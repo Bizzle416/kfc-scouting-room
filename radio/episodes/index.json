@@ -1,0 +1,15 @@
+{
+ "episodes": [
+  {
+   "id": "wk01-preview",
+   "type": "preview",
+   "week": 1,
+   "title": "Week 1 preview",
+   "createdAt": "2026-10-15T09:19:40.394Z",
+   "seconds": 193,
+   "audio": "radio/episodes/wk01-preview.mp3",
+   "script": "radio/episodes/wk01-preview.json",
+   "writer": "templates"
+  }
+ ]
+}

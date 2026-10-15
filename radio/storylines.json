@@ -1,0 +1,21 @@
+{
+  "_readme": "Running jokes the hosts can call back to. Edit freely — keep it to banter about fantasy decisions, nothing personal. Facts (scores, odds, players) never come from here; they come from the sims. 'waste' lines play when that manager has the most games stuck on the bench. 'fanOf' players trigger a line when they're on the OTHER team in that manager's matchup.",
+  "managers": {
+    "Bizzle": {
+      "waste": "And he built the model that's telling him this. Physician, heal thyself.",
+      "fanOf": []
+    },
+    "Danna": {
+      "waste": "Too busy watching Lakers highlights to set a lineup.",
+      "fanOf": ["Cade Cunningham", "LaMelo Ball"]
+    },
+    "Mamba": {
+      "waste": "And this is the only manager in the league who actually reads the rankings!",
+      "fanOf": ["Nikola Jokic", "Victor Wembanyama"]
+    },
+    "Slav": {
+      "waste": "Classic Slav. Set the lineup in October, check back in March.",
+      "fanOf": []
+    }
+  }
+}

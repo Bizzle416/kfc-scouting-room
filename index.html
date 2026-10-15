@@ -54,6 +54,13 @@ td:first-child,th:first-child{text-align:left}
 .verdict .side{font:700 22px var(--cond)}
 .big{font:800 clamp(56px,11vw,104px)/.9 var(--cond);font-variant-numeric:tabular-nums}
 .me{color:var(--me)} .opp{color:var(--opp)}
+.radio{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center;border-top:4px solid var(--bucket)}
+.radio .mic{font:800 30px/1 var(--cond);width:58px;height:58px;border-radius:50%;background:var(--bucket);color:#fff;display:grid;place-items:center;grid-row:span 2}
+.radio h3{margin:0}.radio audio{width:100%;grid-column:1/-1;margin-top:6px}
+.radio .meta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.radio details{grid-column:1/-1}.radio summary{cursor:pointer;font:600 16px var(--cond);color:var(--muted)}
+.radio .line{margin:6px 0;max-width:80ch}.radio .who{font:700 14px var(--cond);letter-spacing:.04em;margin-right:6px}
+.radio .who.KEV{color:var(--bucket)}.radio .who.NIGEL{color:var(--me)}
 .tug{display:grid;grid-template-columns:64px 1fr 64px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
 .tug:last-child{border-bottom:0}
 .tug .cat{grid-column:1/-1;display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
@@ -142,6 +149,13 @@ svg text{font-family:var(--font)}
 <main>
 
 <section id="tab-matchup">
+  <div class="card radio" id="radio" hidden>
+    <div class="mic" aria-hidden="true">FR</div>
+    <div class="meta"><h3 id="radioTitle">Fryer Radio</h3><select id="radioPick" aria-label="Choose an episode"></select></div>
+    <p class="small muted" id="radioSub" style="margin:0">Kev and Nigel on this week's sims. Every number is from the Scouting Room.</p>
+    <audio id="radioAudio" controls preload="none"></audio>
+    <details id="radioScript"><summary>Read the transcript</summary><div id="radioLines"></div></details>
+  </div>
   <div class="card">
     <div class="row">
       <div><label for="mHome">Your team</label><select id="mHome"></select></div>
@@ -792,6 +806,19 @@ $("wbGo").addEventListener("click",importWorkbook);
 $("wbExport").addEventListener("click",exportJson);
 try{$("tagline").textContent=TAGS[Math.floor(Math.random()*TAGS.length)]}catch(e){}
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>renderAll())}catch(e){}
+/* ---------- Fryer Radio ---------- */
+async function loadRadio(){
+  try{const r=await fetch("radio/episodes/index.json",{cache:"no-store"});if(!r.ok)return;const m=await r.json();const eps=(m.episodes||[]).filter(e=>e.audio);if(!eps.length)return;
+    const pick=$("radioPick");pick.innerHTML=eps.map((e,i)=>`<option value="${i}">${esc(e.title)}</option>`).join("");
+    const show=async i=>{const e=eps[i],mins=e.seconds?` · ${Math.floor(e.seconds/60)}:${String(e.seconds%60).padStart(2,"0")}`:"";
+      $("radioTitle").textContent="Fryer Radio · "+e.title;$("radioAudio").src=e.audio+"?v="+encodeURIComponent(e.createdAt);
+      $("radioSub").textContent=`Made ${fmtDate(e.createdAt)}${mins}. Kev and Nigel on the sims — every number is from the Scouting Room${e.type==="preview"?", frozen before tip-off":""}.`;
+      $("radioLines").innerHTML="";
+      try{const s=await (await fetch(e.script,{cache:"no-store"})).json();$("radioLines").innerHTML=s.lines.map(l=>`<p class="line small"><span class="who ${esc(l.host)}">${esc(l.host)}</span>${esc(l.text)}</p>`).join("")}catch(x){}};
+    pick.onchange=()=>show(+pick.value);await show(0);$("radio").hidden=false;
+  }catch(e){}
+}
+loadRadio();
 load();
 </script>
 </body>
