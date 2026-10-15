@@ -387,6 +387,9 @@ function simulate(dA,dB,cA,cB,n){
   return res;
 }
 const expCats=(r,n)=>CATS.reduce((s,c)=>s+r.cat[c.k].w/n,0);
+const FLIP=0.05; // within 5 points either way = coin flip
+const catSide=(r,c)=>{const w=r.cat[c.k].w/SIMS,t=r.cat[c.k].t/SIMS,l=1-w-t;return Math.abs(w-l)<FLIP?0:(w>l?1:-1)};
+const sideTally=r=>{const s={me:0,opp:0,flip:0};CATS.forEach(c=>{const v=catSide(r,c);if(v>0)s.me++;else if(v<0)s.opp++;else s.flip++});return s};
 function finalMeans(d,cur){const o={};["tpm","reb","ast","stl","blk","to","pts","fgm","fga","ftm","fta"].forEach(k=>o[k]=(cur[k]||0)+d.m[k]);o.fgp=o.fga?o.fgm/o.fga:0;o.ftp=o.fta?o.ftm/o.fta:0;return o}
 
 /* ---------- this week ---------- */
@@ -434,7 +437,10 @@ function runMatchup(){
   const mx=Math.max(...r.dist);
   const dist=r.dist.map((n,i)=>`<div style="height:${mx?n/mx*100:0}%;background:var(--me);opacity:${.35+.65*(mx?n/mx:0)}" title="${i} categories: ${(n/SIMS*100).toFixed(1)}%"><span>${i}</span></div>`).join("");
   const seasonLine=S&&M.week<=18&&M.home===(state.me||M.home)?`<p style="text-align:center;margin:6px auto 0"><b>Season ${S.w}-${S.l}-${S.t}</b> → about <b>${Math.round(S.w+expW)}-${Math.round(S.l+expL)}-${Math.round(S.t+expT)}</b> if this week goes to projection</p>`:"";
-  const ds=weekDates(W),left=ds.length-ds.indexOf(from),won=CATS.filter(c=>r.cat[c.k].w/SIMS>=.5).length;
+  const ds=weekDates(W),left=ds.length-ds.indexOf(from),tally=sideTally(r);
+  const lead=CATS.filter(c=>catSide(r,c)>0).map(c=>r.cat[c.k].w/SIMS),trail=CATS.filter(c=>catSide(r,c)<0).map(c=>1-(r.cat[c.k].w+r.cat[c.k].t)/SIMS);
+  const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*100):0;
+  const why=(tally.me<tally.opp&&expW>expL)?`Fewer drumsticks but still favoured: your leads average ${avg(lead)}% while theirs average only ${avg(trail)}%, so the close ones split your way often enough.`:(tally.me>tally.opp&&expW<expL)?`More drumsticks but not favoured: your leads average ${avg(lead)}% while theirs average ${avg(trail)}%.`:"";
   out.innerHTML=`<div class="arena" role="group" aria-label="Scoreboard">
     <div class="arena-top"><span>Week ${W.w}${W.w>18?" · playoffs":""}</span><span>${dayLabel(from)} → ${dayLabel(ds[ds.length-1])}</span><span>Shot clock: ${left} day${left>1?"s":""}</span></div>
     <div class="arena-main">
@@ -447,8 +453,8 @@ function runMatchup(){
     <div class="arena-foot">${Math.round(r.w/SIMS*100)}% chance ${esc(tname(M.home))} takes more categories${expT>.05?` · ${expT.toFixed(1)} expected ties`:""} · ${dA.games.toFixed(0)} vs ${dB.games.toFixed(0)} expected starts left${seasonLine?`<br>${seasonLine.replace(/<\/?p[^>]*>/g,"")}`:""}</div>
   </div>
   <div class="card"><h3>The Bucket</h3><div class="bucketwrap">${bucketSVG(r,M)}
-    <div><p style="font:800 24px/1.15 var(--cond);margin-bottom:6px">${esc(tname(M.home))} projects to take <span style="color:${tcol(M.home)}">${won}</span> of 9 drumsticks.</p>
-    <p class="small muted">Each drumstick is a category. Colour = projected winner. Faded = coin flip — that's where a pickup earns its $5.</p>
+    <div><p style="font:800 24px/1.15 var(--cond);margin-bottom:6px">${esc(tname(M.home))} is favoured in <span style="color:${tcol(M.home)}">${tally.me}</span> of 9 drumsticks${tally.flip?`, ${tally.flip} ${tally.flip===1?"is a":"are"} coin flip${tally.flip===1?"":"s"}`:""}.</p>
+    <p class="small muted">Each drumstick is a category, coloured by who is more likely to win it. Grey = coin flip (within ${FLIP*100} points). Faded = close — that's where a pickup earns its $5. The scoreboard's expected categories (${expW.toFixed(1)}) adds up every category's win chance, so it can differ from the drumstick count.</p>${why?`<p class="small">${why}</p>`:""}
     <h3 style="margin-top:12px">Secret recipe</h3>${pushNotes(r)}</div></div></div>
   ${warn.map(w=>`<div class="notice">${w}</div>`).join("")}
   <div class="cols"><div class="card"><h3>Category tug-of-war</h3>${rows}</div>
@@ -458,8 +464,8 @@ function runMatchup(){
 }
 function bucketSVG(r,M){
   const H=tcol(M.home),A=tcol(M.away);let sticks="";
-  CATS.forEach((c,i)=>{const w=r.cat[c.k].w/SIMS,t=r.cat[c.k].t/SIMS,l=1-w-t,mine=w>=l,conf=Math.min(1,Math.abs(w-l)),op=(.28+.72*conf).toFixed(2);
-    const x=78+i*25.5,ang=(i-4)*9,col=mine?H:A;
+  CATS.forEach((c,i)=>{const w=r.cat[c.k].w/SIMS,t=r.cat[c.k].t/SIMS,l=1-w-t,side=catSide(r,c),conf=Math.min(1,Math.abs(w-l)),op=side===0?"0.85":(.28+.72*conf).toFixed(2);
+    const x=78+i*25.5,ang=(i-4)*9,col=side>0?H:side<0?A:"#9AA0A6";
     sticks+=`<g transform="translate(${x},150) rotate(${ang})"><title>${c.l}: ${Math.round(w*100)}% ${esc(tname(M.home))} / ${Math.round(l*100)}% ${esc(tname(M.away))}</title>
       <rect x="-4" y="-40" width="8" height="60" rx="3" fill="#F4E9D4" stroke="#C9B48E"/><circle cx="-5" cy="-44" r="5" fill="#F4E9D4" stroke="#C9B48E"/><circle cx="5" cy="-44" r="5" fill="#F4E9D4" stroke="#C9B48E"/>
       <path d="M0,-38 C-24,-44 -26,-92 0,-104 C26,-92 24,-44 0,-38Z" fill="${col}" opacity="${op}" stroke="#5A3A12" stroke-opacity=".35"/>
@@ -473,7 +479,7 @@ function bucketSVG(r,M){
     <path d="M60,150 L300,150 L272,290 L88,290Z" fill="none" stroke="#7a0a1c" stroke-width="2"/>
     <rect x="52" y="140" width="256" height="16" rx="8" fill="#fff" stroke="#7a0a1c" stroke-width="2"/>
     <rect x="130" y="190" width="100" height="56" rx="10" fill="#fff" stroke="#7a0a1c" stroke-width="2"/>
-    <text x="180" y="226" text-anchor="middle" font-size="30" font-weight="800" fill="#C8102E" style="font-family:var(--cond)">${CATS.filter(c=>r.cat[c.k].w/SIMS>=.5).length}–${CATS.filter(c=>r.cat[c.k].w/SIMS<.5).length}</text></svg>`;
+    <text x="180" y="226" text-anchor="middle" font-size="30" font-weight="800" fill="#C8102E" style="font-family:var(--cond)">${(()=>{const s=sideTally(r);return s.flip?`${s.me}–${s.opp}–${s.flip}`:`${s.me}–${s.opp}`})()}</text></svg>`;
 }
 let confettiKey="";
 function maybeConfetti(margin,M){
