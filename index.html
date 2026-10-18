@@ -50,6 +50,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 th{font:600 15px var(--cond);color:var(--muted)}
 td:first-child,th:first-child{text-align:left}
+.au th.l,.au td.l{text-align:left} .au td.l{white-space:normal;min-width:9ch}
 .verdict{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;text-align:center}
 .verdict .side{font:700 22px var(--cond)}
 .big{font:800 clamp(56px,11vw,104px)/.9 var(--cond);font-variant-numeric:tabular-nums}
@@ -139,6 +140,7 @@ svg text{font-family:var(--font)}
   <div><h1>KFC Scouting Room</h1><p class="tagline" id="tagline">11 herbs &amp; spices · 9 categories · 10,000 sims</p><p class="small muted" id="syncState" style="margin:2px 0 0">Loading league data…</p></div>
   <nav role="tablist">
     <button role="tab" data-tab="matchup" aria-selected="true">This week</button>
+    <button role="tab" data-tab="audit" aria-selected="false">Bench audit</button>
     <button role="tab" data-tab="season" aria-selected="false">Season</button>
     <button role="tab" data-tab="trade" aria-selected="false">Trade</button>
     <button role="tab" data-tab="league" aria-selected="false">League</button>
@@ -181,6 +183,19 @@ svg text{font-family:var(--font)}
     <div class="card"><h3>Status and overrides</h3>
       <p class="small muted">Games come from the schedule. Type a number to cap a player's games (resting, minutes limit); clear it to go back. What-ifs only.</p>
       <div class="scroll" id="glTable"></div></div>
+  </div>
+</section>
+
+<section id="tab-audit" hidden>
+  <div class="card"><h2>Heat lamp <span class="small muted">· bench audit</span></h2>
+    <p class="small muted" id="auNote"></p>
+    <div id="auScore"></div></div>
+  <div class="card"><h3>Every benched game, tested</h3>
+    <p class="small muted">Each ring on the lineup plan, swapped in for every starter it could legally replace. Shows the best swap and what it does to expected categories. Anything under ±0.02 is a coin flip, not a mistake.</p>
+    <div class="scroll" id="auSwaps"></div></div>
+  <div class="cols">
+    <div class="card"><h3>Which categories are live</h3><p class="small muted">Win chance per category under the site's plan. A player is only worth starting for the categories still in play.</p><div class="scroll" id="auCats"></div></div>
+    <div class="card"><h3>Your roster, three ways</h3><p class="small muted">Per-game 9-cat z (what the planner uses), this matchup's value (same stats, weighted by live categories), and ADP rank.</p><div class="scroll" id="auRoster"></div></div>
   </div>
 </section>
 
@@ -359,8 +374,8 @@ function assignDay(cands){ // cands sorted by value desc; transversal-matroid gr
   return {started:new Set(started),slotOf};
 }
 // roster = array of team entries; returns {games:Map(entry->expected starts), days:[...], benched, daily}
-function planRoster(roster,W,from){
-  const ps=roster.filter(tp=>tp.status==="active").map(tp=>({tp,e:eff(tp),nba:nbaTeam(tp.n),elig:eligible(posOf(tp.n)),v:zOf(tp.n),cap:(tp.gl!=null&&tp.gl!=="")?+tp.gl:Infinity,used:0})).filter(x=>x.e);
+function planRoster(roster,W,from,valFn){
+  const ps=roster.filter(tp=>tp.status==="active").map(tp=>({tp,e:eff(tp),nba:nbaTeam(tp.n),elig:eligible(posOf(tp.n)),v:valFn?valFn(tp):zOf(tp.n),cap:(tp.gl!=null&&tp.gl!=="")?+tp.gl:Infinity,used:0})).filter(x=>x.e);
   ps.sort((a,b)=>b.v-a.v);
   const games=new Map(),days=[];let benched=0,raw=0;
   if(hasDaily(W)){
@@ -378,6 +393,51 @@ function planRoster(roster,W,from){
   let used=0;
   ps.forEach(x=>{const g=Math.min(x.cap,((REF.schedule[x.nba]||[])[W.w-1]||0)*share);raw+=g;const take=Math.max(0,Math.min(g,capTotal-used));used+=take;benched+=g-take;if(take>0)games.set(x.tp,take*availOf(x.e))});
   return {games,days,benched,raw,daily:false};
+}
+/* ---------- bench audit ---------- */
+const phi=x=>Math.exp(-x*x/2)/Math.sqrt(2*Math.PI);
+function Phi(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
+// Normal approximation of each category: P(home wins) and leverage (how much one extra unit moves that chance).
+function catOdds(dA,dB,cA,cB){
+  const o={};
+  ["tpm","reb","ast","stl","blk","to","pts"].forEach(k=>{const mu=((cA[k]||0)+dA.m[k])-((cB[k]||0)+dB.m[k]),sd=Math.sqrt(dA.v[k]+dB.v[k])||1;
+    const low=k==="to",z=low?(-0.5-mu)/sd:(0.5-mu)/sd;o[k]={p:low?Phi(z):1-Phi(z),lev:phi((low?-mu:mu)/sd)/sd}});
+  [["fgp","fgm","fga","lFG"],["ftp","ftm","fta","lFT"]].forEach(([k,mk,ak,lk])=>{
+    const MA=(cA[mk]||0)+dA.m[mk],AA=(cA[ak]||0)+dA.m[ak],MB=(cB[mk]||0)+dB.m[mk],AB=(cB[ak]||0)+dB.m[ak];
+    const pA=AA?MA/AA:0,pB=AB?MB/AB:0,sd=Math.sqrt((AA?dA[lk]/AA/AA:0)+(AB?dB[lk]/AB/AB:0))||1e-3,mu=pA-pB;
+    o[k]={p:1-Phi(-mu/sd),lev:phi(mu/sd)/sd,att:AA,pct:pA}});
+  o.exp=CATS.reduce((s,c)=>s+o[c.k].p,0);return o;
+}
+// Per-game value of a player to THIS matchup: each stat weighted by how live that category is.
+function matchupValue(e,odds){
+  if(!e)return -99;let v=0;
+  ["tpm","reb","ast","stl","blk","pts"].forEach(k=>v+=odds[k].lev*(e[k]||0));v-=odds.to.lev*(e.to||0);
+  v+=odds.fgp.lev*((e.fgm||0)-odds.fgp.pct*(e.fga||0))/Math.max(1,odds.fgp.att);
+  v+=odds.ftp.lev*((e.ftm||0)-odds.ftp.pct*(e.fta||0))/Math.max(1,odds.ftp.att);
+  return v;
+}
+const ADP_VAL=tp=>{const r=ref(tp.n);return r&&r.adp?-r.adp:-999};
+function benchAudit(home,away,W,from){
+  const rh=state.teams[home]||[],ra=state.teams[away]||[],cA=curFor(home),cB=curFor(away);
+  const pB=planRoster(ra,W,from),dB=distFrom(pB);
+  const score=p=>catOdds(distFrom(p),dB,cA,cB);
+  const pZ=planRoster(rh,W,from),oZ=score(pZ);
+  const pADP=planRoster(rh,W,from,ADP_VAL),oADP=score(pADP);
+  let pM=planRoster(rh,W,from,tp=>matchupValue(eff(tp),oZ)),oM=score(pM);
+  const pM2=planRoster(rh,W,from,tp=>matchupValue(eff(tp),oM)),oM2=score(pM2);if(oM2.exp>oM.exp){pM=pM2;oM=oM2}
+  // Swap test on the site's own plan: every benched game, tried in place of every starter it can legally replace.
+  const byName=new Map(rh.map(tp=>[tp.n,tp])),swaps=[];
+  pZ.days.forEach(row=>{if(!row.off.length)return;
+    const on=row.on.map(x=>x[0]);
+    row.off.forEach(xn=>{const xt=byName.get(xn),xe=eff(xt);let best=null;
+      on.forEach(sn=>{const lineup=on.filter(n=>n!==sn).concat(xn).map(n=>({elig:eligible(posOf(n))}));
+        if(assignDay(lineup).started.size<lineup.length)return;
+        const st=byName.get(sn),g=new Map(pZ.games);g.set(st,(g.get(st)||0)-availOf(eff(st)));g.set(xt,(g.get(xt)||0)+availOf(xe));
+        const d=catOdds(distFrom({games:g}),dB,cA,cB).exp-oZ.exp;if(!best||d>best.d)best={out:sn,d}});
+      swaps.push({d:row.d,n:xn,best})})});
+  const diff=(a,b)=>{const out=[];a.days.forEach((r,i)=>{const A=new Set(r.on.map(x=>x[0])),B=new Set((b.days[i]||{on:[]}).on.map(x=>x[0]));
+    const ins=[...B].filter(n=>!A.has(n)),outs=[...A].filter(n=>!B.has(n));if(ins.length)out.push({d:r.d,ins,outs})});return out};
+  return {z:{plan:pZ,odds:oZ},adp:{plan:pADP,odds:oADP,diff:diff(pZ,pADP)},mu:{plan:pM,odds:oM,diff:diff(pZ,pM)},swaps,base:oZ};
 }
 function distFrom(plan){
   const m={},v={};["tpm","reb","ast","stl","blk","to","pts","fga","fta","fgm","ftm"].forEach(k=>{m[k]=0;v[k]=0});let lFG=0,lFT=0,g=0;
@@ -475,6 +535,7 @@ function runMatchup(){
   <div class="card"><h3>How many categories ${esc(tname(M.home))} wins</h3><p class="small muted">Spread of outcomes across 10,000 simulated weeks.</p><div class="dist">${dist}</div><div style="height:26px"></div></div></div>`;
   maybeConfetti(expW-expL,M);
   renderStrip(pA,pB,W,from);renderStreamers();
+  if(!$("tab-audit").hidden)renderAudit();
 }
 function bucketSVG(r,M){
   const H=tcol(M.home),A=tcol(M.away);let sticks="";
@@ -783,11 +844,39 @@ async function importWorkbook(){
 }
 
 /* ---------- wiring ---------- */
-function renderAll(){renderMatchupInputs();runMatchup();if(!$("tab-league").hidden)renderLeague();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-trade").hidden)renderTradeLists()}
+
+/* ---------- bench audit tab ---------- */
+function renderAudit(){
+  const M=state.matchup,W=week(),from=fromDate(W);
+  if(!Object.keys(state.teams).length||M.home===M.away){$("auScore").innerHTML=`<p class="muted">Pick two different teams on This week.</p>`;["auSwaps","auCats","auRoster"].forEach(i=>$(i).innerHTML="");return}
+  const a=benchAudit(M.home,M.away,W,from),base=a.z.odds.exp;
+  $("auNote").innerHTML=`${tl(M.home,20)} vs ${tl(M.away,20)} · week ${W.w}, ${dayLabel(from)} → ${dayLabel(weekDates(W).slice(-1)[0])}. Change the teams or week on <b>This week</b>. Expected categories here use a fast normal approximation that tracks the 10,000 sims to within about 0.02.`;
+  const dl=x=>{const v=Math.round(x*100)/100;return v>0?`<span class="delta-pos">+${v.toFixed(2)}</span>`:v<0?`<span class="delta-neg">${v.toFixed(2)}</span>`:`<span class="muted">±0.00</span>`};
+  const chg=list=>list.length?list.map(x=>`<div class="small">${dayLabel(x.d)}: start ${x.ins.map(esc).join(", ")} · sit ${x.outs.map(esc).join(", ")}</div>`).join(""):`<div class="small muted">Same lineup every day.</div>`;
+  $("auScore").innerHTML=`<div class="scroll"><table class="au"><tr><th class="l">Lineup rule</th><th>Exp cats</th><th>vs site</th><th class="l">Where it differs from the site's plan</th></tr>
+    <tr><td><b>Site plan</b> <span class="small muted">best per-game z</span></td><td><b>${base.toFixed(2)}</b></td><td>—</td><td class="l small muted">The dots on This week.</td></tr>
+    <tr><td><b>Start by ADP</b> <span class="small muted">the gut call</span></td><td>${a.adp.odds.exp.toFixed(2)}</td><td>${dl(a.adp.odds.exp-base)}</td><td class="l">${chg(a.adp.diff)}</td></tr>
+    <tr><td><b>Matchup-aware</b> <span class="small muted">live categories only</span></td><td>${a.mu.odds.exp.toFixed(2)}</td><td>${dl(a.mu.odds.exp-base)}</td><td class="l">${chg(a.mu.diff)}</td></tr></table></div>
+    <p class="small" style="margin-top:8px">Wasted games this week: <b>${Math.round(a.z.plan.benched)}</b> of ${a.z.plan.raw} (${a.z.plan.raw?Math.round(a.z.plan.benched/a.z.plan.raw*100):0}%). ${a.z.plan.daily?"":"<span class='muted'>No daily schedule for this week, so there are no day-by-day choices to audit.</span>"}</p>`;
+  const sw=a.swaps.slice().sort((x,y)=>(y.best?y.best.d:-9)-(x.best?x.best.d:-9));
+  $("auSwaps").innerHTML=sw.length?`<table class="au"><tr><th class="l">Day</th><th class="l">Benched</th><th class="l">Best swap</th><th>Δ exp cats</th><th class="l">Verdict</th></tr>${sw.map(x=>{const d=x.best?x.best.d:null;
+    const v=d==null?`<span class="muted">No legal slot</span>`:d>=.02?`<b style="color:var(--ok)">Start him</b>`:d<=-.02?`Right to sit`:`<span class="muted">Coin flip</span>`;
+    return `<tr><td>${dayLabel(x.d)}</td><td class="l">${esc(x.n)}</td><td class="l">${x.best?"for "+esc(x.best.out):"—"}</td><td>${d==null?"—":dl(d)}</td><td class="l">${v}</td></tr>`}).join("")}</table>`:`<p class="muted small">Nobody with a game is sitting this week.</p>`;
+  const o=a.base;
+  $("auCats").innerHTML=`<table class="au"><tr><th class="l">Cat</th><th>Win chance</th><th class="l">State</th></tr>${CATS.map(c=>{const p=o[c.k].p,st=p>.85?"Locked in":p<.15?"Gone":p>=.35&&p<=.65?"<b>Live</b>":"Leaning "+(p>.5?"yours":"theirs");
+    return `<tr><td>${c.l}</td><td>${Math.round(p*100)}%</td><td class="l">${st}</td></tr>`}).join("")}</table>`;
+  const z=zScores(),rows=(state.teams[M.home]||[]).filter(tp=>tp.status==="active").map(tp=>{const e=eff(tp),zz=z.get(norm(tp.n)),r=ref(tp.n);return {tp,zz,mv:matchupValue(e,o),adp:r&&r.adp}}).filter(x=>x.zz);
+  const rk=(arr,f)=>{const s=arr.slice().sort((x,y)=>f(y)-f(x));return x=>s.indexOf(x)+1};
+  const rz=rk(rows,x=>x.zz.total),rm=rk(rows,x=>x.mv),ra=rk(rows,x=>x.adp?-x.adp:-999);
+  const top=x=>CATS.map(c=>[c.l,x.zz[c.k]]).sort((p,q)=>Math.abs(q[1])-Math.abs(p[1])).slice(0,3).map(([l,v])=>`<span style="color:${v>0?"var(--ok)":"var(--bad)"}">${l} ${v>0?"+":""}${v.toFixed(1)}</span>`).join(" ");
+  $("auRoster").innerHTML=`<table class="au"><tr><th class="l">Player</th><th>Z rank</th><th>Matchup rank</th><th>ADP rank</th><th class="l">Biggest drivers</th></tr>${rows.sort((x,y)=>rz(x)-rz(y)).map(x=>{const gap=Math.abs(rz(x)-ra(x))>=6;
+    return `<tr><td>${esc(x.tp.n)} <span class="src">${esc(posOf(x.tp.n))}</span></td><td>${rz(x)}</td><td>${rm(x)}</td><td${gap?' style="color:var(--warn);font-weight:700"':""}>${ra(x)}${x.adp?` <span class="small muted">(${x.adp.toFixed(0)})</span>`:""}</td><td class="l small">${top(x)}</td></tr>`}).join("")}</table><p class="small muted" style="margin-top:6px">Amber = the gut (ADP) and the maths disagree by 6+ spots. That's where to look.</p>`;
+}
+function renderAll(){renderMatchupInputs();runMatchup();if(!$("tab-league").hidden)renderLeague();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
-  ({league:renderLeague,players:renderPlayers,season:renderSeason,trade:renderTradeLists})[b.dataset.tab]?.();
+  ({audit:renderAudit,league:renderLeague,players:renderPlayers,season:renderSeason,trade:renderTradeLists})[b.dataset.tab]?.();
 }));
 ["mHome","mAway"].forEach(id=>$(id).addEventListener("change",e=>{state.matchup[id==="mHome"?"home":"away"]=e.target.value;save();renderMatchupInputs();runMatchup()}));
 $("mWeek").addEventListener("change",e=>{state.matchup.week=+e.target.value;state.matchup.from=null;state.matchup.current={};TEAMS.forEach(t=>(state.teams[t]||[]).forEach(p=>p.gl=null));save();renderMatchupInputs();runMatchup()});
