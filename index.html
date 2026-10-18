@@ -603,7 +603,7 @@ function renderStrip(pA,pB,W,from){
       const cells=plan.days.map(r=>{const on=r.on.find(x=>x[0]===p.n);if(on){starts++;return `<td title="${esc(on[1])}"><span class="dot ${cls==="opp"?"opp":"on"}" aria-label="starts at ${esc(on[1])}"></span></td>`}
         return r.off.includes(p.n)?`<td><span class="dot bench" aria-label="game, no slot"></span></td>`:"<td></td>"}).join("");
       return `<tr><td>${esc(p.n)} <span class="src">${esc(posOf(p.n)||"UTIL")}</span></td>${cells}<td><b>${starts}</b></td></tr>`}).join("")+
-      `<tr><td class="muted small">Starts / 🪣 wasted</td>${plan.days.map(r=>`<td class="small">${r.on.length}${r.off.length?`<span style="color:var(--bad)">/${r.off.length}</span>`:""}</td>`).join("")}<td></td></tr>`};
+      `<tr><td class="muted small">Starts / 🪣 wasted</td>${plan.days.map(r=>`<td class="small">${r.on.length}${r.off.length?`<span style="color:var(--bad)">/${r.off.length}</span>`:""}</td>`).join("")}<td class="small" title="Starts this week (max ${SLOTS.length} a day) / games wasted with no slot">${(()=>{const st=plan.days.reduce((a,r)=>a+Math.min(r.on.length,SLOTS.length),0),wa=plan.days.reduce((a,r)=>a+r.off.length,0);return `<b>${st}</b>${wa?`<span style="color:var(--bad)">/${wa}</span>`:""}`})()}</td></tr>`};
   $("strip").innerHTML=`<table class="strip"><tr><th>Player</th>${ds.map(d=>`<th>${dayLabel(d)}</th>`).join("")}<th>Starts</th></tr>${block(pA,state.matchup.home,"me")}${block(pB,state.matchup.away,"opp")}</table>`;
 }
 function renderStreamers(){
