@@ -1,0 +1,19 @@
+{
+ "ok": false,
+ "at": "2026-10-21T06:24:18.031Z",
+ "league": "1143837492",
+ "season": 2027,
+ "steps": [
+  "league read"
+ ],
+ "warnings": [],
+ "checks": {
+  "espnTeams": [
+   "1:Mornington Moose ",
+   "2:Nilumbik Nets",
+   "3:Bizzle Analytics",
+   "4:Klaw Patrol"
+  ]
+ },
+ "error": "Couldn't match all 4 ESPN team names: 1:Mornington Moose , 2:Nilumbik Nets, 3:Bizzle Analytics, 4:Klaw Patrol"
+}
