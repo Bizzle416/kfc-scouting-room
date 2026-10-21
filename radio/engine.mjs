@@ -63,7 +63,7 @@ export function matchupReceipts(E, home, away, week, { useCurrent = true } = {})
   E.ctx.__args = { home, away, week, useCurrent };
   return E.run(`(()=>{
     const {home,away,week:wk,useCurrent}=__args;
-    state.matchup.home=home;state.matchup.away=away;state.matchup.week=wk;state.matchup.from=null;
+    state.matchup.home=home;state.matchup.away=away;state.matchup.week=wk;state.matchup.from=(+wk===+state.logWeek&&useCurrent)?((__league.matchup||{}).from||null):null;
     const W=week(),from=fromDate(W);
     const cur=t=>useCurrent&&pairOK()?((state.matchup.current||{})[t]||{}):{};
     const pA=planRoster(state.teams[home]||[],W,from),pB=planRoster(state.teams[away]||[],W,from);

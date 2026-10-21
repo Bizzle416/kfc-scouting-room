@@ -79,6 +79,11 @@ td:first-child,th:first-child{text-align:left}
 .heat td.r2{background:color-mix(in srgb,var(--ok) 12%,transparent)}
 .heat td.r3{background:color-mix(in srgb,var(--bad) 12%,transparent)}
 .heat td.r4{background:color-mix(in srgb,var(--bad) 30%,transparent)}
+.lgw{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.lgm{border:1px solid var(--line);border-radius:10px;padding:12px}
+.lgm .sc{display:flex;align-items:center;justify-content:space-between;gap:8px;font:800 20px var(--cond)}
+.lgm .sc .n{font:800 30px var(--cond)}
+.lgm button{margin-top:8px}
 .notice{border-left:4px solid var(--warn);padding:8px 12px;background:var(--soft);border-radius:0 6px 6px 0;margin-bottom:12px;font-size:15px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .stat-in td{padding:3px 4px} .stat-in input{width:64px}
@@ -169,6 +174,7 @@ svg text{font-family:var(--font)}
     </div>
     <p class="small muted" id="schedNote" style="margin:10px 0 0"></p>
   </div>
+  <div class="card" id="lgWeekCard" hidden><h3>Around the league <span class="small muted" id="lgWeekSub"></span></h3><div class="lgw" id="lgWeek"></div></div>
   <div id="mResult"></div>
   <div class="card"><h3>Seat at the table <span class="small muted">· lineup plan</span></h3>
     <p class="small muted">Each remaining day, the best 10 who play fill PG, SG, SF, PF, C, G, F and 3 UTIL. Filled dot = starts, ring = has a game but no slot. That ring is a wasted game.</p>
@@ -178,7 +184,7 @@ svg text{font-family:var(--font)}
     <div class="scroll" id="streamers"></div></div>
   <div class="cols">
     <div class="card"><h3>Totals so far this week</h3>
-      <p class="small muted">Tracked for the commissioner's matchup (from the Matchup Log). For any other pairing, type ESPN's totals here as a what-if — they aren't saved.</p>
+      <p class="small muted">Tracked for both of this week's matchups (from the Matchup Log). For any other pairing, type ESPN's totals here as a what-if — they aren't saved.</p>
       <div class="scroll"><table class="stat-in" id="curTable"></table></div></div>
     <div class="card"><h3>Status and overrides</h3>
       <p class="small muted">Games come from the schedule. Type a number to cap a player's games (resting, minutes limit); clear it to go back. What-ifs only.</p>
@@ -294,7 +300,8 @@ const addDays=(iso,n)=>{const d=new Date(iso+"T00:00:00Z");d.setUTCDate(d.getUTC
 const etToday=()=>{try{return new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}catch(e){return new Date().toISOString().slice(0,10)}};
 const dayLabel=iso=>{const d=new Date(iso+"T00:00:00Z");return d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",timeZone:"UTC"})};
 const week=()=>REF.weeks[(+state.matchup.week||1)-1]||REF.weeks[0];
-const pairOK=()=>{const p=state.logPair||[],M=state.matchup;return p.includes(M.home)&&p.includes(M.away)&&+M.week===+state.logWeek};
+const otherPair=()=>{const p=state.logPair||[];return p.length===2?TEAMS.filter(t=>!p.includes(t)):[]};
+const pairOK=()=>{const p=state.logPair||[],o=otherPair(),M=state.matchup,has=a=>a.includes(M.home)&&a.includes(M.away);return M.home!==M.away&&(has(p)||has(o))&&+M.week===+state.logWeek};
 const curFor=t=>pairOK()?((state.matchup.current||{})[t]||{}):((state.whatif||{})[t]||{});
 const weekDates=W=>Array.from({length:W.days},(_,i)=>addDays(W.start,i));
 function fromDate(W){const f=state.matchup.from;const ds=weekDates(W);return f&&ds.includes(f)?f:ds[0]}
@@ -328,11 +335,11 @@ function migrate(s){
 }
 const PREF_KEY="kfc-scout-prefs";
 function save(){try{const M=state.matchup;localStorage.setItem(PREF_KEY,JSON.stringify({home:M.home,away:M.away,week:M.week,from:M.from,avail:M.avail}))}catch(e){}}
-function dataInfo(){const t=state.updatedAt||(state.source&&state.source.at);$("dataInfo").textContent=t?`Last updated ${fmtDate(t)}${state.source&&state.source.file?" from "+state.source.file:""}. Matchup totals and season record are tracked for ${state.me||"the commissioner"}'s games.`:"No league data published yet."}
+function dataInfo(){const t=state.updatedAt||(state.source&&state.source.at);$("dataInfo").textContent=t?`Last updated ${fmtDate(t)}${state.source&&state.source.file?" from "+state.source.file:""}. Live totals cover both of this week's matchups; season record is tracked for ${state.me||"the commissioner"}'s games.`:"No league data published yet."}
 async function load(){
   renderAll();
   try{const r=await fetch("data/league.json",{cache:"no-store"});if(!r.ok)throw 0;const d=await r.json();state=migrate(Object.assign(state,d));
-    try{const p=JSON.parse(localStorage.getItem(PREF_KEY)||"null");if(p){["home","away","week","from","avail"].forEach(k=>{if(p[k]!==undefined&&p[k]!==null)state.matchup[k]=p[k]})}}catch(e){}
+    try{const p=JSON.parse(localStorage.getItem(PREF_KEY)||"null");if(p){const pub=(d.matchup||{}).from;["home","away","week","from","avail"].forEach(k=>{if(k==="from"&&pub&&(!p.from||p.from<pub))return;if(p[k]!==undefined&&p[k]!==null)state.matchup[k]=p[k]})}}catch(e){}
     const t=state.updatedAt||(state.source&&state.source.at);setSync(t?`Data updated ${fmtDate(t)}`:"League data loaded");
   }catch(e){setSync("Couldn't load data/league.json")}
   dataInfo();renderAll();
@@ -825,12 +832,15 @@ async function importWorkbook(){
   log.slice(3).forEach(r=>{if(!r)return;const vals=r.slice(3,25),full=vals.length===22&&vals.every(isNum);
     if(String(r[0])===String(key)){const pick=a=>{const x={};RAW.forEach((k,i)=>x[k]=isNum(a[i])?a[i]:0);return x};current[me]=pick(vals.slice(0,11));current[opp]=pick(vals.slice(11,22));
       if(r[2]&&r[2]!==opp)warn.push(`Matchup Log has ${esc(r[2])} as week ${key}'s opponent but Live Matchup B4 says ${esc(opp)}. Using ${esc(opp)}.`)}
-    if(isNum(r[0])&&r[0]<=18&&full){const s=catScore(vals.slice(0,11),vals.slice(11,22));history.push({week:r[0],opp:r[2]||"?",w:s.w,l:s.l,t:s.t,cats:s.cats});
+    if(isNum(r[0])&&r[0]<=18&&r[0]<wk&&full){const s=catScore(vals.slice(0,11),vals.slice(11,22));history.push({week:r[0],opp:r[2]||"?",w:s.w,l:s.l,t:s.t,cats:s.cats});
       if(r[0]<wk){season.w+=s.w;season.l+=s.l;season.t+=s.t;season.weeks++}}});
+  const rest=TEAMS.filter(t=>t!==me&&t!==opp);let otherN=0;
+  log.forEach(r=>{if(r&&rest.includes(r[0])&&r.slice(1,12).some(isNum)){const x={};RAW.forEach((k,i)=>x[k]=isNum(r[1+i])?r[1+i]:0);current[r[0]]=x;otherN++}});
+  if(!otherN)warn.push(`No totals for ${rest.join(" v ")} — add them under OTHER MATCHUP at the bottom of the Matchup Log so both games track live.`);
   state.me=me;state.logPair=[me,opp];state.logWeek=wk;state.whatif={};state.teams=teams;state.espn=espn;state.dead=dead;state.dropped=dropped;state.season=season;state.history=history;state.sched=sched;
   state.matchup=Object.assign({},state.matchup,{home:me,away:opp,week:wk,from,current});state.source={file:f.name,at:new Date().toISOString()};
   tradeSel.A.clear();tradeSel.B.clear();state.updatedAt=new Date().toISOString();invalidate();renderAll();
-  let h=`<p><b>Loaded ${esc(f.name)}.</b> Rosters: ${TEAMS.map(t=>`${t} ${teams[t].length}`).join(", ")}. ESPN stat lines: ${espnN}. Schedule: ${sched?schedN+" games":"none — using weekly counts"}. Week ${wk}: ${esc(me)} vs ${esc(opp)}. Season to date: ${season.w}-${season.l}-${season.t}.</p>`;
+  let h=`<p><b>Loaded ${esc(f.name)}.</b> Rosters: ${TEAMS.map(t=>`${t} ${teams[t].length}`).join(", ")}. ESPN stat lines: ${espnN}. Schedule: ${sched?schedN+" games":"none — using weekly counts"}. Week ${wk}: ${esc(me)} vs ${esc(opp)}${otherN?`, ${rest.join(" vs ")} live too`:""}. Season to date: ${season.w}-${season.l}-${season.t}.</p>`;
   TEAMS.forEach(t=>{const n=teams[t].filter(p=>p.status!=="ir").length;if(n>20)warn.push(`${t} has ${n} active players — over the 20-man limit.`)});
   if(unknownTeam.size)warn.push(`Skipped rows with unknown team names: ${[...unknownTeam].map(esc).join(", ")}.`);
   if(noRef.length)warn.push(`Not in the player list, so no projection or schedule: ${noRef.map(esc).join(", ")}.`);
@@ -872,7 +882,34 @@ function renderAudit(){
   $("auRoster").innerHTML=`<table class="au"><tr><th class="l">Player</th><th>Z rank</th><th>Matchup rank</th><th>ADP rank</th><th class="l">Biggest drivers</th></tr>${rows.sort((x,y)=>rz(x)-rz(y)).map(x=>{const gap=Math.abs(rz(x)-ra(x))>=6;
     return `<tr><td>${esc(x.tp.n)} <span class="src">${esc(posOf(x.tp.n))}</span></td><td>${rz(x)}</td><td>${rm(x)}</td><td${gap?' style="color:var(--warn);font-weight:700"':""}>${ra(x)}${x.adp?` <span class="small muted">(${x.adp.toFixed(0)})</span>`:""}</td><td class="l small">${top(x)}</td></tr>`}).join("")}</table><p class="small muted" style="margin-top:6px">Amber = the gut (ADP) and the maths disagree by 6+ spots. That's where to look.</p>`;
 }
-function renderAll(){renderMatchupInputs();runMatchup();if(!$("tab-league").hidden)renderLeague();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
+
+/* ---------- around the league: both of this week's matchups ---------- */
+function renderLeagueWeek(){
+  const card=$("lgWeekCard");const p=state.logPair||[],o=otherPair(),wk=+state.logWeek||0;
+  if(p.length!==2||o.length!==2||!wk||!Object.keys(state.teams).length){card.hidden=true;return}
+  const W=REF.weeks[wk-1];if(!W){card.hidden=true;return}
+  const saved=Object.assign({},state.matchup);state.matchup.week=wk;const from=fromDate(W);
+  const cur=state.matchup.current||{},ds=weekDates(W),done=ds.indexOf(from);
+  const blocks=[p,o].map(([a,b])=>{
+    const ca=cur[a]||{},cb=cur[b]||{},played=Object.values(ca).some(v=>v>0)||Object.values(cb).some(v=>v>0);
+    const now=played?catScore(RAW.map(k=>ca[k]||0),RAW.map(k=>cb[k]||0)):null;
+    const dA=distFrom(planRoster(state.teams[a]||[],W,from)),dB=distFrom(planRoster(state.teams[b]||[],W,from));
+    const r=simulate(dA,dB,ca,cb,4000),n=4000,expW=expCats(r,n),expT=CATS.reduce((s,c)=>s+r.cat[c.k].t/n,0),expL=9-expW-expT;
+    const swing=CATS.filter(c=>{const w=r.cat[c.k].w/n;return w>.3&&w<.7}).map(c=>c.l);
+    const lean=CATS.map(c=>({c,w:r.cat[c.k].w/n})).filter(x=>x.w>=.7||x.w<=.3);
+    return `<div class="lgm"><div class="sc"><span>${badge(a,30)} ${esc(tname(a))}</span><span class="n" style="color:${tcol(a)}">${expW.toFixed(1)}</span></div>
+      <div class="sc"><span>${badge(b,30)} ${esc(tname(b))}</span><span class="n" style="color:${tcol(b)}">${expL.toFixed(1)}</span></div>
+      <p class="small" style="margin:6px 0 0">${played?`<b>So far ${now.w}-${now.l}-${now.t}</b> to ${esc(a)} after ${done} day${done===1?"":"s"}. `:"No games logged yet. "}Projected ${expW.toFixed(1)}–${expL.toFixed(1)} expected cats · <b>${Math.round(r.w/n*100)}%</b> ${esc(a)} / <b>${Math.round(r.l/n*100)}%</b> ${esc(b)}${r.t/n>.04?` / ${Math.round(r.t/n*100)}% tie`:""}.</p>
+      <p class="small muted" style="margin:4px 0 0">${lean.length?lean.map(x=>`${x.c.l} <b style="color:${tcol(x.w>.5?a:b)}">${esc(x.w>.5?a:b)}</b>`).join(" · "):""}${swing.length?`${lean.length?" · ":""}Up for grabs: <b>${swing.join(", ")}</b>`:""}</p>
+      <button class="ghost" data-open="${esc(a)}|${esc(b)}">Open this matchup</button></div>`});
+  Object.assign(state.matchup,saved);
+  $("lgWeekSub").textContent=`· week ${wk}, counting from ${dayLabel(from)} · ${n4k()} sims each`;
+  $("lgWeek").innerHTML=blocks.join("");card.hidden=false;
+}
+const n4k=()=>"4,000";
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-open]");if(!b)return;const [a,c]=b.dataset.open.split("|");
+  Object.assign(state.matchup,{home:a,away:c,week:+state.logWeek||state.matchup.week});save();renderMatchupInputs();runMatchup();$("mResult").scrollIntoView({behavior:"smooth"})});
+function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}if(!$("tab-league").hidden)renderLeague();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
