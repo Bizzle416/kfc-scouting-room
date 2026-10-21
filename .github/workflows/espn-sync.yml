@@ -1,0 +1,43 @@
+name: ESPN sync
+
+# Pulls the league from ESPN Fantasy and republishes data/league.json.
+# 07:00 UTC = 6pm Melbourne (AEDT), after every US game has finished.
+on:
+  schedule:
+    - cron: "0 7 * * *"
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [espn/**, .github/workflows/espn-sync.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: espn-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Read ESPN
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+        run: node espn/sync.mjs
+      - name: Publish
+        run: |
+          git config user.name "kfc-espn-sync"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/league.json data/espn-status.json
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "ESPN sync $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin main
+          git push origin HEAD:main

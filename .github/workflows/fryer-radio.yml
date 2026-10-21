@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
     paths: [data/league.json]
+  workflow_run:
+    workflows: ["ESPN sync"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       force:
