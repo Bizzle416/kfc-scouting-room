@@ -20,83 +20,29 @@ function picker(seed) {
 function gameSegment(R, pick, story, idx) {
   const L = [], K = (t) => L.push({ host: "KEV", text: t }), N = (t) => L.push({ host: "NIGEL", text: t });
   const H = R.home, A = R.away;
-  const fav = H.winPct >= A.winPct ? H : A, dog = fav === H ? A : H;
-  const p = fav.winPct, gap = Math.abs(H.winPct - A.winPct);
+  // The league scores every category, so talk in projected category scores, not "who wins the matchup".
+  const sc = (x, y) => { const W = Math.round(x), T = Math.min(9 - W, Math.round(R.expTies || 0)); return [W, 9 - W - T, T]; };
+  const hs = sc(H.expCats), fav = H.expCats >= A.expCats ? H : A, dog = fav === H ? A : H;
+  const fs = fav === H ? hs : [hs[1], hs[0], hs[2]], gap = Math.abs(H.expCats - A.expCats);
+  const scoreTxt = `${fs[0]} ${fs[1]}${fs[2] ? `, ${fs[2]} tied` : ""}`;
 
   K(pick(idx === 0
     ? [`Game one! ${H.team}'s ${H.name} against ${A.team}'s ${A.name}!`, `First up, it's ${H.team} versus ${A.team}! ${H.name} against the ${A.name}!`]
     : [`And game two! ${H.team} against ${A.team}!`, `Over to the other side of the draw. ${H.team} versus ${A.team}!`]));
 
-  if (p >= 0.85) {
-    N(pick([`${fav.team} wins this ${P(p)} of the time. That's not a matchup, that's a hostage situation.`,
-      `Ten thousand sims. ${fav.team} takes ${P(p)} of them. ${dog.team}, I'd start writing the apology to your fans.`]));
-  } else if (p >= 0.65) {
-    N(pick([`${fav.team} is a clear favourite. ${P(p)} to take more categories.`, `The model likes ${fav.team} here. ${P(p)}. Not a lock, but close enough to smell the gravy.`]));
-  } else if (gap >= 0.1) {
-    N(pick([`${fav.team} gets the nod, but only just. ${P(p)}. This one's got a pulse.`, `Lean ${fav.team}. ${P(p)}. Anyone telling you it's over is lying.`]));
-  } else {
-    N(pick([`Honestly? Coin flip. ${H.team} ${P(H.winPct)}, ${A.team} ${P(A.winPct)}. Pack a lunch.`, `This is a genuine toss-up. ${P(H.winPct)} to ${P(A.winPct)}. Whoever streams smarter wins it.`]));
-  }
+  if (gap >= 4) N(pick([`Projected score: ${fav.team} ${scoreTxt}. That's not a matchup, that's a hostage situation.`, `The sims have ${fav.team} winning it ${scoreTxt}. ${dog.team}, I'd start writing the apology.`]));
+  else if (gap >= 2) N(pick([`The model has ${fav.team} winning it ${scoreTxt}. Clear edge, every one of those categories counts in the standings.`, `${fav.team} projects ${scoreTxt}. Not a lock in every category, but the bulk of them.`]));
+  else if (gap >= 0.6) N(pick([`${fav.team} edges it on projection, ${scoreTxt}. A couple of categories either way changes the week.`, `Lean ${fav.team}, ${scoreTxt}. This one's got a pulse.`]));
+  else N(pick([`Dead even. The sims split the categories almost down the middle. Every single one is worth fighting for.`, `Projected near enough to ${scoreTxt}. Whoever streams smarter takes the extra categories.`]));
+  const locked = [...(R.locked?.home || []), ...(R.locked?.away || [])];
+  if (R.swing?.length) K(`Up for grabs: ${R.swing.join(", ")}!`);
+  if (locked.length) N(`Already decided, more or less: ${[...(R.locked.home || []).map((c) => `${c} to ${H.team}`), ...(R.locked.away || []).map((c) => `${c} to ${A.team}`)].join(", ")}.`);
 
-  // The drumstick paradox: favoured overall while trailing in more categories.
-  if (fav.drumsticks < dog.drumsticks) {
-    K(`Hang on though. ${dog.team} is ahead in more categories! ${dog.drumsticks} to ${fav.drumsticks}!`);
-    N(`Correct, and it doesn't matter. ${dog.team}'s leads are paper thin. ${fav.team}'s leads are real. Quality over quantity, Kev.`);
-  }
-
-  // Biggest edge and closest category.
-  const edge = R.cats.slice().sort((a, b) => Math.abs(b.win - b.lose) - Math.abs(a.win - a.lose))[0];
-  const owner = edge.win > edge.lose ? H : A, ownP = Math.max(edge.win, edge.lose);
-  K(pick([`${owner.team} owns ${say(edge.l)} this week. ${P(ownP)}. Lock it in!`, `The biggest edge on the board? ${owner.team} in ${say(edge.l)}. ${P(ownP)}!`]));
-  const flip = R.cats.slice().sort((a, b) => Math.abs(a.win - a.lose) - Math.abs(b.win - b.lose))[0];
-  N(pick([`The knife-edge is ${say(flip.l)}. ${P(flip.win)} ${H.team}, ${P(flip.lose)} ${A.team}. That's where your waiver move goes.`,
-    `Watch ${say(flip.l)}. ${P(flip.win)} to ${P(flip.lose)}. One hot night decides it.`]));
-
-  // Star of the matchup.
-  const all = [...H.all.map((x) => ({ ...x, t: H })), ...A.all.map((x) => ({ ...x, t: A }))].filter((x) => x.games > 0);
-  const star = all.slice().sort((a, b) => b.impact - a.impact)[0];
-  if (star) K(pick([`Star of the matchup: ${star.n}! ${star.games} games, and the biggest projected impact on the floor!`,
-    `Keep your eyes on ${star.n}. ${star.games} games this week and the model rates him the most dangerous man in this matchup!`]));
-
-  // Bargain and overpay.
-  const bargain = all.filter((x) => x.salary <= 10 && x.impact >= 8).sort((a, b) => b.impact - a.impact)[0];
-  if (bargain) N(pick([`Best value on the floor: ${bargain.n}. ${$(bargain.salary)}. Projected to outproduce guys on ten times the salary.`,
-    `${bargain.t.team} is getting ${bargain.n} for ${$(bargain.salary)}. That's daylight robbery, and I respect it.`]));
-  const pricey = all.filter((x) => x.salary >= 60 && x.games <= 2).sort((a, b) => b.salary - a.salary)[0];
-  if (pricey) K(pick([`Meanwhile ${pricey.t.team} pays ${$(pricey.salary)} for ${pricey.n}, and he plays ${pricey.games} games this week!`,
-    `${$(pricey.salary)} on ${pricey.n} and you get ${pricey.games} games! The schedule makers have no respect!`]));
-
-  // Wasted bucket: games stuck on the bench.
-  const waste = [H, A].sort((a, b) => b.wasted - a.wasted)[0];
-  if (waste.wasted >= 5 && waste.wastedBy.length) {
-    const w = waste.wastedBy[0];
-    N(`${waste.team} has ${Math.round(waste.wasted)} games with nowhere to put them. ${w.n} alone has ${w.g} games stuck on the bench. That's the wasted bucket, and it's overflowing.`);
-    const bit = (story[waste.team] || {}).waste;
-    if (bit) K(bit);
-  }
-
-  // Fan-favourite callbacks: a manager's guy is playing for the other side this week.
-  for (const [me, them] of [[H, A], [A, H]]) {
-    const fav = ((story[me.team] || {}).fanOf || []).map((n) => them.all.find((x) => x.n === n && x.games > 0)).find(Boolean);
-    if (fav) {
-      N(pick([`${me.team}, I'm told you're a big ${last(fav.n)} fan. Good news, you'll see plenty of him this week. ${fav.games} games. For ${them.team}.`,
-        `Spare a thought for ${me.team}, who loves ${fav.n}. ${them.team} owns him, and he's got ${fav.games} games this week.`]));
-      break;
-    }
-  }
-
-  // Injuries carried on the roster.
-  for (const T of [H, A]) {
-    const out = T.outs.filter((o) => o.status !== "active");
-    if (out.length) N(`${T.team} has ${list(out.map((o) => o.n))} on the sidelines. ${$(out.reduce((s, o) => s + o.salary, 0))} of cap sitting in the stands.`);
-  }
-
-  // Dead cap already on the books.
   for (const T of [H, A]) if (T.dead > 0) K(`And ${T.team} has already got ${$(T.dead)} of dead money on the books before a ball's been bounced!`);
 
   // A lifeline for the underdog.
   const tip = (dog.streamers || []).find((s) => s.fa);
-  if (tip && dog.winPct < 0.5) N(pick([`If ${dog.team} wants a lifeline: ${tip.fa.n} is sitting on waivers. ${tip.fa.games} games, about ${Math.round(tip.fa.per * 10) / 10} ${say(tip.cat)} a game.`,
+  if (tip) N(pick([`If ${dog.team} wants a lifeline: ${tip.fa.n} is sitting on waivers. ${tip.fa.games} games, about ${Math.round(tip.fa.per * 10) / 10} ${say(tip.cat)} a game.`,
     `Free advice for ${dog.team}. Pick up ${tip.fa.n}. ${tip.fa.games} games, ${Math.round(tip.fa.per * 10) / 10} ${say(tip.cat)} a night. You're welcome.`]));
 
   return L;
@@ -110,13 +56,14 @@ export function previewScript(games, { week, story }) {
   if (games.some((g) => g.usedLiveTotals)) N(`Quick note: this one includes the totals logged so far this week. It's a live read, not a fresh preview.`);
   games.forEach((g, i) => L.push(...gameSegment(g, pick, story, i)));
 
-  // Picks.
-  const favs = games.map((g) => (g.home.winPct >= g.away.winPct ? g.home : g.away)).sort((a, b) => b.winPct - a.winPct);
-  const dogs = games.map((g) => (g.home.winPct >= g.away.winPct ? g.away : g.home)).sort((a, b) => b.winPct - a.winPct);
+  // Picks: biggest projected category margin, and the closest game.
+  const margin = (g) => Math.abs(g.home.expCats - g.away.expCats), top = (g) => (g.home.expCats >= g.away.expCats ? g.home : g.away);
+  const byM = games.slice().sort((a, b) => margin(b) - margin(a));
   K(`Nigel. Lock of the week.`);
-  N(`${favs[0].team}. ${P(favs[0].winPct)}. Write it in pen.`);
-  K(`Upset alert?`);
-  N(dogs[0].winPct >= 0.3 ? `${dogs[0].team} at ${P(dogs[0].winPct)}. That's not nothing.` : `${dogs[0].team} at ${P(dogs[0].winPct)}. I've seen better odds on a meat raffle.`);
+  N(`${top(byM[0]).team}. Projected to win the categories by about ${Math.round(margin(byM[0]))}. Write it in pen.`);
+  K(`Closest one?`);
+  const c = byM[byM.length - 1];
+  N(margin(c) < 1 ? `${c.home.team} and ${c.away.team}. Basically level on categories. That's where the standings move.` : `${c.home.team} versus ${c.away.team}. About ${Math.round(margin(c))} categories in it. Plenty of room for a swing.`);
   K(pick([`That's the preview! Set your lineups, and check the Scouting Room!`, `Lineups lock with the first game of the day! Don't be the guy with a star on the bench! See you after the final whistle!`]));
   return L;
 }
@@ -132,11 +79,10 @@ export function reviewScript({ week, me, opp, result, preview, season }, { story
   else if (Math.abs(result.w - result.l) >= 5) N(`That's not a result, that's a crime scene.`);
 
   if (preview) {
-    const p = preview.home.team === me ? preview.home.winPct : preview.away.winPct;
-    if (won && p >= 0.6) N(`The model had ${me} at ${P(p)}. It said this would happen, and it happened. I'd like that noted.`);
-    else if (!won && !tied && p >= 0.6) N(`The model had ${me} at ${P(p)}. So. That aged like milk in the sun.`);
-    else if (won && p < 0.4) N(`The model gave ${me} just ${P(p)}. Upset! The sims are filing a complaint.`);
-    else N(`The model had ${me} at ${P(p)} going in. Close enough to call it fair.`);
+    const ex = preview.home.team === me ? preview.home.expCats : preview.away.expCats, off = result.w - ex;
+    if (Math.abs(off) < 1) N(`The model projected ${me} for about ${Math.round(ex)} categories. Got ${result.w}. I'd like that noted.`);
+    else if (off >= 1) N(`The model had ${me} down for about ${Math.round(ex)} categories. Took ${result.w}. Beat the sims.`);
+    else N(`The model said about ${Math.round(ex)} categories for ${me}. Got ${result.w}. That aged like milk in the sun.`);
 
     const meIsHome = preview.home.team === me;
     const wrong = [], right = [];

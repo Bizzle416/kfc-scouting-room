@@ -84,6 +84,7 @@ td:first-child,th:first-child{text-align:left}
 .lgm .sc{display:flex;align-items:center;justify-content:space-between;gap:8px;font:800 20px var(--cond)}
 .lgm .sc .n{font:800 30px var(--cond)}
 .lgm button{margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.chip{font:600 13px var(--cond);padding:2px 7px;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
 .notice{border-left:4px solid var(--warn);padding:8px 12px;background:var(--soft);border-radius:0 6px 6px 0;margin-bottom:12px;font-size:15px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .stat-in td{padding:3px 4px} .stat-in input{width:64px}
@@ -467,6 +468,8 @@ function simulate(dA,dB,cA,cB,n){
     res.dist[W]++;if(W>L)res.w++;else if(W<L)res.l++;else res.t++}
   return res;
 }
+const projScore=(w,t)=>{const W=Math.round(w),T=Math.min(9-W,Math.round(t));return [W,9-W-T,T]};
+const fmtScore=s=>`${s[0]}-${s[1]}${s[2]?"-"+s[2]:""}`;
 const expCats=(r,n)=>CATS.reduce((s,c)=>s+r.cat[c.k].w/n,0);
 const FLIP=0.05; // within 5 points either way = coin flip
 const catSide=(r,c)=>{const w=r.cat[c.k].w/SIMS,t=r.cat[c.k].t/SIMS,l=1-w-t;return Math.abs(w-l)<FLIP?0:(w>l?1:-1)};
@@ -521,7 +524,7 @@ function runMatchup(){
   const ds=weekDates(W),left=ds.length-ds.indexOf(from),tally=sideTally(r);
   const lead=CATS.filter(c=>catSide(r,c)>0).map(c=>r.cat[c.k].w/SIMS),trail=CATS.filter(c=>catSide(r,c)<0).map(c=>1-(r.cat[c.k].w+r.cat[c.k].t)/SIMS);
   const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*100):0;
-  const why=(tally.me<tally.opp&&expW>expL)?`Fewer drumsticks but still favoured: your leads average ${avg(lead)}% while theirs average only ${avg(trail)}%, so the close ones split your way often enough.`:(tally.me>tally.opp&&expW<expL)?`More drumsticks but not favoured: your leads average ${avg(lead)}% while theirs average ${avg(trail)}%.`:"";
+  const why="";
   out.innerHTML=`<div class="arena" role="group" aria-label="Scoreboard">
     <div class="arena-top"><span>Week ${W.w}${W.w>18?" · playoffs":""}</span><span>${dayLabel(from)} → ${dayLabel(ds[ds.length-1])}</span><span>Shot clock: ${left} day${left>1?"s":""}</span></div>
     <div class="arena-main">
@@ -531,7 +534,7 @@ function runMatchup(){
       <div class="led b" style="color:${tcol(M.away)}">${expL.toFixed(1)}</div>
       <div class="side b">${badge(M.away,56)}<div class="tn">${esc(tname(M.away))}</div><div class="own">${esc(M.away)}</div></div>
     </div>
-    <div class="arena-foot">${Math.round(r.w/SIMS*100)}% chance ${esc(tname(M.home))} takes more categories${expT>.05?` · ${expT.toFixed(1)} expected ties`:""} · ${dA.games.toFixed(0)} vs ${dB.games.toFixed(0)} expected starts left${seasonLine?`<br>${seasonLine.replace(/<\/?p[^>]*>/g,"")}`:""}</div>
+    <div class="arena-foot">Projected week score <b>${fmtScore(projScore(expW,expT))}</b> to ${esc(tname(M.home))} (${expW.toFixed(1)}–${expL.toFixed(1)}${expT>.05?`, ${expT.toFixed(1)} ties`:""}) · most likely exact: ${(()=>{const m=r.dist.indexOf(Math.max(...r.dist));return `${m} cats (${Math.round(r.dist[m]/SIMS*100)}%)`})()} · ${dA.games.toFixed(0)} vs ${dB.games.toFixed(0)} expected starts left${seasonLine?`<br>${seasonLine.replace(/<\/?p[^>]*>/g,"")}`:""}</div>
   </div>
   <div class="card"><h3>The Bucket</h3><div class="bucketwrap">${bucketSVG(r,M)}
     <div><p style="font:800 24px/1.15 var(--cond);margin-bottom:6px">${esc(tname(M.home))} is favoured in <span style="color:${tcol(M.home)}">${tally.me}</span> of 9 drumsticks${tally.flip?`, ${tally.flip} ${tally.flip===1?"is a":"are"} coin flip${tally.flip===1?"":"s"}`:""}.</p>
@@ -899,8 +902,8 @@ function renderLeagueWeek(){
     const lean=CATS.map(c=>({c,w:r.cat[c.k].w/n})).filter(x=>x.w>=.7||x.w<=.3);
     return `<div class="lgm"><div class="sc"><span>${badge(a,30)} ${esc(tname(a))}</span><span class="n" style="color:${tcol(a)}">${expW.toFixed(1)}</span></div>
       <div class="sc"><span>${badge(b,30)} ${esc(tname(b))}</span><span class="n" style="color:${tcol(b)}">${expL.toFixed(1)}</span></div>
-      <p class="small" style="margin:6px 0 0">${played?`<b>So far ${now.w}-${now.l}-${now.t}</b> to ${esc(a)} after ${done} day${done===1?"":"s"}. `:"No games logged yet. "}Projected ${expW.toFixed(1)}–${expL.toFixed(1)} expected cats · <b>${Math.round(r.w/n*100)}%</b> ${esc(a)} / <b>${Math.round(r.l/n*100)}%</b> ${esc(b)}${r.t/n>.04?` / ${Math.round(r.t/n*100)}% tie`:""}.</p>
-      <p class="small muted" style="margin:4px 0 0">${lean.length?lean.map(x=>`${x.c.l} <b style="color:${tcol(x.w>.5?a:b)}">${esc(x.w>.5?a:b)}</b>`).join(" · "):""}${swing.length?`${lean.length?" · ":""}Up for grabs: <b>${swing.join(", ")}</b>`:""}</p>
+      <p class="small" style="margin:6px 0 0">${played?`<b>So far ${now.w}-${now.l}-${now.t}</b> to ${esc(a)} after ${done} day${done===1?"":"s"}. `:"No games logged yet. "}Projected week score <b>${fmtScore(projScore(expW,expT))}</b> to ${esc(a)} (${expW.toFixed(1)}–${expL.toFixed(1)}).</p>
+      <div class="chips">${CATS.map(c=>{const w=r.cat[c.k].w/n,l=1-w-r.cat[c.k].t/n,who=Math.abs(w-l)<.1?null:(w>l?a:b);return `<span class="chip" style="${who?`border-color:${tcol(who)};color:${tcol(who)}`:""}" title="${esc(a)} wins ${c.l} ${Math.round(w*100)}% of sims">${c.l} ${Math.round(w*100)}%</span>`}).join("")}</div><p class="small muted" style="margin:4px 0 0">% = chance ${esc(a)} wins that category. Coloured by who's ahead; grey = within 10 points.</p>
       <button class="ghost" data-open="${esc(a)}|${esc(b)}">Open this matchup</button></div>`});
   Object.assign(state.matchup,saved);
   $("lgWeekSub").textContent=`· week ${wk}, counting from ${dayLabel(from)} · ${n4k()} sims each`;
