@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-10-21T06:25:54.970Z",
+ "at": "2026-10-21T12:37:22.001Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "daily lineups read: 2026-10-20",
+  "daily lineups read: 2026-10-20, 2026-10-21",
   "league.json written"
  ],
  "warnings": [],
@@ -23,8 +23,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 1,
-   "latestScoringPeriod": 1,
+   "currentScoringPeriod": 2,
+   "latestScoringPeriod": 2,
    "currentMatchupPeriod": 1,
    "mp1": [
     1,
@@ -34,7 +34,7 @@
     5,
     6
    ],
-   "today": "2026-10-20"
+   "today": "2026-10-21"
   },
   "rosterChanges": {
    "added": [],
@@ -102,48 +102,48 @@
   },
   "espnScoreboard": {
    "Slav": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.43137255,
+    "ftp": 0.87037037,
+    "tpm": 9,
+    "reb": 62,
+    "ast": 28,
+    "stl": 8,
+    "blk": 16,
+    "to": 21,
+    "pts": 144
    },
    "Mamba": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.29032258,
+    "ftp": 0.66666667,
+    "tpm": 3,
+    "reb": 18,
+    "ast": 8,
+    "stl": 3,
+    "blk": 4,
+    "to": 4,
+    "pts": 25
    },
    "Bizzle": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.37037037,
+    "ftp": 0.83333333,
+    "tpm": 1,
+    "reb": 28,
+    "ast": 32,
+    "stl": 3,
+    "blk": 2,
+    "to": 11,
+    "pts": 76
    },
    "Danna": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.46315789,
+    "ftp": 0.85,
+    "tpm": 18,
+    "reb": 31,
+    "ast": 14,
+    "stl": 10,
+    "blk": 5,
+    "to": 12,
+    "pts": 123
    }
   },
   "pairs": [
