@@ -272,7 +272,7 @@ const RAW_LABEL={fgm:"FGM",fga:"FGA",ftm:"FTM",fta:"FTA",tpm:"3PM",reb:"REB",ast
 const CATS=[{k:"fgp",l:"FG%"},{k:"ftp",l:"FT%"},{k:"tpm",l:"3PM"},{k:"reb",l:"REB"},{k:"ast",l:"AST"},{k:"stl",l:"STL"},{k:"blk",l:"BLK"},{k:"to",l:"TO",low:true},{k:"pts",l:"PTS"}];
 const CV={tpm:.55,reb:.35,ast:.4,stl:.6,blk:.7,to:.5,pts:.3,fga:.25,fta:.55};
 const SLOTS=["PG","SG","SF","PF","C","G","F","UTIL","UTIL","UTIL"];
-const TM={Bizzle:{name:"Bizzle Analytics",ab:"BA",c:"#2563EB",cd:"#6B93FF"},Danna:{name:"Nilumbik Nets",ab:"NN",c:"#15803D",cd:"#4ADE80"},Mamba:{name:"Mornington Malakas",ab:"MM",c:"#7C3AED",cd:"#A78BFA"},Slav:{name:"Klaw Patrol",ab:"KP",c:"#EA580C",cd:"#FB923C"}};
+const TM={Bizzle:{name:"Bizzle Analytics",ab:"BA",c:"#2563EB",cd:"#6B93FF"},Danna:{name:"Nilumbik Nets",ab:"NN",c:"#15803D",cd:"#4ADE80"},Mamba:{name:"Mornington Moose",ab:"MM",c:"#7C3AED",cd:"#A78BFA"},Slav:{name:"Klaw Patrol",ab:"KP",c:"#EA580C",cd:"#FB923C"}};
 const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches};
 const tcol=t=>TM[t]?(isDark()?TM[t].cd:TM[t].c):"#888";
 const tname=t=>TM[t]?TM[t].name:String(t||"");

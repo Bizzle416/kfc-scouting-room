@@ -11,7 +11,7 @@ const LEAGUE_ID = process.env.ESPN_LEAGUE_ID || "1143837492";
 const SEASON = +(process.env.ESPN_SEASON || 2027);           // ESPN names the 2026-27 season 2027
 const DAY1 = process.env.ESPN_DAY1 || "2026-10-20";          // scoring period 1 (US date)
 const S2 = (process.env.ESPN_S2 || "").trim(), SWID = (process.env.ESPN_SWID || "").trim();
-const TEAM_MAP = { "Bizzle Analytics": "Bizzle", "Nilumbik Nets": "Danna", "Mornington Malakas": "Mamba", "Klaw Patrol": "Slav" };
+const TEAM_IDS = { 1: "Mamba", 2: "Danna", 3: "Bizzle", 4: "Slav" }; // ESPN team ids never change; names do
 const TEAMS = ["Bizzle", "Danna", "Mamba", "Slav"];
 const ME = "Bizzle";
 // ESPN basketball stat ids
@@ -52,7 +52,8 @@ async function main() {
   step("league read");
   const teamName = (t) => t.name || `${t.location || ""} ${t.nickname || ""}`.trim();
   const idToKey = {};
-  for (const t of L.teams || []) { const k = TEAM_MAP[teamName(t)]; if (k) idToKey[t.id] = k; }
+  for (const t of L.teams || []) { const k = TEAM_IDS[t.id]; if (k) idToKey[t.id] = k; }
+  status.checks.teamNames = Object.fromEntries((L.teams || []).filter((t) => TEAM_IDS[t.id]).map((t) => [TEAM_IDS[t.id], teamName(t).trim()]));
   status.checks.espnTeams = (L.teams || []).map((t) => `${t.id}:${teamName(t)}`);
   if (Object.keys(idToKey).length !== 4) throw new Error(`Couldn't match all 4 ESPN team names: ${status.checks.espnTeams.join(", ")}`);
 
