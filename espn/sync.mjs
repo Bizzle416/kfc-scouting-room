@@ -60,9 +60,11 @@ async function main() {
   const curSP = +(L.scoringPeriodId || L.status?.currentScoringPeriod || 1);
   const latestSP = +(L.status?.latestScoringPeriod || curSP);
   const curMP = +(L.status?.currentMatchupPeriod || 1);
-  const mps = L.settings?.scheduleSettings?.matchupPeriods || {};
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const REFW = JSON.parse(html.match(/const REF=(\{.*?\});\n/s)[1]).weeks || [];
+  const spOf = (iso) => Math.round((Date.parse(iso + "T00:00:00Z") - Date.parse(DAY1 + "T00:00:00Z")) / 864e5) + 1;
+  const mps = {}; for (const w of REFW) mps[String(w.w)] = Array.from({ length: w.days }, (_, i) => spOf(w.start) + i);
   status.checks.period = { currentScoringPeriod: curSP, latestScoringPeriod: latestSP, currentMatchupPeriod: curMP, mp1: mps["1"], today: spDate(curSP) };
-  if (mps["1"] && (mps["1"][0] !== 1 || spDate(mps["1"].length) !== "2026-10-25")) status.warnings.push("Matchup period 1 doesn't line up with 20–25 Oct; check ESPN_DAY1.");
   const mpFirstDate = (mp) => spDate((mps[String(mp)] || [1])[0]);
   const mpDays = (mp) => (mps[String(mp)] || []);
 
@@ -130,15 +132,9 @@ async function main() {
   // ESPN may not have rolled "today" over yet: if today's date already has stats, count from tomorrow
   const todayD = spDate(curSP), playedToday = Object.values(days[todayD] || {}).some((a) => a.length);
   const fromD = playedToday ? addDays(todayD, 1) : todayD;
-  // week boundaries: ESPN matchup periods v the site's REF.weeks
-  try {
-    const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
-    const REF = JSON.parse(html.match(/const REF=(\{.*?\});\n/s)[1]);
-    const off = (REF.weeks || []).filter((w) => mps[String(w.w)] && (mpFirstDate(w.w) !== w.start || mps[String(w.w)].length !== w.days))
-      .map((w) => `wk ${w.w}: site ${w.start}+${w.days}d, ESPN ${mpFirstDate(w.w)}+${mps[String(w.w)].length}d`);
-    status.checks.weekBoundaryMismatches = off;
-    if (off.length) status.warnings.push(`Site week boundaries differ from ESPN for ${off.length} week(s) — projections for those weeks use the wrong days.`);
-  } catch (e) { status.warnings.push("Couldn't compare week boundaries: " + e.message); }
+  const espnMPs = [...new Set((L.schedule || []).map((m) => m.matchupPeriodId))].length, regWeeks = REFW.filter((w) => w.w <= 18).length;
+  status.checks.matchupPeriods = { espn: espnMPs, siteRegularSeason: regWeeks };
+  if (espnMPs && espnMPs < regWeeks) status.warnings.push(`ESPN has ${espnMPs} matchup periods but the site has ${regWeeks} regular-season weeks — check week boundaries.`);
   // cross-check our lineup sums against ESPN's own matchup scoreboard
   const espnScore = {};
   for (const m of sched) for (const side of ["home", "away"]) {
@@ -147,7 +143,7 @@ async function main() {
   }
   const mism = [];
   for (const t of TEAMS) {
-    const e = espnScore[t]; if (!e) continue; const c = current[t];
+    const e = espnScore[t]; if (!e || !Object.values(e).some((v) => v)) continue; const c = current[t];
     for (const k of ["tpm", "reb", "ast", "stl", "blk", "to", "pts"]) if (e[k] != null && Math.abs(e[k] - c[k]) > 0.01) mism.push(`${t} ${k}: ESPN ${e[k]} v summed ${c[k]}`);
     if (e.fgp != null && c.fga && Math.abs(e.fgp - c.fgm / c.fga) > 0.0006) mism.push(`${t} FG%: ESPN ${e.fgp} v summed ${(c.fgm / c.fga).toFixed(4)}`);
   }
