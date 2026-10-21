@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-21T06:25:00.410Z",
+ "at": "2026-10-21T06:25:54.970Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -8,11 +8,7 @@
   "daily lineups read: 2026-10-20",
   "league.json written"
  ],
- "warnings": [
-  "Matchup period 1 doesn't line up with 20–25 Oct; check ESPN_DAY1.",
-  "Site week boundaries differ from ESPN for 20 week(s) — projections for those weeks use the wrong days.",
-  "Lineup sums disagree with ESPN's scoreboard: Bizzle tpm: ESPN 0 v summed 1; Bizzle reb: ESPN 0 v summed 28; Bizzle ast: ESPN 0 v summed 32; Bizzle stl: ESPN 0 v summed 3; Bizzle blk: ESPN 0 v summed 2; Bizzle to: ESPN 0 v summed 11; Bizzle pts: ESPN 0 v summed 76; Bizzle FG%: ESPN 0 v summed 0.3704; Danna tpm: ESPN 0 v summed 18; Danna reb: ESPN 0 v summed 31; Danna ast: ESPN 0 v summed 14; Danna stl: ESPN 0 v summed 10; Danna blk: ESPN 0 v summed 5; Danna to: ESPN 0 v summed 12; Danna pts: ESPN 0 v summed 123; Danna FG%: ESPN 0 v summed 0.4632; Mamba tpm: ESPN 0 v summed 3; Mamba reb: ESPN 0 v summed 18; Mamba ast: ESPN 0 v summed 8; Mamba stl: ESPN 0 v summed 3; Mamba blk: ESPN 0 v summed 4; Mamba to: ESPN 0 v summed 4; Mamba pts: ESPN 0 v summed 25; Mamba FG%: ESPN 0 v summed 0.2903; Slav tpm: ESPN 0 v summed 9; Slav reb: ESPN 0 v summed 62; Slav ast: ESPN 0 v summed 28; Slav stl: ESPN 0 v summed 8; Slav blk: ESPN 0 v summed 16; Slav to: ESPN 0 v summed 21; Slav pts: ESPN 0 v summed 144; Slav FG%: ESPN 0 v summed 0.4314"
- ],
+ "warnings": [],
  "checks": {
   "teamNames": {
    "Mamba": "Mornington Moose",
@@ -31,42 +27,25 @@
    "latestScoringPeriod": 1,
    "currentMatchupPeriod": 1,
    "mp1": [
-    1
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
    ],
    "today": "2026-10-20"
   },
   "rosterChanges": {
-   "added": [
-    "Mamba: Joel Embiid ($5 FA)"
-   ],
+   "added": [],
    "moved": [],
-   "dropped": [
-    "Mamba: Derik Queen ($1 dead)"
-   ]
+   "dropped": []
   },
   "espnPlayers": 20,
-  "weekBoundaryMismatches": [
-   "wk 1: site 2026-10-20+6d, ESPN 2026-10-20+1d",
-   "wk 2: site 2026-10-26+7d, ESPN 2026-10-21+1d",
-   "wk 3: site 2026-11-02+7d, ESPN 2026-10-22+1d",
-   "wk 4: site 2026-11-09+7d, ESPN 2026-10-23+1d",
-   "wk 5: site 2026-11-16+7d, ESPN 2026-10-24+1d",
-   "wk 6: site 2026-11-23+7d, ESPN 2026-10-25+1d",
-   "wk 7: site 2026-11-30+14d, ESPN 2026-10-26+1d",
-   "wk 8: site 2026-12-14+7d, ESPN 2026-10-27+1d",
-   "wk 9: site 2026-12-21+7d, ESPN 2026-10-28+1d",
-   "wk 10: site 2026-12-28+7d, ESPN 2026-10-29+1d",
-   "wk 11: site 2027-01-04+7d, ESPN 2026-10-30+1d",
-   "wk 12: site 2027-01-11+7d, ESPN 2026-10-31+1d",
-   "wk 13: site 2027-01-18+7d, ESPN 2026-11-01+1d",
-   "wk 14: site 2027-01-25+7d, ESPN 2026-11-02+1d",
-   "wk 15: site 2027-02-01+7d, ESPN 2026-11-03+1d",
-   "wk 16: site 2027-02-08+7d, ESPN 2026-11-04+1d",
-   "wk 17: site 2027-02-15+14d, ESPN 2026-11-05+1d",
-   "wk 18: site 2027-03-01+7d, ESPN 2026-11-06+1d",
-   "wk 19: site 2027-03-08+7d, ESPN 2026-11-07+2d",
-   "wk 20: site 2027-03-15+7d, ESPN 2026-11-09+2d"
-  ],
+  "matchupPeriods": {
+   "espn": 18,
+   "siteRegularSeason": 18
+  },
   "liveTotals": {
    "Bizzle": {
     "fgm": 30,
@@ -177,6 +156,6 @@
     "Danna"
    ]
   ],
-  "from": null
+  "from": "2026-10-21"
  }
 }
