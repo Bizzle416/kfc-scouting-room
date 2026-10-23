@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-10-22T13:57:20.537Z",
+ "at": "2026-10-23T09:43:29.372Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22",
+  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23",
   "league.json written"
  ],
  "warnings": [],
@@ -23,8 +23,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 3,
-   "latestScoringPeriod": 3,
+   "currentScoringPeriod": 4,
+   "latestScoringPeriod": 4,
    "currentMatchupPeriod": 1,
    "mp1": [
     1,
@@ -34,116 +34,116 @@
     5,
     6
    ],
-   "today": "2026-10-22"
+   "today": "2026-10-23"
   },
   "rosterChanges": {
    "added": [],
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 73,
+  "espnPlayers": 78,
   "matchupPeriods": {
    "espn": 18,
    "siteRegularSeason": 18
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 121,
-    "fga": 248,
-    "ftm": 69,
-    "fta": 85,
-    "tpm": 28,
-    "reb": 99,
-    "ast": 72,
-    "stl": 17,
-    "blk": 8,
-    "to": 47,
-    "pts": 339
-   },
-   "Danna": {
-    "fgm": 126,
-    "fga": 230,
+    "fgm": 130,
+    "fga": 273,
     "ftm": 77,
-    "fta": 100,
-    "tpm": 38,
-    "reb": 83,
-    "ast": 49,
-    "stl": 16,
-    "blk": 13,
-    "to": 35,
+    "fta": 95,
+    "tpm": 30,
+    "reb": 116,
+    "ast": 83,
+    "stl": 23,
+    "blk": 9,
+    "to": 53,
     "pts": 367
    },
+   "Danna": {
+    "fgm": 154,
+    "fga": 301,
+    "ftm": 84,
+    "fta": 109,
+    "tpm": 44,
+    "reb": 108,
+    "ast": 63,
+    "stl": 18,
+    "blk": 15,
+    "to": 42,
+    "pts": 436
+   },
    "Mamba": {
-    "fgm": 72,
-    "fga": 171,
-    "ftm": 42,
-    "fta": 58,
-    "tpm": 17,
-    "reb": 102,
-    "ast": 45,
-    "stl": 10,
+    "fgm": 94,
+    "fga": 225,
+    "ftm": 59,
+    "fta": 81,
+    "tpm": 23,
+    "reb": 127,
+    "ast": 57,
+    "stl": 12,
     "blk": 8,
-    "to": 25,
-    "pts": 203
+    "to": 39,
+    "pts": 270
    },
    "Slav": {
-    "fgm": 119,
-    "fga": 261,
-    "ftm": 106,
-    "fta": 129,
-    "tpm": 24,
-    "reb": 103,
-    "ast": 72,
-    "stl": 28,
-    "blk": 18,
-    "to": 41,
-    "pts": 368
+    "fgm": 147,
+    "fga": 312,
+    "ftm": 122,
+    "fta": 150,
+    "tpm": 28,
+    "reb": 133,
+    "ast": 83,
+    "stl": 33,
+    "blk": 23,
+    "to": 51,
+    "pts": 444
    }
   },
   "espnScoreboard": {
    "Slav": {
-    "fgp": 0.4559387,
-    "ftp": 0.82170543,
-    "tpm": 24,
-    "reb": 103,
-    "ast": 72,
-    "stl": 28,
-    "blk": 18,
-    "to": 41,
-    "pts": 368
+    "fgp": 0.47115385,
+    "ftp": 0.81333333,
+    "tpm": 28,
+    "reb": 133,
+    "ast": 83,
+    "stl": 33,
+    "blk": 23,
+    "to": 51,
+    "pts": 444
    },
    "Mamba": {
-    "fgp": 0.42105263,
-    "ftp": 0.72413793,
-    "tpm": 17,
-    "reb": 102,
-    "ast": 45,
-    "stl": 10,
+    "fgp": 0.41777778,
+    "ftp": 0.72839506,
+    "tpm": 23,
+    "reb": 127,
+    "ast": 57,
+    "stl": 12,
     "blk": 8,
-    "to": 25,
-    "pts": 203
+    "to": 39,
+    "pts": 270
    },
    "Bizzle": {
-    "fgp": 0.48790323,
-    "ftp": 0.81176471,
-    "tpm": 28,
-    "reb": 99,
-    "ast": 72,
-    "stl": 17,
-    "blk": 8,
-    "to": 47,
-    "pts": 339
+    "fgp": 0.47619048,
+    "ftp": 0.81052632,
+    "tpm": 30,
+    "reb": 116,
+    "ast": 83,
+    "stl": 23,
+    "blk": 9,
+    "to": 53,
+    "pts": 367
    },
    "Danna": {
-    "fgp": 0.54782609,
-    "ftp": 0.77,
-    "tpm": 38,
-    "reb": 83,
-    "ast": 49,
-    "stl": 16,
-    "blk": 13,
-    "to": 35,
-    "pts": 367
+    "fgp": 0.51162791,
+    "ftp": 0.7706422,
+    "tpm": 44,
+    "reb": 108,
+    "ast": 63,
+    "stl": 18,
+    "blk": 15,
+    "to": 42,
+    "pts": 436
    }
   },
   "pairs": [
@@ -156,6 +156,6 @@
     "Danna"
    ]
   ],
-  "from": "2026-10-22"
+  "from": "2026-10-23"
  }
 }
