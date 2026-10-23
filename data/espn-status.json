@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-23T15:47:58.033Z",
+ "at": "2026-10-23T23:13:03.390Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -8,7 +8,9 @@
   "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23",
   "league.json written"
  ],
- "warnings": [],
+ "warnings": [
+  "Lineup sums disagree with ESPN's scoreboard: Bizzle tpm: ESPN 30 v summed 35; Bizzle reb: ESPN 116 v summed 121; Bizzle ast: ESPN 83 v summed 87; Bizzle stl: ESPN 23 v summed 24; Bizzle to: ESPN 53 v summed 55; Bizzle pts: ESPN 367 v summed 401; Bizzle FG%: ESPN 0.47619048 v summed 0.4781; Danna reb: ESPN 108 v summed 113; Danna ast: ESPN 63 v summed 66; Danna blk: ESPN 15 v summed 16; Danna to: ESPN 42 v summed 44; Danna pts: ESPN 436 v summed 443; Danna FG%: ESPN 0.51162791 v summed 0.5032; Mamba reb: ESPN 127 v summed 131; Mamba ast: ESPN 57 v summed 66; Mamba to: ESPN 39 v summed 40; Mamba pts: ESPN 270 v summed 276; Mamba FG%: ESPN 0.41777778 v summed 0.4128"
+ ],
  "checks": {
   "teamNames": {
    "Mamba": "Mornington Moose",
@@ -48,43 +50,43 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 130,
-    "fga": 273,
-    "ftm": 77,
-    "fta": 95,
-    "tpm": 30,
-    "reb": 116,
-    "ast": 83,
-    "stl": 23,
+    "fgm": 142,
+    "fga": 297,
+    "ftm": 82,
+    "fta": 102,
+    "tpm": 35,
+    "reb": 121,
+    "ast": 87,
+    "stl": 24,
     "blk": 9,
-    "to": 53,
-    "pts": 367
+    "to": 55,
+    "pts": 401
    },
    "Danna": {
-    "fgm": 154,
-    "fga": 301,
-    "ftm": 84,
-    "fta": 109,
+    "fgm": 156,
+    "fga": 310,
+    "ftm": 87,
+    "fta": 113,
     "tpm": 44,
-    "reb": 108,
-    "ast": 63,
+    "reb": 113,
+    "ast": 66,
     "stl": 18,
-    "blk": 15,
-    "to": 42,
-    "pts": 436
+    "blk": 16,
+    "to": 44,
+    "pts": 443
    },
    "Mamba": {
-    "fgm": 94,
-    "fga": 225,
+    "fgm": 97,
+    "fga": 235,
     "ftm": 59,
     "fta": 81,
     "tpm": 23,
-    "reb": 127,
-    "ast": 57,
+    "reb": 131,
+    "ast": 66,
     "stl": 12,
     "blk": 8,
-    "to": 39,
-    "pts": 270
+    "to": 40,
+    "pts": 276
    },
    "Slav": {
     "fgm": 147,
@@ -156,6 +158,6 @@
     "Danna"
    ]
   ],
-  "from": "2026-10-23"
+  "from": "2026-10-24"
  }
 }
