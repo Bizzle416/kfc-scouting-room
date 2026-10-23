@@ -288,6 +288,10 @@ const norm=s=>String(s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toL
 const PMAP=new Map(REF.players.map(p=>[norm(p.n),p]));
 const ALIAS={"alexandre sarr":"alex sarr","nic claxton":"nicolas claxton","bobby portis jr":"bobby portis","pj washington jr":"pj washington"};
 const ref=name=>PMAP.get(norm(name))||PMAP.get(ALIAS[norm(name)]);
+// Injury status: ESPN's live status once the sync has run; the preseason list only as a fallback.
+const injOf=n=>{if(state.injuries){const i=state.injuries;return i[norm(n)]||i[ALIAS[norm(n)]]||""}const r=ref(n);return r&&r.inj?"OUT":""};
+const INJ_LABEL={OUT:"out",DAY_TO_DAY:"dtd",SUSPENSION:"susp",QUESTIONABLE:"q",DOUBTFUL:"doubt",INJURY_RESERVE:"ir"};
+const injTag=n=>{const s=injOf(n);if(!s)return "";const bad=s==="OUT"||s==="INJURY_RESERVE"||s==="SUSPENSION";return ` <span class="tag" style="color:var(${bad?"--bad":"--warn"})" title="ESPN: ${esc(s.replace(/_/g," ").toLowerCase())}">${INJ_LABEL[s]||esc(s.toLowerCase())}</span>`};
 
 let state={teams:{},espn:{},dead:{},season:null,history:[],sched:null,matchup:{home:"Bizzle",away:"Danna",week:1,from:null,slots:10,avail:1,current:{}},updatedAt:null};
 let db=null,readOnly=false,saveTimer=null;
@@ -346,7 +350,7 @@ async function load(){
   dataInfo();renderAll();
 }
 function exportJson(){
-  const o={};["espn","dead","dropped","season","history","sched","me","logPair","logWeek","updatedAt","source"].forEach(k=>o[k]=state[k]);
+  const o={};["espn","injuries","injuriesAt","days","dead","dropped","season","history","sched","me","logPair","logWeek","updatedAt","source"].forEach(k=>o[k]=state[k]);
   o.teams={};TEAMS.forEach(t=>o.teams[t]=(state.teams[t]||[]).map(p=>({n:p.n,salary:p.salary,status:p.status})));
   o.matchup={home:state.matchup.home,away:state.matchup.away,week:state.matchup.week,from:state.matchup.from,avail:1,current:state.matchup.current};
   const blob=new Blob([JSON.stringify(o)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="league.json";document.body.appendChild(a);a.click();a.remove();
@@ -491,7 +495,7 @@ function renderMatchupInputs(){
   [M.home,M.away].forEach((t,ix)=>{const ps=state.teams[t]||[];g+=`<h3 style="margin-top:${ix?14:0}px">${tl(t,26)}</h3>`;
     if(!ps.length){g+=`<p class="small muted">No roster loaded.</p>`;return}
     g+=`<table><tr><th>Player</th><th>Pos</th><th>Status</th><th>Max games</th></tr>`+ps.map((p,i)=>{const e=eff(p),r=ref(p.n);
-      return `<tr><td>${esc(p.n)}${r&&r.inj?'<span class="tag" style="color:var(--bad)">inj</span>':""}${e?`<span class="src">${e.src}</span>`:' <span class="tag" style="color:var(--warn)">no data</span>'}</td><td>${esc(posOf(p.n)||"UTIL")}</td>
+      return `<tr><td>${esc(p.n)}${injTag(p.n)}${e?`<span class="src">${e.src}</span>`:' <span class="tag" style="color:var(--warn)">no data</span>'}</td><td>${esc(posOf(p.n)||"UTIL")}</td>
       <td><select data-st="${esc(t)}" data-i="${i}" aria-label="${esc(p.n)} status">${["active","ir","out"].map(s=>`<option ${p.status===s?"selected":""}>${s}</option>`).join("")}</select></td>
       <td><input type="number" min="0" max="7" step="1" data-gl="${esc(t)}" data-i="${i}" value="${p.gl!=null&&p.gl!==""?p.gl:""}" placeholder="all" aria-label="${esc(p.n)} max games"></td></tr>`}).join("")+"</table>"});
   $("glTable").innerHTML=g;
@@ -619,14 +623,14 @@ function renderStrip(pA,pB,W,from){
 function renderStreamers(){
   if(!last)return;const {r,W,from}=last,z=zScores(),own=rostered();
   const swing=CATS.filter(c=>{const w=r.cat[c.k].w/SIMS;return w>.25&&w<.75});
-  const ban=banned();const fas=REF.players.filter(p=>p.pj&&!p.inj&&!own.has(norm(p.n))&&!ban.has(norm(p.n))).map(p=>{const zz=z.get(norm(p.n)),g=faGamesLeft(p,W,from)*(state.matchup.avail?Math.min(1,p.pj.gp/82):1);
+  const ban=banned();const fas=REF.players.filter(p=>p.pj&&!["OUT","INJURY_RESERVE","SUSPENSION"].includes(injOf(p.n))&&!own.has(norm(p.n))&&!ban.has(norm(p.n))).map(p=>{const zz=z.get(norm(p.n)),g=faGamesLeft(p,W,from)*(state.matchup.avail?Math.min(1,p.pj.gp/82):1);
     return {p,zz,g,score:(zz?zz.total:0)*g,sw:swing.reduce((s,c)=>s+(zz?zz[c.k]:0),0)}}).filter(x=>x.zz&&x.g>0).sort((a,b)=>b.score-a.score).slice(0,10);
   if(!fas.length){$("streamers").innerHTML=`<div class="empty">No projected free agents with games left.</div>`;return}
   const days=hasDaily(W)?weekDates(W).filter(d=>d>=from):[];
   $("streamers").innerHTML=`<table><tr><th>Player</th><th>NBA</th><th>Games left</th>${days.length?"<th>Game days</th>":""}<th>Value / game</th><th>Week value</th>${swing.length?"<th>Swing-cat help</th>":""}<th>Best at</th></tr>`+
     fas.map(x=>{const best=CATS.map(c=>[c.l,x.zz[c.k]]).sort((a,b)=>b[1]-a[1]).slice(0,3).filter(b=>b[1]>0.3).map(b=>b[0]).join(", ");
       return `<tr><td>${esc(x.p.n)}</td><td>${esc(x.p.t)}</td><td>${x.g.toFixed(1)}</td>${days.length?`<td class="small">${days.filter(d=>plays(x.p.t,d)).map(dayLabel).join(", ")}</td>`:""}<td>${x.zz.total.toFixed(1)}</td><td><b>${x.score.toFixed(1)}</b></td>${swing.length?`<td style="color:${x.sw>0?"var(--ok)":"var(--bad)"}">${x.sw>0?"+":""}${x.sw.toFixed(1)}</td>`:""}<td>${best||"—"}</td></tr>`}).join("")+
-    `</table><p class="small muted" style="margin-top:6px">Excluded: players listed OUT in preseason injury reports, and anyone you dropped this season (charter: no re-acquiring). Check the lineup plan: a streamer only helps on days you have an open slot.</p>`;
+    `</table><p class="small muted" style="margin-top:6px">Excluded: players ESPN lists as OUT, and anyone you dropped this season (charter: no re-acquiring). Check the lineup plan: a streamer only helps on days you have an open slot.</p>`;
 }
 
 /* ---------- season ---------- */
@@ -786,7 +790,7 @@ function renderPlayers(){
   const zc=v=>v==null?"":`style="color:${v>=.5?"var(--ok)":v<=-.5?"var(--bad)":"inherit"}"`;
   let h=`<table><tr><th>Player</th><th>Owner</th><th>NBA</th><th>Pos</th><th>$ 26/27</th><th>$ 27/28</th><th>Stats</th><th>Value</th>${CATS.map(c=>`<th>${c.l}</th>`).join("")}<th>Value per $</th></tr>`;
   rows.forEach(({r,k,t})=>{const tp=byName.get(k),z1=z.get(k),e=eff(tp||{n:r.n}),sal=tp&&tp.salary;
-    h+=`<tr><td>${esc(r.n)}${r.inj?' <span class="tag" style="color:var(--bad)">inj</span>':""}${tp&&tp.status!=="active"?` <span class="tag">${esc(tp.status)}</span>`:""}</td><td>${t==="FA"?"FA":badge(t,20)}</td><td>${esc(r.t)}</td><td>${esc(r.p||"")}</td><td>${sal?"$"+sal:"—"}</td><td>${sal?"$"+escal(sal):"—"}</td><td class="muted small">${e?e.src:"—"}</td>
+    h+=`<tr><td>${esc(r.n)}${injTag(r.n)}${tp&&tp.status!=="active"&&!(tp.status==="out"&&injOf(r.n)==="OUT")?` <span class="tag">${esc(tp.status)}</span>`:""}</td><td>${t==="FA"?"FA":badge(t,20)}</td><td>${esc(r.t)}</td><td>${esc(r.p||"")}</td><td>${sal?"$"+sal:"—"}</td><td>${sal?"$"+escal(sal):"—"}</td><td class="muted small">${e?e.src:"—"}</td>
     <td><b ${zc(z1&&z1.total/3)}>${z1?z1.total.toFixed(1):"—"}</b></td>${CATS.map(c=>`<td ${zc(z1&&z1[c.k])}>${z1?z1[c.k].toFixed(1):""}</td>`).join("")}<td>${z1&&sal?(z1.total/escal(sal)*10).toFixed(2):""}</td></tr>`});
   $("pTable").innerHTML=h+`</table><p class="small muted" style="margin-top:8px">Showing up to 150. Value per $ = total z ÷ next-year salary × 10.</p>`;
 }

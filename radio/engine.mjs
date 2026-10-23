@@ -80,7 +80,7 @@ export function matchupReceipts(E, home, away, week, { useCurrent = true } = {})
         out.push({n:tp.n,games:gm,starts:st,z:Math.round(z*100)/100,impact:Math.round(g*z*10)/10,salary:tp.salary})});
       return out.sort((a,b)=>b.impact-a.impact)};
     const wasted=(plan)=>{const m={};plan.days.forEach(d=>d.off.forEach(n=>m[n]=(m[n]||0)+1));return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([n,g])=>({n,g}))};
-    const outs=t=>(state.teams[t]||[]).filter(p=>p.status!=="active"||(ref(p.n)||{}).inj).map(p=>({n:p.n,status:p.status,salary:p.salary,injFlag:!!(ref(p.n)||{}).inj}));
+    const outs=t=>(state.teams[t]||[]).filter(p=>p.status!=="active"||injOf(p.n)).map(p=>({n:p.n,status:p.status,salary:p.salary,injFlag:!!injOf(p.n),inj:injOf(p.n)}));
     const noData=t=>(state.teams[t]||[]).filter(p=>p.status==="active"&&!eff(p)).map(p=>p.n);
     const streamer=(team,key)=>{state.matchup.home=team;const b=bestFA(key,W,from);state.matchup.home=home;return b?{n:b.p.n,nba:b.p.t,per:Math.round(b.per*100)/100,games:Math.round(b.g)}:null};
     const swing=cats.filter(c=>c.win>.25&&c.win<.75);

@@ -29,9 +29,9 @@ const status = { ok: false, at: new Date().toISOString(), league: LEAGUE_ID, sea
 const statusPath = path.join(ROOT, "data", "espn-status.json");
 const step = (s) => status.steps.push(s);
 
-async function get(params) {
+async function get(params, extra = {}) {
   const url = `${process.env.ESPN_BASE || "https://lm-api-reads.fantasy.espn.com"}/apis/v3/games/fba/seasons/${SEASON}/segments/0/leagues/${LEAGUE_ID}?${params}`;
-  const headers = { Accept: "application/json", "User-Agent": "kfc-scouting-room-sync" };
+  const headers = { Accept: "application/json", "User-Agent": "kfc-scouting-room-sync", ...extra };
   if (S2 && SWID) headers.Cookie = `espn_s2=${S2}; SWID=${SWID}`;
   for (let i = 0; i < 3; i++) {
     const r = await fetch(url, { headers, redirect: "follow" });
@@ -89,6 +89,17 @@ async function main() {
       if (gp > 0) { const line = statLine(tot.stats), o = { gp, min: +(tot.stats[SID.min] || 0) / gp }; for (const k of RAW) o[k] = line[k] / gp; espn[norm(n)] = o; }
     }
   }
+  // ----- injuries for every player the site shows: ESPN's own status, not the preseason list -----
+  const injuries = {}, siteName = (en) => { const nk = ALIAS[norm(en)] || norm(en); return nk; };
+  for (const t of L.teams) for (const e of t.roster?.entries || []) { const pl = e.playerPoolEntry?.player || {}; if (pl.injuryStatus && pl.injuryStatus !== "ACTIVE") injuries[siteName(pl.fullName)] = pl.injuryStatus; }
+  let poolN = 0;
+  try {
+    const P = await get("view=kona_player_info", { "X-Fantasy-Filter": JSON.stringify({ players: { limit: 750, sortPercOwned: { sortPriority: 1, sortAsc: false } } }) });
+    for (const x of P.players || []) { const pl = x.player || {}; poolN++; if (pl.injuryStatus && pl.injuryStatus !== "ACTIVE") injuries[siteName(pl.fullName)] = pl.injuryStatus; }
+  } catch (e) { status.warnings.push("Couldn't read ESPN's player pool for free-agent injuries: " + e.message); }
+  status.checks.injuries = { poolPlayers: poolN, flagged: Object.keys(injuries).length, sample: Object.entries(injuries).slice(0, 12) };
+  if (poolN < 200) status.warnings.push(`ESPN player pool only returned ${poolN} players — free-agent injury tags may be incomplete.`);
+
   // dropped = on a roster last sync, on no roster now. Salary stays as dead cap this season.
   const dead = { ...(prev.dead || {}) }, dropped = {}; for (const t of TEAMS) { dead[t] = +(dead[t] || 0); dropped[t] = [...(prev.dropped?.[t] || [])]; }
   const gone = [];
@@ -163,7 +174,7 @@ async function main() {
   history.sort((a, b) => a.week - b.week);
 
   // ----- write -----
-  const out = { ...prev, espn, dead, dropped, season, history, me: ME, logPair: [ME, opp], logWeek: curMP, teams,
+  const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, season, history, me: ME, logPair: [ME, opp], logWeek: curMP, teams,
     days, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
   out.matchup = { ...(prev.matchup || {}), home: ME, away: opp, week: curMP, from: fromD, avail: 1, current };
   if (fromD > spDate(mpDays(curMP).slice(-1)[0] || curSP)) out.matchup.from = null;
