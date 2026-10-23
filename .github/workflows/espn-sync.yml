@@ -4,10 +4,11 @@ name: ESPN sync
 # GitHub delays scheduled runs (often by hours, worst on the hour), so this tries several
 # odd-minute slots after the US games finish (~05:30-06:30 UTC). Each run takes ~15 seconds
 # and only commits when ESPN data actually changed.
-#   05:23 UTC = 4:23pm Melbourne (AEDT) ... 13:23 UTC = 12:23am
+# A game day only counts once it's final (07:00 UTC next day), so slots start just after that.
+#   07:13 UTC = 6:13pm Melbourne (AEDT) ... 13:13 UTC = 12:13am. Manual runs are safe any time.
 on:
   schedule:
-    - cron: "23 5,6,7,8,9,11,13 * * *"
+    - cron: "13 7,8,9,11,13 * * *"
   workflow_dispatch:
   push:
     branches: [main]

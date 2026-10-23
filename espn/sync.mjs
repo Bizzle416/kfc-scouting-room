@@ -25,6 +25,10 @@ const ALIAS = { "alex sarr": "alexandre sarr", "nicolas claxton": "nic claxton" 
 const norm = (s) => String(s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[.'’]/g, "").replace(/\s+/g, " ").trim();
 const addDays = (iso, n) => { const d = new Date(iso + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 const spDate = (sp) => addDays(DAY1, sp - 1);
+// A US game day is final once it's 07:00 UTC the next day (3am EDT / 2am EST): every game, OT included, is over.
+// Until then its stats are live partials and must not be counted as banked, whatever time the sync runs.
+const FINAL_UTC_HOUR = 7;
+const isFinal = (iso) => Date.now() >= Date.parse(addDays(iso, 1) + `T${String(FINAL_UTC_HOUR).padStart(2, "0")}:00:00Z`);
 const status = { ok: false, at: new Date().toISOString(), league: LEAGUE_ID, season: SEASON, steps: [], warnings: [], checks: {} };
 const statusPath = path.join(ROOT, "data", "espn-status.json");
 const step = (s) => status.steps.push(s);
@@ -122,7 +126,7 @@ async function main() {
 
   const current = {}, days = {};
   for (const t of TEAMS) { current[t] = {}; for (const k of RAW) current[t][k] = 0; }
-  for (const sp of mpDays(curMP).filter((s) => s <= latestSP && s < curSP + 1)) {
+  for (const sp of mpDays(curMP).filter((s) => s <= latestSP && s < curSP + 1 && isFinal(spDate(s)))) {
     const D = await get(`view=mRoster&scoringPeriodId=${sp}`);
     const date = spDate(sp); days[date] = {};
     for (const t of D.teams || []) {
@@ -140,9 +144,9 @@ async function main() {
     }
   }
   step(`daily lineups read: ${Object.keys(days).join(", ") || "none yet"}`);
-  // ESPN may not have rolled "today" over yet: if today's date already has stats, count from tomorrow
-  const todayD = spDate(curSP), playedToday = Object.values(days[todayD] || {}).some((a) => a.length);
-  const fromD = playedToday ? addDays(todayD, 1) : todayD;
+  // Count games from the first day that isn't final yet (today's live games stay in the projection).
+  let fromD = mpFirstDate(curMP); while (isFinal(fromD) && spOf(fromD) <= latestSP) fromD = addDays(fromD, 1);
+  status.checks.finalDays = Object.keys(days);
   const espnMPs = [...new Set((L.schedule || []).map((m) => m.matchupPeriodId))].length, regWeeks = REFW.filter((w) => w.w <= 18).length;
   status.checks.matchupPeriods = { espn: espnMPs, siteRegularSeason: regWeeks };
   if (espnMPs && espnMPs < regWeeks) status.warnings.push(`ESPN has ${espnMPs} matchup periods but the site has ${regWeeks} regular-season weeks — check week boundaries.`);
@@ -159,7 +163,9 @@ async function main() {
     if (e.fgp != null && c.fga && Math.abs(e.fgp - c.fgm / c.fga) > 0.0006) mism.push(`${t} FG%: ESPN ${e.fgp} v summed ${(c.fgm / c.fga).toFixed(4)}`);
   }
   status.checks.liveTotals = current; status.checks.espnScoreboard = espnScore;
-  if (mism.length) status.warnings.push(`Lineup sums disagree with ESPN's scoreboard: ${mism.join("; ")}`);
+  const liveNow = Date.now() >= Date.parse(fromD + "T15:00:00Z"); // earliest US tip-offs; ESPN's scoreboard includes live games
+  status.checks.scoreboardCompared = !liveNow;
+  if (mism.length && !liveNow) status.warnings.push(`Lineup sums disagree with ESPN's scoreboard: ${mism.join("; ")}`);
 
   // ----- season history from finished matchup periods -----
   const history = [], season = { w: 0, l: 0, t: 0, weeks: 0 };
