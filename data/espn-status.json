@@ -1,16 +1,14 @@
 {
  "ok": true,
- "at": "2026-10-23T23:16:56.907Z",
+ "at": "2026-10-23T23:18:14.174Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23",
+  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22",
   "league.json written"
  ],
- "warnings": [
-  "Lineup sums disagree with ESPN's scoreboard: Bizzle tpm: ESPN 30 v summed 37; Bizzle reb: ESPN 116 v summed 122; Bizzle ast: ESPN 83 v summed 89; Bizzle stl: ESPN 23 v summed 24; Bizzle blk: ESPN 9 v summed 10; Bizzle to: ESPN 53 v summed 55; Bizzle pts: ESPN 367 v summed 409; Bizzle FG%: ESPN 0.47619048 v summed 0.4785; Danna reb: ESPN 108 v summed 113; Danna ast: ESPN 63 v summed 66; Danna blk: ESPN 15 v summed 16; Danna to: ESPN 42 v summed 44; Danna pts: ESPN 436 v summed 443; Danna FG%: ESPN 0.51162791 v summed 0.5000; Mamba reb: ESPN 127 v summed 133; Mamba ast: ESPN 57 v summed 66; Mamba stl: ESPN 12 v summed 13; Mamba to: ESPN 39 v summed 41; Mamba pts: ESPN 270 v summed 278; Mamba FG%: ESPN 0.41777778 v summed 0.4118; Slav tpm: ESPN 28 v summed 30; Slav reb: ESPN 133 v summed 134; Slav ast: ESPN 83 v summed 86; Slav to: ESPN 51 v summed 52; Slav pts: ESPN 444 v summed 450"
- ],
+ "warnings": [],
  "checks": {
   "teamNames": {
    "Mamba": "Mornington Moose",
@@ -98,62 +96,67 @@
    "dropped": []
   },
   "espnPlayers": 78,
+  "finalDays": [
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
   "matchupPeriods": {
    "espn": 18,
    "siteRegularSeason": 18
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 145,
-    "fga": 303,
-    "ftm": 82,
-    "fta": 102,
-    "tpm": 37,
-    "reb": 122,
-    "ast": 89,
-    "stl": 24,
-    "blk": 10,
-    "to": 55,
-    "pts": 409
+    "fgm": 130,
+    "fga": 273,
+    "ftm": 77,
+    "fta": 95,
+    "tpm": 30,
+    "reb": 116,
+    "ast": 83,
+    "stl": 23,
+    "blk": 9,
+    "to": 53,
+    "pts": 367
    },
    "Danna": {
-    "fgm": 156,
-    "fga": 312,
-    "ftm": 87,
-    "fta": 113,
+    "fgm": 154,
+    "fga": 301,
+    "ftm": 84,
+    "fta": 109,
     "tpm": 44,
-    "reb": 113,
-    "ast": 66,
+    "reb": 108,
+    "ast": 63,
     "stl": 18,
-    "blk": 16,
-    "to": 44,
-    "pts": 443
+    "blk": 15,
+    "to": 42,
+    "pts": 436
    },
    "Mamba": {
-    "fgm": 98,
-    "fga": 238,
+    "fgm": 94,
+    "fga": 225,
     "ftm": 59,
     "fta": 81,
     "tpm": 23,
-    "reb": 133,
-    "ast": 66,
-    "stl": 13,
+    "reb": 127,
+    "ast": 57,
+    "stl": 12,
     "blk": 8,
-    "to": 41,
-    "pts": 278
+    "to": 39,
+    "pts": 270
    },
    "Slav": {
-    "fgm": 149,
-    "fga": 316,
+    "fgm": 147,
+    "fga": 312,
     "ftm": 122,
     "fta": 150,
-    "tpm": 30,
-    "reb": 134,
-    "ast": 86,
+    "tpm": 28,
+    "reb": 133,
+    "ast": 83,
     "stl": 33,
     "blk": 23,
-    "to": 52,
-    "pts": 450
+    "to": 51,
+    "pts": 444
    }
   },
   "espnScoreboard": {
@@ -202,6 +205,7 @@
     "pts": 436
    }
   },
+  "scoreboardCompared": false,
   "pairs": [
    [
     "Slav",
@@ -212,6 +216,6 @@
     "Danna"
    ]
   ],
-  "from": "2026-10-24"
+  "from": "2026-10-23"
  }
 }
