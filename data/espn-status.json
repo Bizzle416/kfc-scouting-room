@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-23T23:13:03.390Z",
+ "at": "2026-10-23T23:16:56.907Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -9,7 +9,7 @@
   "league.json written"
  ],
  "warnings": [
-  "Lineup sums disagree with ESPN's scoreboard: Bizzle tpm: ESPN 30 v summed 35; Bizzle reb: ESPN 116 v summed 121; Bizzle ast: ESPN 83 v summed 87; Bizzle stl: ESPN 23 v summed 24; Bizzle to: ESPN 53 v summed 55; Bizzle pts: ESPN 367 v summed 401; Bizzle FG%: ESPN 0.47619048 v summed 0.4781; Danna reb: ESPN 108 v summed 113; Danna ast: ESPN 63 v summed 66; Danna blk: ESPN 15 v summed 16; Danna to: ESPN 42 v summed 44; Danna pts: ESPN 436 v summed 443; Danna FG%: ESPN 0.51162791 v summed 0.5032; Mamba reb: ESPN 127 v summed 131; Mamba ast: ESPN 57 v summed 66; Mamba to: ESPN 39 v summed 40; Mamba pts: ESPN 270 v summed 276; Mamba FG%: ESPN 0.41777778 v summed 0.4128"
+  "Lineup sums disagree with ESPN's scoreboard: Bizzle tpm: ESPN 30 v summed 37; Bizzle reb: ESPN 116 v summed 122; Bizzle ast: ESPN 83 v summed 89; Bizzle stl: ESPN 23 v summed 24; Bizzle blk: ESPN 9 v summed 10; Bizzle to: ESPN 53 v summed 55; Bizzle pts: ESPN 367 v summed 409; Bizzle FG%: ESPN 0.47619048 v summed 0.4785; Danna reb: ESPN 108 v summed 113; Danna ast: ESPN 63 v summed 66; Danna blk: ESPN 15 v summed 16; Danna to: ESPN 42 v summed 44; Danna pts: ESPN 436 v summed 443; Danna FG%: ESPN 0.51162791 v summed 0.5000; Mamba reb: ESPN 127 v summed 133; Mamba ast: ESPN 57 v summed 66; Mamba stl: ESPN 12 v summed 13; Mamba to: ESPN 39 v summed 41; Mamba pts: ESPN 270 v summed 278; Mamba FG%: ESPN 0.41777778 v summed 0.4118; Slav tpm: ESPN 28 v summed 30; Slav reb: ESPN 133 v summed 134; Slav ast: ESPN 83 v summed 86; Slav to: ESPN 51 v summed 52; Slav pts: ESPN 444 v summed 450"
  ],
  "checks": {
   "teamNames": {
@@ -38,6 +38,60 @@
    ],
    "today": "2026-10-23"
   },
+  "injuries": {
+   "poolPlayers": 750,
+   "flagged": 79,
+   "sample": [
+    [
+     "brandon ingram",
+     "OUT"
+    ],
+    [
+     "lebron james",
+     "DAY_TO_DAY"
+    ],
+    [
+     "aj dybantsa",
+     "OUT"
+    ],
+    [
+     "cedric coward",
+     "DAY_TO_DAY"
+    ],
+    [
+     "kon knueppel",
+     "OUT"
+    ],
+    [
+     "deaaron fox",
+     "DAY_TO_DAY"
+    ],
+    [
+     "coby white",
+     "OUT"
+    ],
+    [
+     "brandin podziemski",
+     "DAY_TO_DAY"
+    ],
+    [
+     "reed sheppard",
+     "DAY_TO_DAY"
+    ],
+    [
+     "kristaps porzingis",
+     "OUT"
+    ],
+    [
+     "tobias harris",
+     "OUT"
+    ],
+    [
+     "nic claxton",
+     "OUT"
+    ]
+   ]
+  },
   "rosterChanges": {
    "added": [],
    "moved": [],
@@ -50,21 +104,21 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 142,
-    "fga": 297,
+    "fgm": 145,
+    "fga": 303,
     "ftm": 82,
     "fta": 102,
-    "tpm": 35,
-    "reb": 121,
-    "ast": 87,
+    "tpm": 37,
+    "reb": 122,
+    "ast": 89,
     "stl": 24,
-    "blk": 9,
+    "blk": 10,
     "to": 55,
-    "pts": 401
+    "pts": 409
    },
    "Danna": {
     "fgm": 156,
-    "fga": 310,
+    "fga": 312,
     "ftm": 87,
     "fta": 113,
     "tpm": 44,
@@ -76,30 +130,30 @@
     "pts": 443
    },
    "Mamba": {
-    "fgm": 97,
-    "fga": 235,
+    "fgm": 98,
+    "fga": 238,
     "ftm": 59,
     "fta": 81,
     "tpm": 23,
-    "reb": 131,
+    "reb": 133,
     "ast": 66,
-    "stl": 12,
+    "stl": 13,
     "blk": 8,
-    "to": 40,
-    "pts": 276
+    "to": 41,
+    "pts": 278
    },
    "Slav": {
-    "fgm": 147,
-    "fga": 312,
+    "fgm": 149,
+    "fga": 316,
     "ftm": 122,
     "fta": 150,
-    "tpm": 28,
-    "reb": 133,
-    "ast": 83,
+    "tpm": 30,
+    "reb": 134,
+    "ast": 86,
     "stl": 33,
     "blk": 23,
-    "to": 51,
-    "pts": 444
+    "to": 52,
+    "pts": 450
    }
   },
   "espnScoreboard": {
