@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-24T05:00:57.439Z",
+ "at": "2026-10-24T05:16:31.608Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -36,6 +36,7 @@
    ],
    "today": "2026-10-23"
   },
+  "poolStats": 285,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 79,
@@ -95,7 +96,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 78,
+  "espnPlayers": 363,
   "finalDays": [
    "2026-10-20",
    "2026-10-21",
