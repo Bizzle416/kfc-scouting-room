@@ -315,11 +315,15 @@ function plays(nba,d){return !!(state.sched&&state.sched[d]&&state.sched[d].incl
 function teamGamesWeek(nba,W){return hasDaily(W)?weekDates(W).filter(d=>plays(nba,d)).length:((REF.schedule[nba]||[])[W.w-1]||0)}
 
 /* ---------- player model ---------- */
+// No preseason projection (deep rookies, fringe guys): a few hot games shouldn't make them stars.
+// Shrink their ESPN line toward a replacement-level player (projected ranks ~130-170) with the same weight projections get.
+let REPL=null;const replLine=()=>{if(REPL)return REPL;const ps=REF.players.filter(p=>p.pj).sort((a,b)=>(b.pj.pts+b.pj.reb+b.pj.ast)-(a.pj.pts+a.pj.reb+a.pj.ast)).slice(130,170);if(!ps.length)return null;
+  REPL={};RAW.forEach(k=>{const v=ps.map(p=>p.pj[k]||0).sort((x,y)=>x-y);REPL[k]=v[Math.floor(v.length/2)]});return REPL};
 function eff(tp){
   const r=ref(tp.n),pj=r&&r.pj,a=(state.espn||{})[norm(tp.n)]||(tp.act&&tp.act.gp>0?tp.act:null);
   if(!pj&&!a)return null;
   if(!a)return Object.assign({src:"proj"},pj);
-  if(!pj)return Object.assign({src:"espn"},a);
+  if(!pj){const R=replLine();if(!R)return Object.assign({src:"espn"},a);const w=a.gp/(a.gp+BLEND_K),o={src:"espn",gp:a.gp};RAW.forEach(k=>o[k]=w*(a[k]||0)+(1-w)*(R[k]||0));return o}
   const w=a.gp/(a.gp+BLEND_K),o={src:"blend",gp:pj.gp};RAW.forEach(k=>o[k]=w*(a[k]||0)+(1-w)*(pj[k]||0));return o;
 }
 const nbaTeam=n=>{const r=ref(n);return r?r.t:""};
