@@ -190,7 +190,11 @@ async function main() {
   status.checks.liveTotals = current; status.checks.espnScoreboard = espnScore;
   const liveNow = Date.now() >= Date.parse(fromD + "T15:00:00Z"); // earliest US tip-offs; ESPN's scoreboard includes live games
   status.checks.scoreboardCompared = !liveNow;
-  if (mism.length && !liveNow) status.warnings.push(`Lineup sums disagree with ESPN's scoreboard: ${mism.join("; ")}`);
+  // ESPN's scoreboard often lags a night behind its box scores; that's not a data problem
+  const lastDay = Object.keys(days).sort().pop(), lag = mism.length && lastDay && TEAMS.every((t) => { const e = espnScore[t]; if (!e) return true;
+    const rows = (days[lastDay][t] || []).filter((r) => r[1] !== "BE" && r[1] !== "IR"), pts = rows.reduce((s, r) => s + r[r.length - 1], 0); return Math.abs(e.pts - (current[t].pts - pts)) < 0.01; });
+  status.checks.scoreboardLagging = !!lag;
+  if (mism.length && !liveNow && !lag) status.warnings.push(`Lineup sums disagree with ESPN's scoreboard: ${mism.join("; ")}`);
 
   // ----- season history from finished matchup periods -----
   const history = [], season = { w: 0, l: 0, t: 0, weeks: 0 };

@@ -1,0 +1,434 @@
+{
+ "id": "wk01-update-1023",
+ "type": "update",
+ "week": 1,
+ "title": "Week 1 midweek (4 nights)",
+ "createdAt": "2026-10-24T06:02:03.598Z",
+ "dataUpdatedAt": "2026-10-24T05:59:35.673Z",
+ "receipts": {
+  "asOf": "2026-10-23",
+  "games": [
+   {
+    "teams": [
+     "Bizzle",
+     "Danna"
+    ],
+    "now": {
+     "w": 4,
+     "l": 5,
+     "t": 0,
+     "cats": [
+      "L",
+      "W",
+      "L",
+      "W",
+      "W",
+      "W",
+      "L",
+      "L",
+      "L"
+     ]
+    },
+    "projLeader": "Danna",
+    "projScore": [
+     5,
+     4
+    ],
+    "swing": [
+     "REB",
+     "AST"
+    ],
+    "rabbit": {
+     "mag": 0.31566666666666665,
+     "team": "Danna",
+     "victim": "Bizzle",
+     "cat": "AST",
+     "say": "assists",
+     "value": 64,
+     "theirs": 50,
+     "night": 4,
+     "before": 73,
+     "after": 41
+    },
+    "cheapHeroes": [
+     {
+      "n": "Ty Jerome",
+      "team": "Danna",
+      "salary": 5,
+      "fa": true,
+      "best": 45,
+      "second": 28,
+      "games": 2,
+      "avg": 37
+     },
+     {
+      "n": "Paul George",
+      "team": "Danna",
+      "salary": 1,
+      "fa": false,
+      "best": 38,
+      "second": 38,
+      "games": 1,
+      "avg": 38
+     },
+     {
+      "n": "Tyler Herro",
+      "team": "Bizzle",
+      "salary": 4,
+      "fa": false,
+      "best": 34,
+      "second": 24,
+      "games": 2,
+      "avg": 29
+     },
+     {
+      "n": "Anthony Davis",
+      "team": "Bizzle",
+      "salary": 3,
+      "fa": false,
+      "best": 34,
+      "second": 9,
+      "games": 2,
+      "avg": 22
+     },
+     {
+      "n": "Julius Randle",
+      "team": "Danna",
+      "salary": 3,
+      "fa": false,
+      "best": 33,
+      "second": 33,
+      "games": 1,
+      "avg": 33
+     },
+     {
+      "n": "Nickeil Alexander-Walker",
+      "team": "Danna",
+      "salary": 5,
+      "fa": true,
+      "best": 31,
+      "second": 14,
+      "games": 2,
+      "avg": 23
+     },
+     {
+      "n": "Michael Porter Jr.",
+      "team": "Bizzle",
+      "salary": 5,
+      "fa": true,
+      "best": 26,
+      "second": 26,
+      "games": 1,
+      "avg": 26
+     }
+    ],
+    "benchWaste": {
+     "team": "Danna",
+     "victimOf": "Bizzle",
+     "pts": 91,
+     "dayLabel": "night 4",
+     "who": "Kyrie Irving"
+    },
+    "need": "For Bizzle to steal it, they need 1 more category to flip. The live ones are REB, AST.",
+    "topLines": [
+     {
+      "d": "2026-10-21",
+      "t": "Bizzle",
+      "n": "Anthony Edwards",
+      "fgm": 16,
+      "fga": 29,
+      "ftm": 4,
+      "fta": 5,
+      "tpm": 9,
+      "reb": 10,
+      "ast": 3,
+      "stl": 2,
+      "blk": 1,
+      "to": 4,
+      "pts": 45
+     },
+     {
+      "d": "2026-10-21",
+      "t": "Danna",
+      "n": "Ty Jerome",
+      "fgm": 17,
+      "fga": 25,
+      "ftm": 6,
+      "fta": 7,
+      "tpm": 5,
+      "reb": 7,
+      "ast": 6,
+      "stl": 0,
+      "blk": 1,
+      "to": 1,
+      "pts": 45
+     },
+     {
+      "d": "2026-10-20",
+      "t": "Danna",
+      "n": "Paul George",
+      "fgm": 12,
+      "fga": 21,
+      "ftm": 7,
+      "fta": 8,
+      "tpm": 7,
+      "reb": 5,
+      "ast": 3,
+      "stl": 5,
+      "blk": 0,
+      "to": 3,
+      "pts": 38
+     }
+    ],
+    "side": {
+     "Bizzle": {
+      "team": "Bizzle",
+      "wasted": 0
+     },
+     "Danna": {
+      "team": "Danna",
+      "wasted": 1
+     }
+    }
+   },
+   {
+    "teams": [
+     "Mamba",
+     "Slav"
+    ],
+    "now": {
+     "w": 1,
+     "l": 8,
+     "t": 0,
+     "cats": [
+      "L",
+      "L",
+      "L",
+      "W",
+      "L",
+      "L",
+      "L",
+      "L",
+      "L"
+     ]
+    },
+    "projLeader": "Slav",
+    "projScore": [
+     7,
+     2
+    ],
+    "swing": [
+     "TO"
+    ],
+    "rabbit": {
+     "mag": 0.28266666666666673,
+     "team": "Mamba",
+     "victim": "Slav",
+     "cat": "REB",
+     "say": "rebounds",
+     "value": 84,
+     "theirs": 41,
+     "night": 2,
+     "before": 50,
+     "after": 22
+    },
+    "cheapHeroes": [
+     {
+      "n": "Pascal Siakam",
+      "team": "Slav",
+      "salary": 3,
+      "fa": false,
+      "best": 30,
+      "second": 23,
+      "games": 2,
+      "avg": 27
+     },
+     {
+      "n": "Darius Garland",
+      "team": "Mamba",
+      "salary": 1,
+      "fa": false,
+      "best": 26,
+      "second": 26,
+      "games": 1,
+      "avg": 26
+     },
+     {
+      "n": "Zion Williamson",
+      "team": "Slav",
+      "salary": 5,
+      "fa": true,
+      "best": 22,
+      "second": 22,
+      "games": 1,
+      "avg": 22
+     }
+    ],
+    "benchWaste": {
+     "team": "Mamba",
+     "victimOf": "Slav",
+     "pts": 115,
+     "dayLabel": "night 2",
+     "who": "Darius Garland"
+    },
+    "need": "For Mamba to steal it, they need 3 more categories to flip. The live ones are TO.",
+    "topLines": [
+     {
+      "d": "2026-10-23",
+      "t": "Mamba",
+      "n": "Giannis Antetokounmpo",
+      "fgm": 15,
+      "fga": 26,
+      "ftm": 5,
+      "fta": 8,
+      "tpm": 1,
+      "reb": 12,
+      "ast": 5,
+      "stl": 2,
+      "blk": 1,
+      "to": 3,
+      "pts": 36
+     },
+     {
+      "d": "2026-10-22",
+      "t": "Slav",
+      "n": "Tyrese Maxey",
+      "fgm": 12,
+      "fga": 23,
+      "ftm": 6,
+      "fta": 8,
+      "tpm": 2,
+      "reb": 3,
+      "ast": 6,
+      "stl": 2,
+      "blk": 0,
+      "to": 2,
+      "pts": 32
+     },
+     {
+      "d": "2026-10-22",
+      "t": "Slav",
+      "n": "Donovan Mitchell",
+      "fgm": 11,
+      "fga": 19,
+      "ftm": 8,
+      "fta": 11,
+      "tpm": 2,
+      "reb": 10,
+      "ast": 3,
+      "stl": 2,
+      "blk": 1,
+      "to": 5,
+      "pts": 32
+     }
+    ],
+    "side": {
+     "Mamba": {
+      "team": "Mamba",
+      "wasted": 0
+     },
+     "Slav": {
+      "team": "Slav",
+      "wasted": 0
+     }
+    }
+   }
+  ]
+ },
+ "lines": [
+  {
+   "host": "KEV",
+   "text": "It's the Fryer Radio midweek special! 4 nights down in week 1!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "I'm Nigel. Everything you're about to hear comes from the banked box scores. No vibes. Well, some vibes."
+  },
+  {
+   "host": "KEV",
+   "text": "Bizzle against Danna. After 4 nights it's Bizzle 4 5 in categories."
+  },
+  {
+   "host": "NIGEL",
+   "text": "Projected finish: Danna 5 4. Still live: REB, AST."
+  },
+  {
+   "host": "KEV",
+   "text": "Can we address what Danna just pulled out of the hat?"
+  },
+  {
+   "host": "NIGEL",
+   "text": "The AST category. Going into night 4, Bizzle was winning it 73 percent of the time. Danna then put up 64 assists in one night, to Bizzle's 50. It's now 41 percent."
+  },
+  {
+   "host": "KEV",
+   "text": "That is a bullshit rabbit out of a bullshit hat! 64 assists! In one night!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "And the star of the show for Danna this week? Ty Jerome. A 5 dollar waiver pickup. 45 points, then 28. 2 games, 37 a night."
+  },
+  {
+   "host": "NIGEL",
+   "text": "38 in a night from Paul George, and Danna is paying him 1 dollars."
+  },
+  {
+   "host": "KEV",
+   "text": "Silver lining, Bizzle: Danna left 91 points on the bench on night 4. Kyrie Irving among them. Imagine if they'd set the lineup properly!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "Biggest nights in this one: Anthony Edwards with 45, and Ty Jerome with 45."
+  },
+  {
+   "host": "NIGEL",
+   "text": "For Bizzle to steal it, they need 1 more category to flip. The live ones are REB, AST."
+  },
+  {
+   "host": "KEV",
+   "text": "Mamba against Slav. After 4 nights it's Mamba 1 8 in categories."
+  },
+  {
+   "host": "NIGEL",
+   "text": "Projected finish: Slav 7 2. Still live: TO."
+  },
+  {
+   "host": "KEV",
+   "text": "Nigel. Nigel. I need to talk about the rabbit."
+  },
+  {
+   "host": "NIGEL",
+   "text": "The REB category. Going into night 2, Slav was winning it 50 percent of the time. Mamba then put up 84 rebounds in one night, to Slav's 41. It's now 22 percent."
+  },
+  {
+   "host": "KEV",
+   "text": "84 rebounds! That's not a fantasy lineup, that's a magic show!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "Pascal Siakam, on a 3 dollar salary, has given Slav 30 in a single night. Auction of the century."
+  },
+  {
+   "host": "NIGEL",
+   "text": "Darius Garland, on a 1 dollar salary, has given Mamba 26 in a single night. Auction of the century."
+  },
+  {
+   "host": "KEV",
+   "text": "Silver lining, Slav: Mamba left 115 points on the bench on night 2. Darius Garland among them. Imagine if they'd set the lineup properly!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "Biggest nights in this one: Giannis Antetokounmpo with 36, and Tyrese Maxey with 32."
+  },
+  {
+   "host": "NIGEL",
+   "text": "For Mamba to steal it, they need 3 more categories to flip. The live ones are TO."
+  },
+  {
+   "host": "KEV",
+   "text": "That's the midweek! Lineups lock with the first game each day. Don't leave a rabbit in your hat!"
+  }
+ ],
+ "writer": "templates",
+ "seconds": 152
+}

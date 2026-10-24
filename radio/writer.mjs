@@ -144,3 +144,40 @@ ${JSON.stringify(lines)}`;
     return null;
   }
 }
+
+// ---------- Midweek update: the week so far, from the banked nightly box scores ----------
+export function midweekScript(F, { story }) {
+  const pick = picker(`update-${F.week}-${F.asOf}`), L = [];
+  const K = (t) => L.push({ host: "KEV", text: t }), N = (t) => L.push({ host: "NIGEL", text: t });
+  const sc = (s) => `${s.w} ${s.l}${s.t ? `, ${s.t} tied` : ""}`;
+  K(pick([`Fryer Radio, midweek! Week ${F.week}, ${F.nights} nights in, and somebody's been in the fryer with a top hat!`, `It's the Fryer Radio midweek special! ${F.nights} nights down in week ${F.week}!`]));
+  N(`I'm Nigel. Everything you're about to hear comes from the banked box scores. No vibes. Well, some vibes.`);
+
+  for (const g of F.games) {
+    const [a, b] = g.teams, A = g.side[a], B = g.side[b];
+    K(`${a} against ${b}. After ${F.nights} nights it's ${a} ${sc(g.now)} in categories.`);
+    N(`Projected finish: ${g.projLeader} ${g.projScore[0]} ${g.projScore[1]}. ${g.swing.length ? `Still live: ${g.swing.join(", ")}.` : "Not much left to fight over."}`);
+
+    if (g.rabbit) {
+      const r = g.rabbit;
+      K(pick([`Nigel. Nigel. I need to talk about the rabbit.`, `Can we address what ${r.team} just pulled out of the hat?`]));
+      N(`The ${r.cat} category. Going into night ${r.night}, ${r.victim} was winning it ${r.before} percent of the time. ${r.team} then put up ${r.value} ${r.say} in one night, to ${r.victim}'s ${r.theirs}. It's now ${r.after} percent.`);
+      F.rabbits = (F.rabbits || 0) + 1;
+      K(F.rabbits === 1 ? `That is a bullshit rabbit out of a bullshit hat! ${r.value} ${r.say}! In one night!` : `${r.value} ${r.say}! That's not a fantasy lineup, that's a magic show!`);
+    }
+    for (const h of (g.cheapHeroes || []).slice(0, 2)) {
+      if (h.fa) N(`And the star of the show for ${h.team} this week? ${h.n}. A ${h.salary} dollar waiver pickup. ${h.best} points, then ${h.second}. ${h.games} games, ${h.avg} a night.`);
+      else N(pick([`${h.n}, on a ${h.salary} dollar salary, has given ${h.team} ${h.best} in a single night. Auction of the century.`, `${h.n}. ${h.salary} dollars. ${h.best} points in one night for ${h.team}. Somebody check the receipts.`, `${h.best} in a night from ${h.n}, and ${h.team} is paying him ${h.salary} dollars.`]));
+    }
+    if (g.benchWaste && g.benchWaste.pts >= 40) K(`Silver lining, ${g.benchWaste.victimOf}: ${g.benchWaste.team} left ${g.benchWaste.pts} points on the bench on ${g.benchWaste.dayLabel}. ${g.benchWaste.who} among them. Imagine if they'd set the lineup properly!`);
+    const tops = g.topLines.slice(0, 2).map((x) => `${x.n} with ${x.pts}`).join(", and ");
+    if (tops) N(`Biggest nights in this one: ${tops}.`);
+    for (const T of [A, B]) {
+      const bit = (story[T.team] || {}).waste;
+      if (T.wasted >= 6 && bit) K(`${T.team} still has ${Math.round(T.wasted)} games projected to sit on the bench this week. ${bit}`);
+    }
+    if (g.need) N(g.need);
+  }
+  K(pick([`That's the midweek! Lineups lock with the first game each day. Don't leave a rabbit in your hat!`, `That's the midweek fry-up! Check the Scouting Room, set your lineups, and watch out for magicians!`]));
+  return L;
+}

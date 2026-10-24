@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { loadEngine, matchupReceipts, pairings, weekInfo } from "./engine.mjs";
-import { previewScript, reviewScript, punchUp } from "./writer.mjs";
+import { previewScript, reviewScript, midweekScript, punchUp } from "./writer.mjs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const EP = path.join(ROOT, "radio", "episodes");
@@ -53,6 +53,59 @@ if (wk <= 18 && (!has(pid) || args.has("--force"))) {
     dataUpdatedAt: league.updatedAt, receipts: games, lines: previewScript(games, { week: wk, story }) });
 }
 
+// 2b) Midweek update (on request: node radio/build.mjs --update)
+if (args.has("--update") && wk <= 18) {
+  const days = Object.keys(league.days || {}).sort(), asOf = days[days.length - 1];
+  const dayLabel = (iso) => new Date(iso + "T00:00:00Z").toLocaleDateString("en-AU", { weekday: "long", timeZone: "UTC" }) + " night";
+  const K = ["fgm", "fga", "ftm", "fta", "tpm", "reb", "ast", "stl", "blk", "to", "pts"], SAY = { ast: "assists", reb: "rebounds", tpm: "threes", stl: "steals", blk: "blocks", pts: "points" };
+  const prevEp = readEp(`wk${pad(wk)}-preview`);
+  const sal = {}; for (const [t, ps] of Object.entries(league.teams)) for (const p of ps) sal[p.n] = { t, s: p.salary };
+  const games = pairings(E).map(([a, b]) => {
+    const R = matchupReceipts(E, a, b, wk), cur = league.matchup.current;
+    const now = E.run(`(()=>{const c=state.matchup.current,s=catScore(RAW.map(k=>c[${JSON.stringify(a)}][k]),RAW.map(k=>c[${JSON.stringify(b)}][k]));return s})()`);
+    const lines = [], teamNight = {};
+    for (const d of days) for (const t of [a, b]) for (const r of (league.days[d][t] || [])) {
+      const on = r[1] !== "BE" && r[1] !== "IR", o = Object.fromEntries(K.map((k, i) => [k, r[2 + i]]));
+      if (on) { lines.push({ d, t, n: r[0], ...o }); teamNight[t + d] = teamNight[t + d] || { t, d, ...Object.fromEntries(K.map((k) => [k, 0])) }; K.forEach((k) => teamNight[t + d][k] += o[k]); }
+    }
+    // the rabbit: re-run the sims as they stood before each night; the biggest one-night swing in a counting category
+    const simAt = (n) => { // n = nights banked
+      const cum = { [a]: Object.fromEntries(K.map((k) => [k, 0])), [b]: Object.fromEntries(K.map((k) => [k, 0])) };
+      for (const d of days.slice(0, n)) for (const t of [a, b]) { const x = teamNight[t + d]; if (x) K.forEach((k) => cum[t][k] += x[k]); }
+      E.ctx.__sim = { a, b, cum, from: n < days.length ? days[n] : league.matchup.from, wk };
+      return E.run(`(()=>{const {a,b,cum,from,wk}=__sim;state.matchup.week=wk;const W=week();const dA=distFrom(planRoster(state.teams[a],W,from)),dB=distFrom(planRoster(state.teams[b],W,from));
+        const r=simulate(dA,dB,cum[a],cum[b],6000);return Object.fromEntries(CATS.map(c=>[c.k,r.cat[c.k].w/6000]))})()`);
+    };
+    const probs = [0, 1, 2, 3, 4, 5, 6].filter((n) => n <= days.length).map(simAt);
+    let rabbit = null;
+    for (let n = 1; n < probs.length; n++) for (const c of R.cats.filter((c) => SAY[c.k])) {
+      const before = probs[n - 1][c.k], after = probs[n][c.k], drop = before - after, thief = drop > 0 ? b : a, victim = drop > 0 ? a : b;
+      const x = teamNight[thief + days[n - 1]], y = teamNight[victim + days[n - 1]];
+      if (!x || Math.abs(drop) < 0.2) continue;
+      if (!rabbit || Math.abs(drop) > rabbit.mag)
+        rabbit = { mag: Math.abs(drop), team: thief, victim, cat: c.l, say: SAY[c.k], value: x[c.k], theirs: y ? y[c.k] : 0, night: n,
+          before: Math.round((drop > 0 ? before : 1 - before) * 100), after: Math.round((drop > 0 ? after : 1 - after) * 100) };
+    }
+    const byPlayer = {}; for (const x of lines) (byPlayer[x.n] = byPlayer[x.n] || { n: x.n, t: x.t, g: [] }).g.push(x.pts);
+    const cheapHeroes = Object.values(byPlayer).map((p) => ({ ...p, salary: (sal[p.n] || {}).s ?? 5, best: Math.max(...p.g) }))
+      .filter((p) => p.salary <= 5 && (p.best >= 30 || p.g.reduce((s, x) => s + x, 0) / p.g.length >= 22))
+      .sort((x, y) => y.best - x.best).map((p) => { const srt = p.g.slice().sort((x, y) => y - x);
+        return { n: p.n, team: p.t, salary: p.salary, fa: p.salary === 5, best: srt[0], second: srt[1] ?? srt[0], games: p.g.length, avg: Math.round(p.g.reduce((s, x) => s + x, 0) / p.g.length) }; });
+    let benchWaste = null;
+    for (const d of days) for (const t of [a, b]) { const be = (league.days[d][t] || []).filter((r) => r[1] === "BE"), pts = be.reduce((s, r) => s + r[r.length - 1], 0);
+      if (!benchWaste || pts > benchWaste.pts) benchWaste = { team: t, victimOf: t === a ? b : a, pts, dayLabel: `night ${days.indexOf(d) + 1}`, who: be.sort((x, y) => y[y.length - 1] - x[x.length - 1])[0]?.[0] }; }
+    const expA = R.home.expCats, expB = R.away.expCats, lead = expA >= expB ? a : b, ps = [Math.round(Math.max(expA, expB)), 9 - Math.round(Math.max(expA, expB)) - Math.round(R.expTies)];
+    const swing = R.cats.filter((c) => c.win > 0.3 && c.win < 0.7).map((c) => c.l);
+    const behind = expA < expB ? a : b, needN = Math.max(0, 5 - Math.round(Math.min(expA, expB)));
+    const need = swing.length ? `For ${behind} to steal it, they need ${needN} more categor${needN === 1 ? "y" : "ies"} to flip. The live ones are ${swing.join(", ")}.` : "";
+    return { teams: [a, b], now, projLeader: lead, projScore: ps, swing, rabbit, cheapHeroes, benchWaste, need,
+      topLines: lines.sort((x, y) => y.pts - x.pts).filter((x, i, arr) => arr.findIndex((z) => z.n === x.n) === i).slice(0, 3), side: { [a]: { team: a, wasted: R.home.wasted }, [b]: { team: b, wasted: R.away.wasted } } };
+  });
+  const id = `wk${pad(wk)}-update-${asOf.slice(5).replace("-", "")}`;
+  await finish({ id, type: "update", week: wk, title: `Week ${wk} midweek (${days.length} nights)`, createdAt: new Date().toISOString(),
+    dataUpdatedAt: league.updatedAt, receipts: { asOf, games }, lines: midweekScript({ week: wk, asOf, nights: days.length, games }, { story }) });
+}
+
 // 3) Voices.
 if (!args.has("--no-audio")) {
   for (const ep of made) execFileSync("python3", [path.join(ROOT, "radio", "tts.py"), path.join(EP, `${ep.id}.json`)], { stdio: "inherit" });
@@ -66,6 +119,7 @@ for (const ep of made) {
     seconds: saved.seconds || null, audio: fs.existsSync(path.join(EP, `${ep.id}.mp3`)) ? `radio/episodes/${ep.id}.mp3` : null,
     script: `radio/episodes/${ep.id}.json`, writer: ep.writer });
 }
-manifest.episodes.sort((a, b) => b.week - a.week || (a.type === "review" ? -1 : 1));
+const RANK = { review: 0, update: 1, preview: 2 };
+manifest.episodes.sort((a, b) => b.week - a.week || (RANK[a.type] ?? 3) - (RANK[b.type] ?? 3) || String(b.createdAt).localeCompare(String(a.createdAt)));
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 1));
 console.log(made.length ? `Built: ${made.map((e) => `${e.id} (${e.writer})`).join(", ")}` : "Nothing new to build.");
