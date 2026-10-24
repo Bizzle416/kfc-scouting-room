@@ -98,8 +98,18 @@ async function main() {
   for (const t of L.teams) for (const e of t.roster?.entries || []) { const pl = e.playerPoolEntry?.player || {}; if (pl.injuryStatus && pl.injuryStatus !== "ACTIVE") injuries[siteName(pl.fullName)] = pl.injuryStatus; }
   let poolN = 0;
   try {
-    const P = await get("view=kona_player_info", { "X-Fantasy-Filter": JSON.stringify({ players: { limit: 750, sortPercOwned: { sortPriority: 1, sortAsc: false } } }) });
-    for (const x of P.players || []) { const pl = x.player || {}; poolN++; if (pl.injuryStatus && pl.injuryStatus !== "ACTIVE") injuries[siteName(pl.fullName)] = pl.injuryStatus; }
+    const P = await get("view=kona_player_info", { "X-Fantasy-Filter": JSON.stringify({ players: { limit: 750, sortPercOwned: { sortPriority: 1, sortAsc: false }, filterStatsForTopScoringPeriodIds: { value: 2, additionalValue: ["002027", "102027"] } } }) });
+    let poolStats = 0;
+    for (const x of P.players || []) {
+      const pl = x.player || {}; poolN++; const key = siteName(pl.fullName);
+      if (pl.injuryStatus && pl.injuryStatus !== "ACTIVE") injuries[key] = pl.injuryStatus;
+      // real season stats for free agents too, so the site rates them on games played, not just preseason projections
+      const tot = (pl.stats || []).find((st) => st.seasonId === SEASON && st.statSourceId === 0 && st.statSplitTypeId === 0);
+      const gp = +(tot?.stats?.[SID.gp] || 0);
+      if (gp > 0 && !espn[key]) { const line = statLine(tot.stats), o = { gp, min: +(tot.stats[SID.min] || 0) / gp }; for (const k of RAW) o[k] = line[k] / gp;
+        if (Math.abs(2 * o.fgm + o.tpm + o.ftm - o.pts) < 0.01) { espn[key] = o; poolStats++; } }
+    }
+    status.checks.poolStats = poolStats;
   } catch (e) { status.warnings.push("Couldn't read ESPN's player pool for free-agent injuries: " + e.message); }
   status.checks.injuries = { poolPlayers: poolN, flagged: Object.keys(injuries).length, sample: Object.entries(injuries).slice(0, 12) };
   if (poolN < 200) status.warnings.push(`ESPN player pool only returned ${poolN} players — free-agent injury tags may be incomplete.`);
