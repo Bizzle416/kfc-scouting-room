@@ -28,7 +28,20 @@ const spDate = (sp) => addDays(DAY1, sp - 1);
 // A US game day is final once it's 07:00 UTC the next day (3am EDT / 2am EST): every game, OT included, is over.
 // Until then its stats are live partials and must not be counted as banked, whatever time the sync runs.
 const FINAL_UTC_HOUR = 7;
-const isFinal = (iso) => Date.now() >= Date.parse(addDays(iso, 1) + `T${String(FINAL_UTC_HOUR).padStart(2, "0")}:00:00Z`);
+const timeFinal = (iso) => Date.now() >= Date.parse(addDays(iso, 1) + `T${String(FINAL_UTC_HOUR).padStart(2, "0")}:00:00Z`);
+// Sooner than the clock rule: ESPN's public NBA scoreboard says every game that day is complete.
+const FINAL = new Map();
+async function checkFinal(iso) {
+  if (timeFinal(iso)) return FINAL.set(iso, true), true;
+  if (Date.now() < Date.parse(iso + "T15:00:00Z")) return FINAL.set(iso, false), false;
+  try {
+    const r = await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${iso.replace(/-/g, "")}`, { headers: { Accept: "application/json" } });
+    const j = await r.json(), ev = j.events || [];
+    const done = ev.length > 0 && ev.every((e) => e.status?.type?.completed);
+    FINAL.set(iso, done); return done;
+  } catch { FINAL.set(iso, false); return false; }
+}
+const isFinal = (iso) => FINAL.get(iso) ?? timeFinal(iso);
 const status = { ok: false, at: new Date().toISOString(), league: LEAGUE_ID, season: SEASON, steps: [], warnings: [], checks: {} };
 const statusPath = path.join(ROOT, "data", "espn-status.json");
 const step = (s) => status.steps.push(s);
@@ -134,6 +147,8 @@ async function main() {
   if (!myPair) throw new Error(`No ${ME} matchup found in matchup period ${curMP}`);
   const opp = myPair[0] === ME ? myPair[1] : myPair[0];
 
+  for (const sp of mpDays(curMP)) if (sp <= latestSP + 1) await checkFinal(spDate(sp));
+  status.checks.finalBy = Object.fromEntries([...FINAL].map(([d, f]) => [d, f ? (timeFinal(d) ? "clock" : "scoreboard") : "not yet"]));
   const current = {}, days = {};
   for (const t of TEAMS) { current[t] = {}; for (const k of RAW) current[t][k] = 0; }
   for (const sp of mpDays(curMP).filter((s) => s <= latestSP && s < curSP + 1 && isFinal(spDate(s)))) {
