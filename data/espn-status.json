@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-24T05:59:34.778Z",
+ "at": "2026-10-24T06:03:09.570Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -8,9 +8,7 @@
   "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23",
   "league.json written"
  ],
- "warnings": [
-  "Lineup sums disagree with ESPN's scoreboard: Bizzle tpm: ESPN 30 v summed 52; Bizzle reb: ESPN 116 v summed 186; Bizzle ast: ESPN 83 v summed 133; Bizzle stl: ESPN 23 v summed 39; Bizzle blk: ESPN 9 v summed 19; Bizzle to: ESPN 53 v summed 86; Bizzle pts: ESPN 367 v summed 583; Bizzle FG%: ESPN 0.47619048 v summed 0.4687; Danna tpm: ESPN 44 v summed 61; Danna reb: ESPN 108 v summed 171; Danna ast: ESPN 63 v summed 127; Danna stl: ESPN 18 v summed 31; Danna blk: ESPN 15 v summed 22; Danna to: ESPN 42 v summed 75; Danna pts: ESPN 436 v summed 632; Danna FG%: ESPN 0.51162791 v summed 0.5172; Mamba tpm: ESPN 23 v summed 35; Mamba reb: ESPN 127 v summed 201; Mamba ast: ESPN 57 v summed 115; Mamba stl: ESPN 12 v summed 25; Mamba blk: ESPN 8 v summed 17; Mamba to: ESPN 39 v summed 82; Mamba pts: ESPN 270 v summed 474; Mamba FG%: ESPN 0.41777778 v summed 0.4450; Slav tpm: ESPN 28 v summed 48; Slav reb: ESPN 133 v summed 192; Slav ast: ESPN 83 v summed 128; Slav stl: ESPN 33 v summed 39; Slav blk: ESPN 23 v summed 30; Slav to: ESPN 51 v summed 80; Slav pts: ESPN 444 v summed 637; Slav FG%: ESPN 0.47115385 v summed 0.4639"
- ],
+ "warnings": [],
  "checks": {
   "teamNames": {
    "Mamba": "Mornington Moose",
@@ -217,6 +215,7 @@
    }
   },
   "scoreboardCompared": true,
+  "scoreboardLagging": true,
   "pairs": [
    [
     "Slav",
