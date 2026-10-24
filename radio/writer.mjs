@@ -146,6 +146,8 @@ ${JSON.stringify(lines)}`;
 }
 
 // ---------- Midweek update: the week so far, from the banked nightly box scores ----------
+const andList = (a) => a.length <= 1 ? (a[0] || "") : `${a.slice(0, -1).join(", ")} and ${a[a.length - 1]}`;
+const dollars = (n) => `${n} dollar${n === 1 ? "" : "s"}`;
 export function midweekScript(F, { story }) {
   const pick = picker(`update-${F.week}-${F.asOf}`), L = [];
   const K = (t) => L.push({ host: "KEV", text: t }), N = (t) => L.push({ host: "NIGEL", text: t });
@@ -156,7 +158,7 @@ export function midweekScript(F, { story }) {
   for (const g of F.games) {
     const [a, b] = g.teams, A = g.side[a], B = g.side[b];
     K(`${a} against ${b}. After ${F.nights} nights it's ${a} ${sc(g.now)} in categories.`);
-    N(`Projected finish: ${g.projLeader} ${g.projScore[0]} ${g.projScore[1]}. ${g.swing.length ? `Still live: ${g.swing.join(", ")}.` : "Not much left to fight over."}`);
+    N(`Projected finish: ${g.projLeader} ${g.projScore[0]} ${g.projScore[1]}. ${g.swing.length ? `Still live: ${andList(g.swing)}.` : "Not much left to fight over."}`);
 
     if (g.rabbit) {
       const r = g.rabbit;
@@ -167,7 +169,7 @@ export function midweekScript(F, { story }) {
     }
     for (const h of (g.cheapHeroes || []).slice(0, 2)) {
       if (h.fa) N(`And the star of the show for ${h.team} this week? ${h.n}. A ${h.salary} dollar waiver pickup. ${h.best} points, then ${h.second}. ${h.games} games, ${h.avg} a night.`);
-      else N(pick([`${h.n}, on a ${h.salary} dollar salary, has given ${h.team} ${h.best} in a single night. Auction of the century.`, `${h.n}. ${h.salary} dollars. ${h.best} points in one night for ${h.team}. Somebody check the receipts.`, `${h.best} in a night from ${h.n}, and ${h.team} is paying him ${h.salary} dollars.`]));
+      else { F.heroN = (F.heroN || 0) + 1; N([`${h.n}, on a ${h.salary} dollar salary, has given ${h.team} ${h.best} in a single night. Auction of the century.`, `${h.best} in a night from ${h.n}, and ${h.team} is paying him ${dollars(h.salary)}.`, `${h.n}. ${dollars(h.salary)}. ${h.best} points in one night for ${h.team}. Somebody check the receipts.`][F.heroN % 3]); }
     }
     if (g.benchWaste && g.benchWaste.pts >= 40) K(`Silver lining, ${g.benchWaste.victimOf}: ${g.benchWaste.team} left ${g.benchWaste.pts} points on the bench on ${g.benchWaste.dayLabel}. ${g.benchWaste.who} among them. Imagine if they'd set the lineup properly!`);
     const tops = g.topLines.slice(0, 2).map((x) => `${x.n} with ${x.pts}`).join(", and ");
@@ -178,6 +180,36 @@ export function midweekScript(F, { story }) {
     }
     if (g.need) N(g.need);
   }
+  // Around the league: luck, ice, injuries, tilt (all from banked box scores and ESPN statuses)
+  const T = F.teams || {};
+  const byLuck = Object.values(T).sort((x, y) => y.overPct - x.overPct), hot = byLuck[0], cold = byLuck[byLuck.length - 1];
+  if (hot && hot.overPct >= 8) {
+    K(`Nigel, I want to talk about luck. Specifically, how much ${hot.team} has been kissed this week.`);
+    N(`${hot.team}'s starters are ${hot.over} points above their projections. That's ${hot.overPct} percent. ${hot.sharp.length} different players shooting over fifty percent.${hot.best ? ` ${hot.best.n} is ${hot.best.fgm} of ${hot.best.fga} from the field.` : ""}${hot.hero ? ` ${hot.hero.n} is ${hot.hero.over} points above projection in ${hot.hero.g} games.` : ""}`);
+    K(`Kissed! Kissed on both cheeks! Somebody check ${hot.team}'s lineup for horseshoes!`);
+  }
+  const pecker = Object.values(T).find((t) => t.overPct < 0 && t.leading);
+  if (pecker) {
+    N(`And then there's ${pecker.team}. ${Math.abs(pecker.over)} points under projection. Under. And still leading ${pecker.score}.`);
+    K(`Because they drew ${pecker.opp}! ${pecker.team} has been kissed on the pecker by the schedule!`);
+  }
+  if (cold && cold.overPct <= -8) {
+    N(`Which brings us to ${cold.team}. ${Math.abs(cold.over)} points below projection, ${Math.abs(cold.overPct)} percent, the coldest team in the league. Shooting ${cold.fg} percent as a team.`);
+    if (cold.tilt) K(`${cold.team} is on full tilt, Nigel! ${cold.tilt}`);
+  }
+  const hurt = Object.values(T).sort((x, y) => y.inj.length - x.inj.length)[0];
+  if (hurt && hurt.inj.length >= 3) {
+    const outs = hurt.inj.filter((i) => i.s === "OUT").map((i) => i.n), dtd = hurt.inj.filter((i) => i.s !== "OUT").map((i) => i.n);
+    N(`Injury report. ${hurt.team}, look away. ${outs.length ? `${outs.join(" and ")} ${outs.length > 1 ? "are" : "is"} out.` : ""} ${dtd.length ? `${dtd.join(", ")}, all day to day.` : ""}`);
+    K(pick([`The injuries are coming for ${hurt.team}! Brace! Brace!`, `${hurt.team}'s medical room is busier than the KFC drive-through on a Friday!`]));
+  }
+
   K(pick([`That's the midweek! Lineups lock with the first game each day. Don't leave a rabbit in your hat!`, `That's the midweek fry-up! Check the Scouting Room, set your lineups, and watch out for magicians!`]));
   return L;
+}
+
+// Spoken category names: radio says "rebounds", not "REB".
+const SPOKEN = { "FG%": "field goal percentage", "FT%": "free throw percentage", "3PM": "threes", REB: "rebounds", AST: "assists", STL: "steals", BLK: "blocks", TO: "turnovers", PTS: "points" };
+export function speakCats(lines) {
+  return lines.map((l) => ({ ...l, text: l.text.replace(/(FG%|FT%|3PM|\bREB\b|\bAST\b|\bSTL\b|\bBLK\b|\bTO\b|\bPTS\b)/g, (m) => SPOKEN[m] || m) }));
 }

@@ -3,8 +3,8 @@
  "type": "update",
  "week": 1,
  "title": "Week 1 midweek (4 nights)",
- "createdAt": "2026-10-24T06:02:03.598Z",
- "dataUpdatedAt": "2026-10-24T05:59:35.673Z",
+ "createdAt": "2026-10-24T07:31:40.240Z",
+ "dataUpdatedAt": "2026-10-24T06:03:10.498Z",
  "receipts": {
   "asOf": "2026-10-23",
   "games": [
@@ -129,7 +129,7 @@
      "dayLabel": "night 4",
      "who": "Kyrie Irving"
     },
-    "need": "For Bizzle to steal it, they need 1 more category to flip. The live ones are REB, AST.",
+    "need": "For Bizzle to steal it, they need 1 more category to flip. The live ones are REB and AST.",
     "topLines": [
      {
       "d": "2026-10-21",
@@ -271,7 +271,7 @@
      "dayLabel": "night 2",
      "who": "Darius Garland"
     },
-    "need": "For Mamba to steal it, they need 3 more categories to flip. The live ones are TO.",
+    "need": "For Mamba to steal it, they need 3 more categories to flip. The only live one is TO.",
     "topLines": [
      {
       "d": "2026-10-23",
@@ -333,7 +333,174 @@
      }
     }
    }
-  ]
+  ],
+  "teams": {
+   "Bizzle": {
+    "team": "Bizzle",
+    "over": -6,
+    "overPct": -1,
+    "fg": 46.9,
+    "sharp": [
+     "Cooper Flagg",
+     "Alperen Seng\u00fcn",
+     "Devin Booker",
+     "Paolo Banchero",
+     "Jaren Jackson Jr."
+    ],
+    "best": {
+     "n": "Paolo Banchero",
+     "g": 2,
+     "fgm": 16,
+     "fga": 23,
+     "over": 1
+    },
+    "hero": {
+     "n": "Tyler Herro",
+     "over": 14,
+     "g": 2
+    },
+    "inj": [
+     {
+      "n": "Cooper Flagg",
+      "s": "OUT"
+     },
+     {
+      "n": "LeBron James",
+      "s": "DAY_TO_DAY"
+     },
+     {
+      "n": "AJ Dybantsa",
+      "s": "DAY_TO_DAY"
+     },
+     {
+      "n": "Paolo Banchero",
+      "s": "DAY_TO_DAY"
+     },
+     {
+      "n": "Cedric Coward",
+      "s": "OUT"
+     }
+    ],
+    "leading": false,
+    "score": "4 5",
+    "opp": "Danna",
+    "tilt": ""
+   },
+   "Danna": {
+    "team": "Danna",
+    "over": 74,
+    "overPct": 13,
+    "fg": 51.7,
+    "sharp": [
+     "Paul George",
+     "Austin Reaves",
+     "Walker Kessler",
+     "Keyonte George",
+     "Kyrie Irving",
+     "Julius Randle",
+     "RJ Barrett",
+     "Ty Jerome",
+     "Evan Mobley",
+     "Domantas Sabonis"
+    ],
+    "best": {
+     "n": "Walker Kessler",
+     "g": 2,
+     "fgm": 22,
+     "fga": 26,
+     "over": 25.1
+    },
+    "hero": {
+     "n": "Ty Jerome",
+     "over": 39,
+     "g": 2
+    },
+    "inj": [
+     {
+      "n": "Brandon Ingram",
+      "s": "OUT"
+     }
+    ],
+    "leading": true,
+    "score": "5 4",
+    "opp": "Bizzle",
+    "tilt": "Left 91 points on the bench on night 4."
+   },
+   "Mamba": {
+    "team": "Mamba",
+    "over": -70,
+    "overPct": -13,
+    "fg": 44.5,
+    "sharp": [
+     "Giannis Antetokounmpo",
+     "Amen Thompson",
+     "Ivica Zubac",
+     "Zach Edey"
+    ],
+    "best": {
+     "n": "Giannis Antetokounmpo",
+     "g": 2,
+     "fgm": 28,
+     "fga": 45,
+     "over": 8.439999999999998
+    },
+    "hero": {
+     "n": "Scottie Barnes",
+     "over": 14,
+     "g": 2
+    },
+    "inj": [],
+    "leading": false,
+    "score": "1 8",
+    "opp": "Slav",
+    "tilt": "Panic-added Joel Embiid, cut Derik Queen. Left 115 points on the bench on night 2."
+   },
+   "Slav": {
+    "team": "Slav",
+    "over": -30,
+    "overPct": -5,
+    "fg": 46.4,
+    "sharp": [
+     "Jalen Duren",
+     "Karl-Anthony Towns",
+     "Derrick White",
+     "Kevin Durant",
+     "Dyson Daniels",
+     "Pascal Siakam",
+     "Donovan Mitchell"
+    ],
+    "best": {
+     "n": "Karl-Anthony Towns",
+     "g": 2,
+     "fgm": 15,
+     "fga": 22,
+     "over": -1.4399999999999977
+    },
+    "hero": {
+     "n": "Pascal Siakam",
+     "over": 9,
+     "g": 2
+    },
+    "inj": [
+     {
+      "n": "Jalen Duren",
+      "s": "DAY_TO_DAY"
+     },
+     {
+      "n": "Ausar Thompson",
+      "s": "DAY_TO_DAY"
+     },
+     {
+      "n": "Kon Knueppel",
+      "s": "DAY_TO_DAY"
+     }
+    ],
+    "leading": true,
+    "score": "8 1",
+    "opp": "Mamba",
+    "tilt": ""
+   }
+  }
  },
  "lines": [
   {
@@ -350,7 +517,7 @@
   },
   {
    "host": "NIGEL",
-   "text": "Projected finish: Danna 5 4. Still live: REB, AST."
+   "text": "Projected finish: Danna 5 4. Still live: rebounds and assists."
   },
   {
    "host": "KEV",
@@ -358,7 +525,7 @@
   },
   {
    "host": "NIGEL",
-   "text": "The AST category. Going into night 4, Bizzle was winning it 73 percent of the time. Danna then put up 64 assists in one night, to Bizzle's 50. It's now 41 percent."
+   "text": "The assists category. Going into night 4, Bizzle was winning it 73 percent of the time. Danna then put up 64 assists in one night, to Bizzle's 50. It's now 41 percent."
   },
   {
    "host": "KEV",
@@ -370,7 +537,7 @@
   },
   {
    "host": "NIGEL",
-   "text": "38 in a night from Paul George, and Danna is paying him 1 dollars."
+   "text": "38 in a night from Paul George, and Danna is paying him 1 dollar."
   },
   {
    "host": "KEV",
@@ -382,7 +549,7 @@
   },
   {
    "host": "NIGEL",
-   "text": "For Bizzle to steal it, they need 1 more category to flip. The live ones are REB, AST."
+   "text": "For Bizzle to steal it, they need 1 more category to flip. The live ones are rebounds and assists."
   },
   {
    "host": "KEV",
@@ -390,15 +557,15 @@
   },
   {
    "host": "NIGEL",
-   "text": "Projected finish: Slav 7 2. Still live: TO."
+   "text": "Projected finish: Slav 7 2. Still live: turnovers."
   },
   {
    "host": "KEV",
-   "text": "Nigel. Nigel. I need to talk about the rabbit."
+   "text": "Can we address what Mamba just pulled out of the hat?"
   },
   {
    "host": "NIGEL",
-   "text": "The REB category. Going into night 2, Slav was winning it 50 percent of the time. Mamba then put up 84 rebounds in one night, to Slav's 41. It's now 22 percent."
+   "text": "The rebounds category. Going into night 2, Slav was winning it 50 percent of the time. Mamba then put up 84 rebounds in one night, to Slav's 41. It's now 22 percent."
   },
   {
    "host": "KEV",
@@ -406,7 +573,7 @@
   },
   {
    "host": "NIGEL",
-   "text": "Pascal Siakam, on a 3 dollar salary, has given Slav 30 in a single night. Auction of the century."
+   "text": "Pascal Siakam. 3 dollars. 30 points in one night for Slav. Somebody check the receipts."
   },
   {
    "host": "NIGEL",
@@ -422,7 +589,43 @@
   },
   {
    "host": "NIGEL",
-   "text": "For Mamba to steal it, they need 3 more categories to flip. The live ones are TO."
+   "text": "For Mamba to steal it, they need 3 more categories to flip. The only live one is turnovers."
+  },
+  {
+   "host": "KEV",
+   "text": "Nigel, I want to talk about luck. Specifically, how much Danna has been kissed this week."
+  },
+  {
+   "host": "NIGEL",
+   "text": "Danna's starters are 74 points above their projections. That's 13 percent. 10 different players shooting over fifty percent. Walker Kessler is 22 of 26 from the field. Ty Jerome is 39 points above projection in 2 games."
+  },
+  {
+   "host": "KEV",
+   "text": "Kissed! Kissed on both cheeks! Somebody check Danna's lineup for horseshoes!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "And then there's Slav. 30 points under projection. Under. And still leading 8 1."
+  },
+  {
+   "host": "KEV",
+   "text": "Because they drew Mamba! Slav has been kissed on the pecker by the schedule!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "Which brings us to Mamba. 70 points below projection, 13 percent, the coldest team in the league. Shooting 44.5 percent as a team."
+  },
+  {
+   "host": "KEV",
+   "text": "Mamba is on full tilt, Nigel! Panic-added Joel Embiid, cut Derik Queen. Left 115 points on the bench on night 2."
+  },
+  {
+   "host": "NIGEL",
+   "text": "Injury report. Bizzle, look away. Cooper Flagg and Cedric Coward are out. LeBron James, AJ Dybantsa, Paolo Banchero, all day to day."
+  },
+  {
+   "host": "KEV",
+   "text": "The injuries are coming for Bizzle! Brace! Brace!"
   },
   {
    "host": "KEV",
@@ -430,5 +633,5 @@
   }
  ],
  "writer": "templates",
- "seconds": 152
+ "seconds": 221
 }

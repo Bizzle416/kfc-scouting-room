@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { loadEngine, matchupReceipts, pairings, weekInfo } from "./engine.mjs";
-import { previewScript, reviewScript, midweekScript, punchUp } from "./writer.mjs";
+import { previewScript, reviewScript, midweekScript, speakCats, punchUp } from "./writer.mjs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const EP = path.join(ROOT, "radio", "episodes");
@@ -22,6 +22,7 @@ const readEp = (id) => (has(id) ? JSON.parse(fs.readFileSync(path.join(EP, `${id
 const made = [];
 
 async function finish(ep) {
+  ep.lines = speakCats(ep.lines);
   const llm = await punchUp(ep.lines, { apiKey: process.env.GEMINI_API_KEY, model: process.env.GEMINI_MODEL || undefined, story });
   if (llm) { ep.templateLines = ep.lines; ep.lines = llm; ep.writer = "gemini"; } else ep.writer = "templates";
   fs.writeFileSync(path.join(EP, `${ep.id}.json`), JSON.stringify(ep, null, 1));
@@ -97,13 +98,34 @@ if (args.has("--update") && wk <= 18) {
     const expA = R.home.expCats, expB = R.away.expCats, lead = expA >= expB ? a : b, ps = [Math.round(Math.max(expA, expB)), 9 - Math.round(Math.max(expA, expB)) - Math.round(R.expTies)];
     const swing = R.cats.filter((c) => c.win > 0.3 && c.win < 0.7).map((c) => c.l);
     const behind = expA < expB ? a : b, needN = Math.max(0, 5 - Math.round(Math.min(expA, expB)));
-    const need = swing.length ? `For ${behind} to steal it, they need ${needN} more categor${needN === 1 ? "y" : "ies"} to flip. The live ones are ${swing.join(", ")}.` : "";
+    const need = swing.length ? `For ${behind} to steal it, they need ${needN} more categor${needN === 1 ? "y" : "ies"} to flip. ${swing.length === 1 ? `The only live one is ${swing[0]}` : `The live ones are ${swing.slice(0, -1).join(", ")} and ${swing[swing.length - 1]}`}.` : "";
     return { teams: [a, b], now, projLeader: lead, projScore: ps, swing, rabbit, cheapHeroes, benchWaste, need,
       topLines: lines.sort((x, y) => y.pts - x.pts).filter((x, i, arr) => arr.findIndex((z) => z.n === x.n) === i).slice(0, 3), side: { [a]: { team: a, wasted: R.home.wasted }, [b]: { team: b, wasted: R.away.wasted } } };
   });
+  // per-team luck: banked starter points v projection, shooting, injuries, transactions
+  E.ctx.__days = league.days;
+  const teams = JSON.parse(E.run(`(()=>{const out={};for(const t of TEAMS){let ap=0,pp=0,fgm=0,fga=0;const pl={};
+    for(const d of Object.keys(__days))for(const r of (__days[d][t]||[])){if(r[1]==="BE"||r[1]==="IR")continue;const o=Object.fromEntries(RAW.map((k,i)=>[k,r[2+i]]));const pj=(ref(r[0])||{}).pj;
+      ap+=o.pts;fgm+=o.fgm;fga+=o.fga;if(pj)pp+=pj.pts;const P=pl[r[0]]=pl[r[0]]||{n:r[0],g:0,fgm:0,fga:0,over:0};P.g++;P.fgm+=o.fgm;P.fga+=o.fga;P.over+=o.pts-(pj?pj.pts:o.pts)}
+    const ps=Object.values(pl),sharp=ps.filter(p=>p.fga>=5&&p.fgm/p.fga>.5);
+    out[t]={team:t,over:Math.round(ap-pp),overPct:+((ap/Math.max(1,pp)-1)*100).toFixed(0),fg:+(fgm/Math.max(1,fga)*100).toFixed(1),sharp:sharp.map(p=>p.n),
+      best:sharp.filter(p=>p.fga>=15).sort((a,b)=>b.fgm/b.fga-a.fgm/a.fga)[0]||null,hero:ps.sort((a,b)=>b.over-a.over)[0]?{n:ps[0].n,over:Math.round(ps[0].over),g:ps[0].g}:null,
+      inj:(state.teams[t]||[]).filter(p=>injOf(p.n)).map(p=>({n:p.n,s:injOf(p.n)}))}}return JSON.stringify(out)})()`));
+  for (const g of games) { const [a, b] = g.teams; for (const [me, op] of [[a, b], [b, a]]) {
+    const w = me === a ? g.now.w : g.now.l, l = me === a ? g.now.l : g.now.w; teams[me].leading = w > l; teams[me].score = `${w} ${l}`; teams[me].opp = op; } }
+  // tilt: cold team with a panic move this week and/or a big night left on the bench
+  const statusLog = []; try { for (const c of execFileSync("git", ["log", "--format=%h", "-40", "--", "data/espn-status.json"], { cwd: ROOT }).toString().trim().split("\n"))
+    statusLog.push(JSON.parse(execFileSync("git", ["show", `${c}:data/espn-status.json`], { cwd: ROOT }).toString())); } catch {}
+  for (const t of Object.values(teams)) {
+    const adds = [...new Set(statusLog.flatMap((s) => (s.checks?.rosterChanges?.added || []).filter((x) => x.startsWith(t.team + ":")).map((x) => x.split(": ")[1].replace(/ \(.*/, ""))))];
+    const drops = [...new Set(statusLog.flatMap((s) => (s.checks?.rosterChanges?.dropped || []).filter((x) => x.startsWith(t.team + ":")).map((x) => x.split(": ")[1].replace(/ \(.*/, ""))))];
+    const bw = games.map((g) => g.benchWaste).find((x) => x && x.team === t.team && x.pts >= 60);
+    const bits = []; if (adds.length) bits.push(`Panic-added ${adds.join(" and ")}${drops.length ? `, cut ${drops.join(" and ")}` : ""}.`); if (bw) bits.push(`Left ${bw.pts} points on the bench on ${bw.dayLabel}.`);
+    t.tilt = bits.join(" ");
+  }
   const id = `wk${pad(wk)}-update-${asOf.slice(5).replace("-", "")}`;
   await finish({ id, type: "update", week: wk, title: `Week ${wk} midweek (${days.length} nights)`, createdAt: new Date().toISOString(),
-    dataUpdatedAt: league.updatedAt, receipts: { asOf, games }, lines: midweekScript({ week: wk, asOf, nights: days.length, games }, { story }) });
+    dataUpdatedAt: league.updatedAt, receipts: { asOf, games, teams }, lines: midweekScript({ week: wk, asOf, nights: days.length, games, teams }, { story }) });
 }
 
 // 3) Voices.
