@@ -4,12 +4,12 @@
    "id": "wk01-update-1023",
    "type": "update",
    "week": 1,
-   "title": "Week 1 midweek (4 nights)",
+   "title": "Week 1 midweek: Danna kissed, Mamba cold",
    "createdAt": "2026-10-24T07:31:40.240Z",
-   "seconds": 221,
+   "seconds": 135,
    "audio": "radio/episodes/wk01-update-1023.mp3",
    "script": "radio/episodes/wk01-update-1023.json",
-   "writer": "templates"
+   "writer": "edited"
   },
   {
    "id": "wk01-preview",
