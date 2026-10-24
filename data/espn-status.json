@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-24T12:00:54.129Z",
+ "at": "2026-10-24T16:35:35.319Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,11 +39,15 @@
   "poolStats": 285,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 79,
+   "flagged": 85,
    "sample": [
     [
      "brandon ingram",
      "OUT"
+    ],
+    [
+     "kyrie irving",
+     "DAY_TO_DAY"
     ],
     [
      "cooper flagg",
@@ -63,10 +67,14 @@
     ],
     [
      "cedric coward",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "jalen duren",
+     "DAY_TO_DAY"
+    ],
+    [
+     "stephen curry",
      "DAY_TO_DAY"
     ],
     [
@@ -78,16 +86,8 @@
      "DAY_TO_DAY"
     ],
     [
-     "coby white",
+     "fred vanvleet",
      "DAY_TO_DAY"
-    ],
-    [
-     "reed sheppard",
-     "OUT"
-    ],
-    [
-     "tobias harris",
-     "OUT"
     ]
    ]
   },
@@ -215,7 +215,7 @@
     "pts": 632
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "pairs": [
    [
