@@ -216,6 +216,12 @@ async function main() {
   fs.writeFileSync(path.join(ROOT, "data", "league.json"), JSON.stringify(out));
   status.ok = true; status.checks.pairs = pairs; status.checks.from = out.matchup.from;
   step("league.json written");
+  // Keep the free Supabase project (trade block) awake: it pauses after a week without requests.
+  try {
+    const html2 = fs.readFileSync(path.join(ROOT, "index.html"), "utf8"), u = (html2.match(/const TB=\{url:"([^"]+)",key:"([^"]+)"/) || []);
+    if (u[1] && !u[1].startsWith("__")) { const r = await fetch(`${u[1]}/rest/v1/trade_block?select=id`, { headers: { apikey: u[2], Authorization: "Bearer " + u[2] } });
+      status.checks.tradeBlock = r.ok ? (await r.json()).length : `HTTP ${r.status}`; }
+  } catch (e) { status.warnings.push("Trade block ping failed: " + e.message); }
 }
 
 main().catch((e) => { status.ok = false; status.error = String(e && e.message || e); })

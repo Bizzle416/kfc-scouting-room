@@ -224,6 +224,21 @@ svg text{font-family:var(--font)}
     <div class="picks"><div id="tListA"></div><div id="tListB"></div></div>
   </div>
   <div id="tResult"></div>
+  <div class="card" id="tbCard" hidden><h2>Trade block <span class="small muted">· who's up for grabs</span></h2>
+    <p class="small muted">Players their managers will listen to offers on. Anyone can look; only the owner (with their PIN) can list or pull a player. Tap <b>Analyse</b> to load him straight into the Trade kitchen.</p>
+    <div id="tbList"><p class="small muted">Loading the block…</p></div>
+    <details id="tbAddWrap" style="margin-top:12px"><summary><b>List a player</b></summary>
+      <div class="row" style="margin-top:10px">
+        <div><label for="tbMgr">Manager</label><select id="tbMgr"></select></div>
+        <div><label for="tbPlayer">Player</label><select id="tbPlayer"></select></div>
+        <div style="flex:1;min-width:200px"><label for="tbNote">Looking for (optional)</label><input id="tbNote" maxlength="140" placeholder="e.g. a big who doesn't turn it over"></div>
+        <div><label for="tbPin">PIN</label><input id="tbPin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" style="width:90px"></div>
+        <button class="primary" id="tbAdd">Put on the block</button>
+      </div>
+      <label class="small" style="display:inline-flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="tbRemember"> Remember my PIN on this device</label>
+      <div id="tbMsg" class="small" style="margin-top:6px"></div>
+    </details>
+  </div>
 </section>
 
 <section id="tab-league" hidden>
@@ -920,11 +935,59 @@ function renderLeagueWeek(){
 const n4k=()=>"4,000";
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-open]");if(!b)return;const [a,c]=b.dataset.open.split("|");
   Object.assign(state.matchup,{home:a,away:c,week:+state.logWeek||state.matchup.week});save();renderMatchupInputs();runMatchup();$("mResult").scrollIntoView({behavior:"smooth"})});
+
+/* ---------- trade block (shared, Supabase) ---------- */
+const TB={url:"https://hfwkwpzmbabrgwhkafnl.supabase.co",key:"sb_publishable_XKzsttchSE3ZsIoL0sKhEA_hwWHd55i",rows:[],ok:false,ready:false};
+const tbHeaders=()=>({apikey:TB.key,Authorization:"Bearer "+TB.key,"Content-Type":"application/json"});
+async function tbLoad(){
+  try{const r=await fetch(`${TB.url}/rest/v1/trade_block?select=id,manager,player,note,created_at&order=created_at.desc`,{headers:tbHeaders(),cache:"no-store"});
+    if(!r.ok)throw new Error(r.status);TB.rows=await r.json();TB.ok=true;TB.ready=true}catch(e){TB.ok=false}
+  const card=$("tbCard");if(card)card.hidden=!TB.ready; // stays hidden until the trade block tables exist
+  renderTradeBlock();
+}
+function tbPinFor(m){try{return localStorage.getItem("kfc-tb-pin-"+m)||""}catch(e){return ""}}
+function renderTradeBlock(){
+  const box=$("tbList");if(!box)return;
+  if(!TB.ok){box.innerHTML=`<p class="small muted">The trade block couldn't load right now. Try again in a minute.</p>`}
+  else{const own=rostered();
+    const rows=TB.rows.filter(r=>own.get(norm(r.player))===r.manager); // auto-hides players who've since been traded or dropped
+    const stale=TB.rows.length-rows.length;
+    box.innerHTML=rows.length?`<div class="scroll"><table class="au"><tr><th class="l">Player</th><th class="l">Owner</th><th>Salary</th><th>z</th><th class="l">Looking for</th><th>Listed</th><th></th></tr>${rows.map(r=>{const tp=(state.teams[r.manager]||[]).find(p=>norm(p.n)===norm(r.player))||{};
+      return `<tr><td class="l"><b>${esc(r.player)}</b>${injTag(r.player)} <span class="src">${esc(posOf(r.player)||"")}${nbaTeam(r.player)?" · "+esc(nbaTeam(r.player)):""}</span></td><td class="l">${tl(r.manager,20)}</td><td>$${tp.salary??"?"}</td><td>${zOf(r.player).toFixed(1)}</td><td class="l small">${esc(r.note||"")}</td><td class="small muted">${new Date(r.created_at).toLocaleDateString(undefined,{day:"numeric",month:"short"})}</td>
+      <td style="white-space:nowrap"><button class="ghost" data-tb-analyse="${r.id}">Analyse</button> <button class="ghost" data-tb-remove="${r.id}" title="Owner only">Remove</button></td></tr>`}).join("")}</table></div>${stale?`<p class="small muted">${stale} older listing${stale===1?"":"s"} hidden — player no longer on that roster.</p>`:""}`
+      :`<p class="small muted">Nobody's on the block. Be the first to shop someone.</p>`}
+  const mgr=$("tbMgr");if(mgr&&!mgr.options.length){teamOpts(mgr,state.me||"Bizzle");}
+  const m=mgr?mgr.value:null,ps=$("tbPlayer");
+  if(ps&&m){const cur=ps.value;ps.innerHTML=(state.teams[m]||[]).slice().sort((x,y)=>zOf(y.n)-zOf(x.n)).map(p=>`<option ${p.n===cur?"selected":""}>${esc(p.n)}</option>`).join("");
+    const pin=tbPinFor(m);$("tbPin").value=pin;$("tbRemember").checked=!!pin}
+}
+async function tbCall(fn,body){
+  const r=await fetch(`${TB.url}/rest/v1/rpc/${fn}`,{method:"POST",headers:tbHeaders(),body:JSON.stringify(body)});
+  const t=await r.text();let j=null;try{j=JSON.parse(t)}catch(e){}
+  if(!r.ok)throw new Error((j&&(j.message||j.hint))||("Error "+r.status));return j;
+}
+$("tbMgr").addEventListener("change",renderTradeBlock);
+$("tbAdd").addEventListener("click",async()=>{const m=$("tbMgr").value,pl=$("tbPlayer").value,pin=$("tbPin").value.trim(),note=$("tbNote").value.trim(),msg=$("tbMsg");
+  if(!pin){msg.textContent="Enter your PIN.";return}
+  msg.textContent="Listing…";
+  try{await tbCall("tb_add",{p_manager:m,p_pin:pin,p_player:pl,p_note:note});
+    try{if($("tbRemember").checked)localStorage.setItem("kfc-tb-pin-"+m,pin);else localStorage.removeItem("kfc-tb-pin-"+m)}catch(e){}
+    msg.textContent=`${pl} is on the block.`;$("tbNote").value="";await tbLoad()}catch(e){msg.textContent=e.message}});
+document.addEventListener("click",async e=>{
+  const an=e.target.closest&&e.target.closest("[data-tb-analyse]"),rm=e.target.closest&&e.target.closest("[data-tb-remove]");
+  if(an){const r=TB.rows.find(x=>String(x.id)===an.dataset.tbAnalyse);if(!r)return;const me=state.me||"Bizzle";
+    const a=r.manager===me?me:me,b=r.manager===me?TEAMS.find(t=>t!==me):r.manager;$("tA").value=a;teamOpts($("tA"),a);teamOpts($("tB"),b);tradeSel.A.clear();tradeSel.B.clear();
+    if(r.manager===me)tradeSel.A.add(r.player);else tradeSel.B.add(r.player);renderTradeLists();$("tA").scrollIntoView({behavior:"smooth",block:"center"})}
+  if(rm){const r=TB.rows.find(x=>String(x.id)===rm.dataset.tbRemove);if(!r)return;
+    const typed=$("tbMgr").value===r.manager?$("tbPin").value.trim():"",pin=tbPinFor(r.manager)||typed;
+    if(!pin){$("tbAddWrap").open=true;$("tbMgr").value=r.manager;renderTradeBlock();$("tbMsg").innerHTML=`Only ${esc(r.manager)} can pull ${esc(r.player)}. Enter ${esc(r.manager)}'s PIN above, then press Remove again.`;$("tbPin").focus();return}
+    try{await tbCall("tb_remove",{p_id:r.id,p_manager:r.manager,p_pin:pin});$("tbMsg").textContent=`${r.player} is off the block.`;await tbLoad()}catch(err){$("tbAddWrap").open=true;$("tbMsg").textContent=err.message}}
+});
 function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}if(!$("tab-league").hidden)renderLeague();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
-  ({audit:renderAudit,league:renderLeague,players:renderPlayers,season:renderSeason,trade:renderTradeLists})[b.dataset.tab]?.();
+  ({audit:renderAudit,league:renderLeague,players:renderPlayers,season:renderSeason,trade:()=>{renderTradeLists();tbLoad()}})[b.dataset.tab]?.();
 }));
 ["mHome","mAway"].forEach(id=>$(id).addEventListener("change",e=>{state.matchup[id==="mHome"?"home":"away"]=e.target.value;save();renderMatchupInputs();runMatchup()}));
 $("mWeek").addEventListener("change",e=>{state.matchup.week=+e.target.value;state.matchup.from=null;state.matchup.current={};TEAMS.forEach(t=>(state.teams[t]||[]).forEach(p=>p.gl=null));save();renderMatchupInputs();runMatchup()});
