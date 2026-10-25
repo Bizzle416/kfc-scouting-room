@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-25T04:34:11.880Z",
+ "at": "2026-10-25T12:34:40.191Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -23,8 +23,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 5,
-   "latestScoringPeriod": 5,
+   "currentScoringPeriod": 6,
+   "latestScoringPeriod": 6,
    "currentMatchupPeriod": 1,
    "mp1": [
     1,
@@ -34,12 +34,12 @@
     5,
     6
    ],
-   "today": "2026-10-24"
+   "today": "2026-10-25"
   },
-  "poolStats": 296,
+  "poolStats": 297,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 90,
+   "flagged": 89,
    "sample": [
     [
      "zach edey",
@@ -96,13 +96,13 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 375,
+  "espnPlayers": 376,
   "finalBy": {
    "2026-10-20": "clock",
    "2026-10-21": "clock",
    "2026-10-22": "clock",
    "2026-10-23": "clock",
-   "2026-10-24": "scoreboard",
+   "2026-10-24": "clock",
    "2026-10-25": "not yet"
   },
   "finalDays": [
@@ -149,10 +149,10 @@
     "ftm": 171,
     "fta": 216,
     "tpm": 53,
-    "reb": 286,
+    "reb": 287,
     "ast": 184,
     "stl": 35,
-    "blk": 23,
+    "blk": 24,
     "to": 105,
     "pts": 706
    },
@@ -172,52 +172,52 @@
   },
   "espnScoreboard": {
    "Slav": {
-    "fgp": 0.46389497,
-    "ftp": 0.80487805,
-    "tpm": 48,
-    "reb": 192,
-    "ast": 128,
-    "stl": 39,
-    "blk": 30,
-    "to": 80,
-    "pts": 637
+    "fgp": 0.47668394,
+    "ftp": 0.81327801,
+    "tpm": 68,
+    "reb": 231,
+    "ast": 158,
+    "stl": 45,
+    "blk": 38,
+    "to": 101,
+    "pts": 816
    },
    "Mamba": {
-    "fgp": 0.44501279,
-    "ftp": 0.74590164,
-    "tpm": 35,
-    "reb": 201,
-    "ast": 115,
-    "stl": 25,
-    "blk": 17,
-    "to": 82,
-    "pts": 474
+    "fgp": 0.42806394,
+    "ftp": 0.79166667,
+    "tpm": 53,
+    "reb": 287,
+    "ast": 184,
+    "stl": 35,
+    "blk": 24,
+    "to": 105,
+    "pts": 706
    },
    "Bizzle": {
-    "fgp": 0.46867749,
-    "ftp": 0.81410256,
-    "tpm": 52,
-    "reb": 186,
-    "ast": 133,
-    "stl": 39,
-    "blk": 19,
-    "to": 86,
-    "pts": 583
+    "fgp": 0.47619048,
+    "ftp": 0.81283422,
+    "tpm": 68,
+    "reb": 250,
+    "ast": 164,
+    "stl": 49,
+    "blk": 26,
+    "to": 105,
+    "pts": 760
    },
    "Danna": {
-    "fgp": 0.51716247,
-    "ftp": 0.75796178,
-    "tpm": 61,
-    "reb": 171,
-    "ast": 127,
-    "stl": 31,
-    "blk": 22,
-    "to": 75,
-    "pts": 632
+    "fgp": 0.51277683,
+    "ftp": 0.77386935,
+    "tpm": 87,
+    "reb": 234,
+    "ast": 176,
+    "stl": 47,
+    "blk": 30,
+    "to": 101,
+    "pts": 843
    }
   },
   "scoreboardCompared": true,
-  "scoreboardLagging": true,
+  "scoreboardLagging": false,
   "pairs": [
    [
     "Slav",
