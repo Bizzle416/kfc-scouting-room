@@ -89,7 +89,7 @@ td:first-child,th:first-child{text-align:left}
 .achhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font:700 18px var(--cond);margin-bottom:6px}.achhead .sc{font:800 30px var(--cond);font-variant-numeric:tabular-nums}
 table.ach td.l,table.ach th.l,table.fd td.l,table.fd th.l,table.catstrip .l{text-align:left}table.ach td.l{white-space:normal}table.ach td,table.ach th{padding:6px 4px}@media (max-width:420px){.cols{grid-template-columns:minmax(0,1fr)}}table.ach .why{font-size:13px}
 table.catstrip td,table.catstrip th{padding:3px 6px;text-align:center;font-size:13px}
-.fdcard{border-top:4px solid var(--bucket)}.fdside{border:1px solid var(--line);border-radius:10px;padding:12px}
+.fdcard{border-top:4px solid var(--bucket)}.fdscore{font:800 30px/1.1 var(--cond);margin:0}.fdside{border:1px solid var(--line);border-radius:10px;padding:12px}
 .fdnums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}.fdnums div{background:var(--soft);border-radius:8px;padding:6px 8px}
 .fdnums b{display:block;font:800 26px/1 var(--cond);font-variant-numeric:tabular-nums}.fdnums span{font-size:12px;color:var(--muted)}
 table.fd td.fdneed{white-space:normal;padding-top:0;color:var(--muted)}table.fd tr:has(+tr.needrow) td{border-bottom:0}.fdlev{margin:4px 0 0;padding-left:18px;font-size:14px}.fdlev li{margin:3px 0}
@@ -184,7 +184,7 @@ svg text{font-family:var(--font)}
   <div class="card" id="lgWeekCard" hidden><h3>Around the league <span class="small muted" id="lgWeekSub"></span></h3><div class="lgw" id="lgWeek"></div></div>
   <div id="mResult"></div>
   <div class="card" id="achCard" hidden><h2>Over &amp; under achievers <span class="small muted" id="achSub"></span></h2>
-    <p class="small muted">Who is deciding each matchup. Expected categories are re-run after every night using only what was known then. Player impact swaps his actual started games for what he was projected to do before the week and measures how far the expected final score moves. Bench games don't count. Rosters are today's.</p>
+    <p class="small muted">Raw production, every team. <b>Game z</b> is that single game's 9-cat z-score — one great night can score 20+, a season-long star averages around 8; <b>vs norm</b> subtracts what he was projected to produce per game before the week. Team totals count started games only. The timelines re-run each matchup after every night using only what was known then.</p>
     <div id="ach"></div></div>
   <div class="card"><h3>Seat at the table <span class="small muted">· lineup plan</span></h3>
     <p class="small muted">Each remaining day, the best 10 who play fill PG, SG, SF, PF, C, G, F and 3 UTIL. Filled dot = starts, ring = has a game but no slot. That ring is a wasted game.</p>
@@ -367,7 +367,7 @@ function zScores(){
   const vals=e=>({fgp:e.fgm-e.fga*lgFG,ftp:e.ftm-e.fta*lgFT,tpm:e.tpm,reb:e.reb,ast:e.ast,stl:e.stl,blk:e.blk,to:-e.to,pts:e.pts});
   const base=top.map(vals),ms={};
   CATS.forEach(c=>{const xs=base.map(a=>a[c.k]);const m=xs.reduce((a,b)=>a+b,0)/xs.length;const sd=Math.sqrt(xs.reduce((a,b)=>a+(b-m)**2,0)/xs.length)||1;ms[c.k]=[m,sd]});
-  zCache=new Map();
+  zCache=new Map();zCache.scale={ms,lgFG,lgFT};
   pool.forEach(([k,e])=>{const v=vals(e),z={};let tot=0;CATS.forEach(c=>{z[c.k]=(v[c.k]-ms[c.k][0])/ms[c.k][1];tot+=z[c.k]});z.total=tot;zCache.set(k,z)});
   return zCache;
 }
@@ -526,7 +526,7 @@ function runMatchup(){
   const lead=CATS.filter(c=>catSide(r,c)>0).map(c=>r.cat[c.k].w/SIMS),trail=CATS.filter(c=>catSide(r,c)<0).map(c=>1-(r.cat[c.k].w+r.cat[c.k].t)/SIMS);
   const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*100):0;
   const why="";
-  const fd=(left===1&&pairOK()&&from===state.pubFrom&&hasDaily(W))?(()=>{try{return finalDayHTML({M,W,from,pA,pB,dA,dB,cA,cB,r})}catch(e){console.error(e);return ""}})():"";
+  const fd=(left===1&&pairOK()&&from===state.pubFrom&&hasDaily(W))?(()=>{try{return finalDayHTML({M,W,from,pA,pB,dA,dB,cA,cB,r,fA,fB})}catch(e){console.error(e);return ""}})():"";
   out.innerHTML=`<div class="arena" role="group" aria-label="Scoreboard">
     <div class="arena-top"><span>Week ${W.w}${W.w>18?" · playoffs":""}</span><span>${dayLabel(from)} → ${dayLabel(ds[ds.length-1])}</span><span>Shot clock: ${left} day${left>1?"s":""}</span></div>
     <div class="arena-main">
@@ -881,44 +881,44 @@ function matchupTimeline(a,b,wk,n=4000){
     return {days,pts}});
 }
 
-// Started games only. Expected = what he was projected to do per game before the week began.
-// Impact = how far the expected final score moves if his actual games are swapped for expected ones.
-function achievers(a,b,wk){
+const wkd=iso=>new Date(iso+"T00:00:00Z").toLocaleDateString(undefined,{weekday:"short",timeZone:"UTC"});
+// Game production: every game's 9-cat value (same z scale as the Players tab) against what that player
+// was projected to produce per game before the week. Bench games count — production is production.
+function production(wk){
   const W=REF.weeks[wk-1];if(!W)return null;const days=bankedDays(W);if(!days.length)return null;
   return withWeek(wk,()=>{
-    const lines={};
-    [a,b].forEach(t=>days.forEach(d=>dayRows(d,t).filter(onCourt).forEach(r=>{const k=t+"|"+r[0],L=lines[k]=lines[k]||{t,n:r[0],g:0,act:zeroLine()};L.g++;addLine(L.act,r)})));
-    const Ls=Object.values(lines);
-    withRewind(days[0],()=>Ls.forEach(L=>{const e=eff({n:L.n})||replLine();L.exp=zeroLine();if(e)RAW.forEach(k=>L.exp[k]=(e[k]||0)*L.g);else L.exp=Object.assign({},L.act)}));
-    const from=liveFrom(W),cur=state.matchup.current||{};
-    const dA=distFrom(planRoster(state.teams[a]||[],W,from)),dB=distFrom(planRoster(state.teams[b]||[],W,from));
-    const C={[a]:Object.assign(zeroLine(),cur[a]),[b]:Object.assign(zeroLine(),cur[b])};
-    const expA=(ca,cb)=>catOdds(dA,dB,ca,cb).exp;
-    const base=expA(C[a],C[b]);
-    const odds={[a]:catOdds(dA,dB,C[a],C[b]),[b]:catOdds(dB,dA,C[b],C[a])};
-    const swap=(c,L)=>{const o=Object.assign({},c);RAW.forEach(k=>o[k]=o[k]-L.act[k]+L.exp[k]);return o};
-    const impact=(t,ca,cb)=>t===a?base-expA(ca,cb):expA(ca,cb)-base;
-    Ls.forEach(L=>{const ca=L.t===a?swap(C[a],L):C[a],cb=L.t===b?swap(C[b],L):C[b];L.imp=impact(L.t,ca,cb);
-      const o=odds[L.t],d=k=>L.act[k]-L.exp[k],parts=[];
-      ["tpm","reb","ast","stl","blk","pts"].forEach(k=>parts.push({k,v:o[k].lev*d(k)}));parts.push({k:"to",v:-o.to.lev*d("to")});
-      parts.push({k:"fgp",v:o.fgp.lev*(d("fgm")-o.fgp.pct*d("fga"))/Math.max(1,o.fgp.att)});
-      parts.push({k:"ftp",v:o.ftp.lev*(d("ftm")-o.ftp.pct*d("fta"))/Math.max(1,o.ftp.att)});
-      L.why=parts.filter(p=>Math.sign(p.v)===Math.sign(L.imp)&&Math.abs(p.v)>.004).sort((x,y)=>Math.abs(y.v)-Math.abs(x.v)).slice(0,2).map(p=>p.k)});
-    const allSwap=t=>Ls.filter(L=>L.t===t).reduce((c,L)=>swap(c,L),C[t]);
-    const team={[a]:impact(a,allSwap(a),C[b]),[b]:impact(b,C[a],allSwap(b))};
-    const pace=expA(allSwap(a),allSwap(b));
-    return {a,b,base,pace,team,lines:Ls,days};
+    const games=[];TEAMS.forEach(t=>days.forEach(d=>dayRows(d,t).forEach(r=>games.push({t,d,n:r[0],slot:r[1],line:addLine(zeroLine(),r)}))));
+    const per={};withRewind(days[0],()=>games.forEach(g=>{const k=norm(g.n);if(!(k in per))per[k]=eff({n:g.n})||replLine()}));
+    zScores();const S=zCache.scale;
+    const gz=l=>{if(!l)return 0;const v={fgp:l.fgm-l.fga*S.lgFG,ftp:l.ftm-l.fta*S.lgFT,tpm:l.tpm,reb:l.reb,ast:l.ast,stl:l.stl,blk:l.blk,to:-l.to,pts:l.pts};
+      return CATS.reduce((s,c)=>s+(v[c.k]-S.ms[c.k][0])/S.ms[c.k][1],0)};
+    games.forEach(g=>{g.exp=per[norm(g.n)];g.z=gz(g.line);g.dz=g.z-gz(g.exp)});
+    const pl={};games.forEach(g=>{const k=g.t+"|"+g.n,P=pl[k]=pl[k]||{t:g.t,n:g.n,g:0,dz:0,act:zeroLine(),exp:g.exp,best:null};
+      P.g++;P.dz+=g.dz;RAW.forEach(q=>P.act[q]+=g.line[q]);if(!P.best||g.dz>P.best.dz)P.best=g});
+    const team={};TEAMS.forEach(t=>team[t]=games.filter(g=>g.t===t&&onCourt([0,g.slot])).reduce((s,g)=>s+g.dz,0));
+    return {days,games,players:Object.values(pl),team};
   });
 }
-const wkd=iso=>new Date(iso+"T00:00:00Z").toLocaleDateString(undefined,{weekday:"short",timeZone:"UTC"});
 const CATLBL=Object.fromEntries(CATS.map(c=>[c.k,c.l]));
-function whyText(L){return L.why.map(k=>{
-  if(k==="fgp"||k==="ftp"){const m=k==="fgp"?"fgm":"ftm",a=k==="fgp"?"fga":"fta",ap=L.act[a]?L.act[m]/L.act[a]:0,ep=L.exp[a]?L.exp[m]/L.exp[a]:0;
-    return `${CATLBL[k]} ${L.act[m]}/${L.act[a]} (${Math.round(ap*100)}% v ${Math.round(ep*100)}%)`}
-  const df=Math.round(L.act[k]-L.exp[k]);return `${L.act[k]} ${CATLBL[k]} (${df>0?"+":""}${df})`}).join(" · ")||"—"}
 const sgn=(x,dp=2)=>{const v=+x.toFixed(dp);return (v>0?"+":v<0?"−":"±")+Math.abs(v).toFixed(dp)};
 const dcls=x=>x>=.005?"delta-pos":x<=-.005?"delta-neg":"muted";
-
+const r1=x=>(Math.round(x*10)/10).toFixed(1);
+// One game: the counting line that matters, shooting last.
+const gameLine=l=>{const bits=[`<b>${l.pts}</b> pts`,`${l.reb} reb`,`${l.ast} ast`];if(l.tpm)bits.push(`${l.tpm} 3s`);if(l.stl)bits.push(`${l.stl} stl`);if(l.blk)bits.push(`${l.blk} blk`);bits.push(`${l.to} to`);
+  return bits.join(" · ")+` <span class="muted">${l.fgm}/${l.fga} FG${l.fta?` · ${l.ftm}/${l.fta} FT`:""}</span>`};
+const avgLine=(l,g)=>{const a=k=>r1(l[k]/g),fg=l.fga?Math.round(l.fgm/l.fga*100):0,ft=l.fta?Math.round(l.ftm/l.fta*100):0;return `${a("pts")} / ${a("reb")} / ${a("ast")} · ${a("tpm")} 3s · ${a("stl")} stl · ${a("blk")} blk · ${a("to")} to · ${fg}% FG · ${ft}% FT`};
+function prodTables(P){
+  const lg=(arr,head)=>`<tr><th class="l" colspan="5" style="padding-top:10px">${head}</th></tr>`+arr.map(g=>`<tr><td class="l">${badge(g.t,20)} ${esc(g.n)}${onCourt([0,g.slot])?"":' <span class="tag" style="color:var(--bad)">bench</span>'}</td><td class="l small">${wkd(g.d)}</td><td class="l small">${gameLine(g.line)}</td><td>${r1(g.z)}</td><td><span class="${dcls(g.dz)}"><b>${sgn(g.dz,1)}</b></span></td></tr>`).join("");
+  const hot=P.games.filter(g=>g.dz>=3).sort((a,b)=>b.dz-a.dz).slice(0,10),cold=P.games.filter(g=>g.dz<=-3).sort((a,b)=>a.dz-b.dz).slice(0,6);
+  let h=`<h3>Massive games <span class="small muted">· every team, every night</span></h3><div class="scroll"><table class="ach"><tr><th class="l">Player</th><th class="l">Night</th><th class="l">Line</th><th>Game z</th><th>vs norm</th></tr>${lg(hot,"🔥 Blow-ups")}${lg(cold,"🧊 Duds")}</table></div>`;
+  const teamTbl=t=>{const ps=P.players.filter(p=>p.t===t),hot=ps.filter(p=>p.dz>=1).sort((a,b)=>b.dz-a.dz).slice(0,5),cold=ps.filter(p=>p.dz<=-1).sort((a,b)=>a.dz-b.dz).slice(0,3);
+    const row=p=>`<tr><td class="l">${esc(p.n)}${injTag(p.n)}<div class="why">${avgLine(p.act,p.g)} <br><span class="muted">proj ${p.exp?avgLine(p.exp,1):"—"}</span></div></td><td>${p.g}</td><td><span class="${dcls(p.dz)}"><b>${sgn(p.dz,1)}</b></span></td></tr>`;
+    const sec=(arr,head,empty)=>`<tr><th class="l" colspan="3" style="padding-top:8px">${head}</th></tr>`+(arr.length?arr.map(row).join(""):`<tr><td class="l small muted" colspan="3">${empty}</td></tr>`);
+    return `<div><h3>${tl(t,24)} <span class="${dcls(P.team[t])}" style="font:700 18px var(--cond)">${sgn(P.team[t],1)}</span> <span class="small muted">starters vs norm</span></h3>
+      <div class="scroll"><table class="ach"><tr><th class="l">Player · per game, then projection</th><th>G</th><th>vs norm</th></tr>${sec(hot,"🔥 Over",`Nobody well above his norm.`)}${sec(cold,"🧊 Under","Nobody well below.")}</table></div></div>`};
+  h+=`<h3 style="margin-top:16px">By team <span class="small muted">· week totals, all games</span></h3><div class="cols">${TEAMS.map(teamTbl).join("")}</div>`;
+  return h;
+}
 function timelineSVG(T,a,b){
   const P=T.pts,N=P.length,w=640,h=200,L=34,R=60,top=14,bot=34,xs=i=>L+(N>1?i*(w-L-R)/(N-1):0),ys=v=>top+(9-v)*(h-top-bot)/9;
   const lab=i=>i===0?"Start":(P[i].final?"Final":"after "+wkd(T.days[i-1]));
@@ -949,30 +949,20 @@ function timelineStory(T,a,b){
     t+=` Biggest night: <b>${wkd(night)}</b>, <span class="${dcls(big.d)}">${sgn(big.d,1)}</span> to ${esc(a)}, mostly <b>${c.c.l}</b> (${esc(a)} ${Math.round(pA.cat[c.c.k]*100)}% → ${Math.round(pB.cat[c.c.k]*100)}%)${who}.`}
   return `<p class="small" style="margin:8px 0 0">${t}</p>`;
 }
-function achTeamList(A,t){
-  const ls=A.lines.filter(L=>L.t===t),hot=ls.filter(L=>L.imp>=.02).sort((x,y)=>y.imp-x.imp).slice(0,4),cold=ls.filter(L=>L.imp<=-.02).sort((x,y)=>x.imp-y.imp).slice(0,3);
-  const row=L=>`<tr><td class="l">${esc(L.n)}${injTag(L.n)}<div class="small muted why">${whyText(L)}</div></td><td>${L.g}</td><td><span class="${dcls(L.imp)}">${sgn(L.imp)}</span></td></tr>`;
-  const tb=(h,arr,empty)=>`<tr><th class="l" colspan="3" style="padding-top:10px">${h}</th></tr>`+(arr.length?arr.map(row).join(""):`<tr><td class="l small muted" colspan="3">${empty}</td></tr>`);
-  return `<div><h3>${tl(t,24)} <span class="${dcls(A.team[t])}" style="font:700 18px var(--cond)">${sgn(A.team[t])} cats</span></h3>
-    <div class="scroll"><table class="ach"><tr><th class="l">Player · why</th><th>G</th><th>Cats</th></tr>
-    ${tb("🔥 Running hot",hot,"Nobody's above projection by much.")}${tb("🧊 Running cold",cold,"Nobody's dragging.")}</table></div></div>`;
-}
 let achCache={key:"",data:null};
 function renderAchievers(){
   const card=$("achCard"),p=state.logPair||[],o=otherPair(),wk=+state.logWeek||0;
   if(!card)return;
   if(p.length!==2||!wk||!Object.keys(state.teams).length||!bankedDays(REF.weeks[wk-1]||{start:"",days:0}).length){card.hidden=true;return}
   const key=[state.updatedAt,state.matchup.avail,wk].join("|");
-  if(achCache.key!==key){achCache={key,data:[p,o].filter(x=>x.length===2).map(([a,b])=>({a,b,T:matchupTimeline(a,b,wk),A:achievers(a,b,wk)}))}}
-  const W=REF.weeks[wk-1],nights=bankedDays(W).length;
+  if(achCache.key!==key)achCache={key,data:{P:production(wk),M:[p,o].filter(x=>x.length===2).map(([a,b])=>({a,b,T:matchupTimeline(a,b,wk)}))}};
+  const {P,M}=achCache.data,nights=bankedDays(REF.weeks[wk-1]).length;
   $("achSub").textContent=`· week ${wk}, ${nights} night${nights===1?"":"s"} banked`;
-  $("ach").innerHTML=achCache.data.map(({a,b,T,A})=>{if(!T||!A)return "";
-    const e=T.pts[T.pts.length-1];
+  const tls=M.map(({a,b,T})=>{if(!T)return "";const e=T.pts[T.pts.length-1];
     return `<div class="achm"><div class="achhead">${tl(a,28)} <span class="sc" style="color:${tcol(a)}">${e.a.toFixed(1)}</span><span class="muted small">exp cats</span><span class="sc" style="color:${tcol(b)}">${e.b.toFixed(1)}</span> ${tl(b,28)}</div>
       ${timelineSVG(T,a,b)}${timelineStory(T,a,b)}
-      <details class="small" style="margin-top:6px"><summary>Category win % night by night</summary><div class="scroll">${catStrip(T,a,b)}</div></details>
-      <p class="small" style="margin:12px 0 4px"><b>Luck ledger:</b> ${esc(tname(a))}'s starters are <span class="${dcls(A.team[a])}">${sgn(A.team[a])}</span> cats against projection, ${esc(tname(b))}'s <span class="${dcls(A.team[b])}">${sgn(A.team[b])}</span>. If everyone had played to projection this would sit <b>${A.pace.toFixed(1)}–${(9-A.pace).toFixed(1)}</b> instead of ${A.base.toFixed(1)}–${(9-A.base).toFixed(1)}.</p>
-      <div class="cols">${achTeamList(A,a)}${achTeamList(A,b)}</div></div>`}).join("");
+      <details class="small" style="margin-top:6px"><summary>Category win % night by night</summary><div class="scroll">${catStrip(T,a,b)}</div></details></div>`}).join("");
+  $("ach").innerHTML=(P?prodTables(P):"")+`<h3 style="margin-top:18px">How each matchup moved</h3>`+tls;
   card.hidden=false;
 }
 
@@ -981,67 +971,49 @@ function simJoint(dA,dB,cA,cB,n){const m=new Map();for(let i=0;i<n;i++){const x=
   CATS.forEach(c=>{const p=x[c.k],q=y[c.k],eq=c.k.endsWith("p")?Math.abs(p-q)<1e-4:p===q;if(eq)T++;else if(c.low?p<q:p>q)W++;else L++});
   const k=W+"-"+L+"-"+T;m.set(k,(m.get(k)||0)+1)}return m}
 const FD_STATE=p=>p>=.95?["Locked","ok"]:p>=.65?["Ahead","ok"]:p>.35?["Coin flip","warn"]:p>.05?["Long shot","bad"]:["Gone","bad"];
-// What one side needs tonight in one category, assuming the other side plays to projection.
-function fdNeed(c,me,op,cMe,cOp,dMe,dOp,gMe){
-  const r=Math.round,ahead=c.low?(cMe[c.k]+dMe.m[c.k])<(cOp[c.k]+dOp.m[c.k]):(cMe[c.k]||0)+dMe.m[c.k]>(cOp[c.k]||0)+dOp.m[c.k];
+// What the trailing side needs tonight in one category, assuming the other side plays to projection.
+function fdNeed(c,cMe,cOp,dMe,dOp,gMe){
+  const r=Math.round;
   if(c.k==="fgp"||c.k==="ftp"){const m=c.k==="fgp"?"fgm":"ftm",a=c.k==="fgp"?"fga":"fta",L=c.k==="fgp"?"FGA":"FTA";
-    const pMe=((cMe[m]||0)+dMe.m[m])/Math.max(1,(cMe[a]||0)+dMe.m[a]),pOp=((cOp[m]||0)+dOp.m[m])/Math.max(1,(cOp[a]||0)+dOp.m[a]);
-    const need=(p,cm,ca,att)=>att>0?(p*(ca+att)-cm)/att:9;
-    if(!ahead){const q=need(pOp,cMe[m]||0,cMe[a]||0,dMe.m[a]),proj=dMe.m[a]?dMe.m[m]/dMe.m[a]:0;
-      return q>1?`Out of reach on ≈${r(dMe.m[a])} ${L} — they'd have to go cold.`:`Shoot <b>${Math.max(0,Math.round(q*100))}%+</b> on ≈${r(dMe.m[a])} ${L} tonight (projected ${Math.round(proj*100)}%).`}
-    const q=need(pMe,cOp[m]||0,cOp[a]||0,dOp.m[a]),proj=dOp.m[a]?dOp.m[m]/dOp.m[a]:0;
-    return q>1?`They can't catch you on ≈${r(dOp.m[a])} ${L}.`:q<=0?`Thin: they pass you on any normal night.`:`They need <b>${Math.round(q*100)}%</b> on ≈${r(dOp.m[a])} ${L} to pass you (they project ${Math.round(proj*100)}%). Sit bad-volume shooters to protect it.`}
-  const now=cMe[c.k]||0,opF=(cOp[c.k]||0)+dOp.m[c.k],meF=now+dMe.m[c.k];
-  if(c.low){const cap=Math.ceil(opF-now)-1;return cap<0?`Already ${r(now-opF)+1} too many — only fixable if they cough it up.`:`Keep it to <b>${cap} or fewer</b> tonight (projected ${r(dMe.m[c.k])}).${ahead?"":" Bench high-turnover guards."}`}
-  if(ahead){const x=Math.max(1,Math.floor(meF-(cOp[c.k]||0))+1);return `They need <b>${x}+</b> tonight to pass you (they project ${r(dOp.m[c.k])}).`}
-  const x=Math.max(1,Math.ceil(opF-now)+1);return `Need <b>${x}+</b> tonight (projected ${r(dMe.m[c.k])} from ${r(gMe)} start${r(gMe)===1?"":"s"}).`;
-}
-function fdLevers(team,opp,W,from){
-  const R=state.teams[team]||[],dO=distFrom(planRoster(state.teams[opp]||[],W,from)),cMe=curFor(team),cOp=curFor(opp);
-  const odds=plan=>catOdds(distFrom(plan),dO,cMe,cOp),base=planRoster(R,W,from),o0=odds(base),b0=o0.exp,out=[];
-  const tonight=p=>(p.days[0]||{on:[]}).on.map(x=>x[0]);
-  const mu=planRoster(R,W,from,tp=>matchupValue(eff(tp),o0)),dMu=odds(mu).exp-b0;
-  if(dMu>=.05){const A=new Set(tonight(base)),B=new Set(tonight(mu)),ins=[...B].filter(n=>!A.has(n)),outs=[...A].filter(n=>!B.has(n));
-    if(ins.length)out.push({d:dMu,h:`Start <b>${ins.map(esc).join(", ")}</b> over ${outs.map(esc).join(", ")} — weights tonight's lineup to the live categories.`})}
-  tonight(base).forEach(n=>{const d=odds(planRoster(R.map(p=>p.n===n?Object.assign({},p,{gl:0}):p),W,from)).exp-b0;
-    if(d>=.05)out.push({d,h:`Sit <b>${esc(n)}</b> — protects more than his counting stats add.`})});
-  const own=rostered(),ban=new Set((state.dropped||{})[team]||[]);
-  REF.players.filter(p=>p.pj&&!own.has(norm(p.n))&&!ban.has(norm(p.n))&&!["OUT","INJURY_RESERVE","SUSPENSION"].includes(injOf(p.n))&&plays(p.t,from))
-    .map(p=>({p,v:matchupValue(eff({n:p.n}),o0)})).sort((x,y)=>y.v-x.v).slice(0,6)
-    .map(({p})=>({p,d:odds(planRoster(R.concat([{n:p.n,salary:5,status:"active"}]),W,from)).exp-b0})).filter(x=>x.d>=.05).sort((x,y)=>y.d-x.d).slice(0,2)
-    .forEach(x=>{const e=eff({n:x.p.n}),k=["tpm","reb","ast","stl","blk","pts"].map(k=>({k,v:o0[k].lev*(e[k]||0)})).sort((a,b)=>b.v-a.v).slice(0,2).map(z=>CATLBL[z.k]);
-      out.push({d:x.d,h:`Stream <b>${esc(x.p.n)}</b> (${esc(x.p.t)}) for ${k.join(" and ")} — $5 plus the dropped player's dead cap.`})});
-  return out.sort((x,y)=>y.d-x.d).slice(0,4);
+    const pOp=((cOp[m]||0)+dOp.m[m])/Math.max(1,(cOp[a]||0)+dOp.m[a]),att=dMe.m[a],q=att>0?(pOp*((cMe[a]||0)+att)-(cMe[m]||0))/att:9,proj=att?dMe.m[m]/att:0;
+    return q>1?`out of reach on ≈${r(att)} ${L} unless the other side goes cold`:`shoot <b>${Math.max(0,Math.round(q*100))}%+</b> on ≈${r(att)} ${L} (projected ${Math.round(proj*100)}%)`}
+  const now=cMe[c.k]||0,opF=(cOp[c.k]||0)+dOp.m[c.k];
+  if(c.low){const cap=Math.ceil(opF-now)-1;return cap<0?`already too many — only flips if the other side coughs it up`:`keep it to <b>${cap} or fewer</b> (projected ${r(dMe.m[c.k])})`}
+  return `needs <b>${Math.max(1,Math.ceil(opF-now)+1)}+</b> tonight (projected ${r(dMe.m[c.k])} from ${r(gMe)} start${r(gMe)===1?"":"s"})`;
 }
 function finalDayHTML(x){
-  const {M,W,from,pA,pB,dA,dB,cA,cB,r}=x,n=8000,J=simJoint(dA,dB,cA,cB,n);
+  const {M,W,pA,pB,dA,dB,cA,cB,r,fA,fB}=x,n=8000,J=simJoint(dA,dB,cA,cB,n),H=M.home,A=M.away;
   const now=catScore(RAW.map(k=>cA[k]||0),RAW.map(k=>cB[k]||0));
   const fmtS=(w,l,t)=>`${w}–${l}${t?"–"+t:""}`;
-  const top=[...J].sort((p,q)=>q[1]-p[1]).slice(0,4).map(([k,c])=>{const [w,l,t]=k.split("-").map(Number),lead=w>l?M.home:w<l?M.away:null;
-    return `<span class="chip" style="${lead?`border-color:${tcol(lead)};color:${tcol(lead)}`:""}">${fmtS(w,l,t)} · ${Math.round(c/n*100)}%</span>`}).join("");
+  const rows=CATS.map((c,i)=>{const w=r.cat[c.k].w/SIMS,t=r.cat[c.k].t/SIMS,l=1-w-t,win=Math.abs(w-l)<1e-9?null:(w>l?H:A);return {c,i,w,l,t,win}});
+  const pH=rows.filter(x=>x.win===H),pAw=rows.filter(x=>x.win===A),pT=rows.filter(x=>!x.win);
+  const lead=pH.length>pAw.length?H:pAw.length>pH.length?A:null,big=Math.max(pH.length,pAw.length),small=Math.min(pH.length,pAw.length);
+  const scoreLine=lead?`<b style="color:${tcol(lead)}">${esc(tname(lead))} ${fmtS(big,small,pT.length)}</b>`:`<b>Level ${fmtS(big,small,pT.length)}</b>`;
+  const exp={[H]:rows.reduce((s,x)=>s+x.w,0),[A]:rows.reduce((s,x)=>s+x.l,0)};
   const atLeast=(home,k)=>{let s=0;J.forEach((c,key)=>{const [w,l]=key.split("-").map(Number);if((home?w:l)>=k)s+=c});return s/n};
-  const side=(team,opp,home)=>{
-    const cMe=home?cA:cB,cOp=home?cB:cA,dMe=home?dA:dB,dOp=home?dB:dA,plan=home?pA:pB;
-    const gT=(plan.days[0]||{on:[]}).on.length;
-    const ps=CATS.map(c=>{const w=r.cat[c.k].w/SIMS,t=r.cat[c.k].t/SIMS;return {c,p:home?w:1-w-t}});
-    const exp=ps.reduce((s,x)=>s+x.p,0),live=ps.filter(x=>x.p>.05&&x.p<.95).sort((a,b)=>b.p-a.p),bank=ps.filter(x=>x.p>=.95),gone=ps.filter(x=>x.p<=.05);
-    const ceil=ps.filter(x=>x.p>=.2).length,flips=ps.filter(x=>x.p>=.2&&x.p<.95).sort((a,b)=>b.p-a.p);
-    const lev=fdLevers(team,opp,W,from);
-    return `<div class="fdside"><h3>${tl(team,28)}</h3>
-      <div class="fdnums"><div><b>${exp.toFixed(1)}</b><span>expected cats</span></div><div><b>${fmtS(ceil,9-ceil,0)}</b><span>best realistic · ${Math.round(atLeast(home,ceil)*100)}%</span></div><div><b>${Math.round(atLeast(home,5)*100)}%</b><span>5+ cats</span></div></div>
-      <p class="small" style="margin:6px 0">${ceil>bank.length?`Best realistic score needs ${bank.length?`the ${bank.length} locked plus `:""}${flips.map(f=>`<b>${f.c.l}</b> (${Math.round(f.p*100)}%)`).join(", ")}.`:"Nothing left to chase — hold what's locked."}</p>
-      <div class="scroll"><table class="fd"><tr><th class="l">Cat</th><th>Now (v them)</th><th>Win</th></tr>
-      ${live.map(({c,p})=>{const [lab,col]=FD_STATE(p);return `<tr><td class="l"><b>${c.l}</b> <span class="tag" style="color:var(--${col})">${lab}</span></td><td>${(()=>{const v=C=>c.k.endsWith("p")?((C[c.k==="fgp"?"fga":"fta"]?C[c.k==="fgp"?"fgm":"ftm"]/C[c.k==="fgp"?"fga":"fta"]:0)*100).toFixed(1)+"%":Math.round(C[c.k]||0);return `${v(cMe)} <span class="muted">v ${v(cOp)}</span>`})()}</td><td><b>${Math.round(p*100)}%</b></td></tr><tr class="needrow"><td class="l small fdneed" colspan="3">${fdNeed(c,team,opp,cMe,cOp,dMe,dOp,gT)}</td></tr>`}).join("")}
-      ${bank.length?`<tr><td class="l" colspan="3" style="white-space:normal"><span class="tag" style="color:var(--ok)">Locked</span> ${bank.map(x=>x.c.l).join(", ")} <span class="small muted">— don't spend a move here</span></td></tr>`:""}
-      ${gone.length?`<tr><td class="l" colspan="3" style="white-space:normal"><span class="tag" style="color:var(--bad)">Gone</span> ${gone.map(x=>x.c.l).join(", ")} <span class="small muted">— punt it, play for the rest</span></td></tr>`:""}</table></div>
-      <h3 style="margin-top:12px;font-size:17px">Levers tonight</h3>
-      ${lev.length?`<ul class="fdlev">${lev.map(l=>`<li>${l.h} <span class="delta-pos">+${l.d.toFixed(2)} cats</span></li>`).join("")}</ul>`:`<p class="small muted">No move adds 0.05 cats. The site's lineup is already the best play.</p>`}</div>`};
+  const top=[...J].sort((p,q)=>q[1]-p[1]).slice(0,4).map(([k,c])=>{const [w,l,t]=k.split("-").map(Number),ld=w>l?H:w<l?A:null;
+    return `<span class="chip" style="${ld?`border-color:${tcol(ld)};color:${tcol(ld)}`:""}">${ld?esc(ld)+" ":""}${fmtS(Math.max(w,l),Math.min(w,l),t)} · ${Math.round(c/n*100)}%</span>`}).join("");
+  const fmt=(k,v)=>k.endsWith("p")?(v*100).toFixed(1)+"%":Math.round(v);
+  const nowV=(C,k)=>k==="fgp"?(C.fga?C.fgm/C.fga:0):k==="ftp"?(C.fta?C.ftm/C.fta:0):(C[k]||0);
+  const gT={[H]:(pA.days[0]||{on:[]}).on.length,[A]:(pB.days[0]||{on:[]}).on.length};
+  const body=rows.map(x=>{const {c,i,w,l,win}=x,pWin=Math.max(w,l),[lab,col]=FD_STATE(pWin),bk=now.cats[i],bt=bk==="W"?H:bk==="L"?A:null;
+    const trail=win===H?A:H,need=pWin<.95&&pWin>.05?`${esc(trail)} ${fdNeed(c,trail===H?cA:cB,trail===H?cB:cA,trail===H?dA:dB,trail===H?dB:dA,gT[trail])}`:pWin>=.95?"Locked — no move changes it":"Gone";
+    return `<tr><td class="l"><b>${c.l}</b></td>
+      <td${bt===H?` style="color:${tcol(H)};font-weight:700"`:""}>${fmt(c.k,nowV(cA,c.k))}</td><td${bt===A?` style="color:${tcol(A)};font-weight:700"`:""}>${fmt(c.k,nowV(cB,c.k))}</td>
+      <td>${fmt(c.k,fA[c.k])}</td><td>${fmt(c.k,fB[c.k])}</td>
+      <td><b>${Math.round(w*100)}%</b></td>
+      <td class="l">${win?`${badge(win,20)} <span class="tag" style="color:var(--${col})">${lab}</span>`:`<span class="tag" style="color:var(--warn)">Coin flip</span>`}</td></tr>
+      <tr class="needrow"><td class="l small fdneed" colspan="7">${need}</td></tr>`}).join("");
+  const list=(arr,t)=>`<span style="color:${tcol(t)}"><b>${esc(t)}</b></span> takes ${arr.length?arr.map(x=>x.c.l).join(", "):"nothing"}`;
   return `<div class="card fdcard"><h2>Final Day <span class="small muted">· last night of week ${W.w} · lineups lock at tonight's first tip</span></h2>
-    <p style="margin:0 0 6px"><b>Banked so far:</b> ${tl(M.home,22)} <b>${fmtS(now.w,now.l,now.t)}</b> ${tl(M.away,22)} <span class="chips" style="display:inline-flex;vertical-align:middle">${CATS.map((c,i)=>{const v=now.cats[i],t=v==="W"?M.home:v==="L"?M.away:null;return `<span class="chip" style="${t?`border-color:${tcol(t)};color:${tcol(t)}`:""}">${c.l}</span>`}).join("")}</span></p>
-    <p style="margin:0"><b>Most likely final scores</b> (${esc(M.home)} first): <span class="chips" style="display:inline-flex">${top}</span></p>
-    <p class="small muted" style="margin:6px 0 12px">Every category is its own W, L or T in the standings, so the score matters, not just who wins the week. "Best realistic" counts every category with at least a 20% chance; the % is the chance of getting there or better.</p>
-    <div class="cols">${side(M.home,M.away,true)}${side(M.away,M.home,false)}</div>
-    <p class="small muted" style="margin:10px 0 0">Needs assume the other side plays to projection. Levers are tested one at a time on the fast approximation and aren't additive. Every add costs at least $5 of cap plus the dropped player's dead money; ESPN allows 7 adds a matchup.</p></div>`;
+    <p class="fdscore">Projected final: ${scoreLine}</p>
+    <p style="margin:2px 0 8px">${list(pAw,A)} · ${list(pH,H)}${pT.length?` · even: ${pT.map(x=>x.c.l).join(", ")}`:""}</p>
+    <div class="fdnums" style="max-width:720px"><div><b>${fmtS(now.w,now.l,now.t)}</b><span>banked so far (${esc(H)} first)</span></div>
+      <div><b>${exp[H].toFixed(1)} – ${exp[A].toFixed(1)}</b><span>expected cats</span></div>
+      <div><b>${Math.round(atLeast(true,5)*100)}% / ${Math.round(atLeast(false,5)*100)}%</b><span>5+ cats ${esc(H)} / ${esc(A)}</span></div></div>
+    <p style="margin:10px 0 6px"><b>Most likely exact scores:</b> <span class="chips" style="display:inline-flex">${top}</span></p>
+    <div class="scroll"><table class="fd"><tr><th class="l">Cat</th><th colspan="2">Now <span class="small">${esc(H)} · ${esc(A)}</span></th><th colspan="2">Projected final</th><th>${esc(H)} win</th><th class="l">Projected winner</th></tr>${body}</table></div>
+    <p class="small muted" style="margin:10px 0 0">Projected final gives each category to whoever wins it in more of the 10,000 sims, so it can sit a category away from the expected cats. Bold "now" = who leads it after the banked nights. The line under each category is what the side behind needs tonight, assuming the other side plays to projection.</p></div>`;
 }
 
 /* ---------- trade block (shared, Supabase) ---------- */
