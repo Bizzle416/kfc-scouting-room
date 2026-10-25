@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-10-25T01:29:18.209Z",
+ "at": "2026-10-25T04:34:11.880Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23",
+  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-24",
   "league.json written"
  ],
  "warnings": [],
@@ -36,14 +36,18 @@
    ],
    "today": "2026-10-24"
   },
-  "poolStats": 289,
+  "poolStats": 296,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 88,
+   "flagged": 90,
    "sample": [
     [
      "zach edey",
      "OUT"
+    ],
+    [
+     "joel embiid",
+     "DAY_TO_DAY"
     ],
     [
      "brandon ingram",
@@ -84,34 +88,29 @@
     [
      "ausar thompson",
      "DAY_TO_DAY"
-    ],
-    [
-     "kon knueppel",
-     "OUT"
     ]
    ]
   },
   "rosterChanges": {
-   "added": [
-    "Bizzle: Jaden McDaniels ($5 FA)"
-   ],
+   "added": [],
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 368,
+  "espnPlayers": 375,
   "finalBy": {
    "2026-10-20": "clock",
    "2026-10-21": "clock",
    "2026-10-22": "clock",
    "2026-10-23": "clock",
-   "2026-10-24": "not yet",
+   "2026-10-24": "scoreboard",
    "2026-10-25": "not yet"
   },
   "finalDays": [
    "2026-10-20",
    "2026-10-21",
    "2026-10-22",
-   "2026-10-23"
+   "2026-10-23",
+   "2026-10-24"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -119,56 +118,56 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 202,
-    "fga": 431,
-    "ftm": 127,
-    "fta": 156,
-    "tpm": 52,
-    "reb": 186,
-    "ast": 133,
-    "stl": 39,
-    "blk": 19,
-    "to": 86,
-    "pts": 583
+    "fgm": 270,
+    "fga": 567,
+    "ftm": 152,
+    "fta": 187,
+    "tpm": 68,
+    "reb": 250,
+    "ast": 164,
+    "stl": 49,
+    "blk": 26,
+    "to": 105,
+    "pts": 760
    },
    "Danna": {
-    "fgm": 226,
-    "fga": 437,
-    "ftm": 119,
-    "fta": 157,
-    "tpm": 61,
-    "reb": 171,
-    "ast": 127,
-    "stl": 31,
-    "blk": 22,
-    "to": 75,
-    "pts": 632
+    "fgm": 301,
+    "fga": 587,
+    "ftm": 154,
+    "fta": 199,
+    "tpm": 87,
+    "reb": 234,
+    "ast": 176,
+    "stl": 47,
+    "blk": 30,
+    "to": 101,
+    "pts": 843
    },
    "Mamba": {
-    "fgm": 174,
-    "fga": 391,
-    "ftm": 91,
-    "fta": 122,
-    "tpm": 35,
-    "reb": 201,
-    "ast": 115,
-    "stl": 25,
-    "blk": 17,
-    "to": 82,
-    "pts": 474
+    "fgm": 241,
+    "fga": 563,
+    "ftm": 171,
+    "fta": 216,
+    "tpm": 53,
+    "reb": 286,
+    "ast": 184,
+    "stl": 35,
+    "blk": 23,
+    "to": 105,
+    "pts": 706
    },
    "Slav": {
-    "fgm": 212,
-    "fga": 457,
-    "ftm": 165,
-    "fta": 205,
-    "tpm": 48,
-    "reb": 192,
-    "ast": 128,
-    "stl": 39,
-    "blk": 30,
-    "to": 80,
-    "pts": 637
+    "fgm": 276,
+    "fga": 579,
+    "ftm": 196,
+    "fta": 241,
+    "tpm": 68,
+    "reb": 231,
+    "ast": 158,
+    "stl": 45,
+    "blk": 38,
+    "to": 101,
+    "pts": 816
    }
   },
   "espnScoreboard": {
@@ -217,8 +216,8 @@
     "pts": 632
    }
   },
-  "scoreboardCompared": false,
-  "scoreboardLagging": false,
+  "scoreboardCompared": true,
+  "scoreboardLagging": true,
   "pairs": [
    [
     "Slav",
@@ -229,7 +228,7 @@
     "Danna"
    ]
   ],
-  "from": "2026-10-24",
+  "from": "2026-10-25",
   "tradeBlock": "HTTP 404"
  }
 }
