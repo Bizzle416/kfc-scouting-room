@@ -86,7 +86,13 @@ td:first-child,th:first-child{text-align:left}
 .lgm button{margin-top:8px}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.chip{font:600 13px var(--cond);padding:2px 7px;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
 .achm{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}.achm:first-child{border-top:0;padding-top:0;margin-top:0}
-.achhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font:700 18px var(--cond);margin-bottom:6px}.achhead .sc{font:800 30px var(--cond);font-variant-numeric:tabular-nums}
+h4{font:700 17px var(--cond);margin:0 0 6px}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:16px;margin-top:12px}
+table.prod td,table.prod th{padding:5px 4px;font-size:13.5px}table.prod td.l,table.prod th.l{text-align:left;white-space:normal;min-width:104px}
+table.prod td.up{color:var(--ok);font-weight:700}table.prod td.dn{color:var(--bad);font-weight:700}
+table.prod tr.grp td{font:600 14px var(--cond);color:var(--muted);padding-top:10px}
+.mgames{list-style:none;padding:0;margin:0;font-size:14px}.mgames li{padding:4px 0;border-bottom:1px solid var(--line)}
+.achm{border-top:2px solid var(--line)}.achhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font:700 18px var(--cond);margin-bottom:6px}.achhead .sc{font:800 30px var(--cond);font-variant-numeric:tabular-nums}
 table.ach td.l,table.ach th.l,table.fd td.l,table.fd th.l,table.catstrip .l{text-align:left}table.ach td.l{white-space:normal}table.ach td,table.ach th{padding:6px 4px}@media (max-width:420px){.cols{grid-template-columns:minmax(0,1fr)}}table.ach .why{font-size:13px}
 table.catstrip td,table.catstrip th{padding:3px 6px;text-align:center;font-size:13px}
 .fdcard{border-top:4px solid var(--bucket)}.fdscore{font:800 30px/1.1 var(--cond);margin:0}.fdside{border:1px solid var(--line);border-radius:10px;padding:12px}
@@ -184,7 +190,7 @@ svg text{font-family:var(--font)}
   <div class="card" id="lgWeekCard" hidden><h3>Around the league <span class="small muted" id="lgWeekSub"></span></h3><div class="lgw" id="lgWeek"></div></div>
   <div id="mResult"></div>
   <div class="card" id="achCard" hidden><h2>Over &amp; under achievers <span class="small muted" id="achSub"></span></h2>
-    <p class="small muted">Raw production, every team. <b>Game z</b> is that single game's 9-cat z-score — one great night can score 20+, a season-long star averages around 8; <b>vs norm</b> subtracts what he was projected to produce per game before the week. Team totals count started games only. The timelines re-run each matchup after every night using only what was known then.</p>
+    <p class="small muted">One block per matchup: how the expected score moved night by night, the games that swung it, then each side's over and under performers. Stat cells are per-game averages, <span style="color:var(--ok)">green</span> above projection and <span style="color:var(--bad)">red</span> below (hover for the projection). <b>vs norm</b> is the week's 9-cat z-score against his pre-week projection; one huge night can be worth +20.</p>
     <div id="ach"></div></div>
   <div class="card"><h3>Seat at the table <span class="small muted">· lineup plan</span></h3>
     <p class="small muted">Each remaining day, the best 10 who play fill PG, SG, SF, PF, C, G, F and 3 UTIL. Filled dot = starts, ring = has a game but no slot. That ring is a wasted game.</p>
@@ -907,17 +913,29 @@ const r1=x=>(Math.round(x*10)/10).toFixed(1);
 const gameLine=l=>{const bits=[`<b>${l.pts}</b> pts`,`${l.reb} reb`,`${l.ast} ast`];if(l.tpm)bits.push(`${l.tpm} 3s`);if(l.stl)bits.push(`${l.stl} stl`);if(l.blk)bits.push(`${l.blk} blk`);bits.push(`${l.to} to`);
   return bits.join(" · ")+` <span class="muted">${l.fgm}/${l.fga} FG${l.fta?` · ${l.ftm}/${l.fta} FT`:""}</span>`};
 const avgLine=(l,g)=>{const a=k=>r1(l[k]/g),fg=l.fga?Math.round(l.fgm/l.fga*100):0,ft=l.fta?Math.round(l.ftm/l.fta*100):0;return `${a("pts")} / ${a("reb")} / ${a("ast")} · ${a("tpm")} 3s · ${a("stl")} stl · ${a("blk")} blk · ${a("to")} to · ${fg}% FG · ${ft}% FT`};
-function prodTables(P){
-  const lg=(arr,head)=>`<tr><th class="l" colspan="5" style="padding-top:10px">${head}</th></tr>`+arr.map(g=>`<tr><td class="l">${badge(g.t,20)} ${esc(g.n)}${onCourt([0,g.slot])?"":' <span class="tag" style="color:var(--bad)">bench</span>'}</td><td class="l small">${wkd(g.d)}</td><td class="l small">${gameLine(g.line)}</td><td>${r1(g.z)}</td><td><span class="${dcls(g.dz)}"><b>${sgn(g.dz,1)}</b></span></td></tr>`).join("");
-  const hot=P.games.filter(g=>g.dz>=3).sort((a,b)=>b.dz-a.dz).slice(0,10),cold=P.games.filter(g=>g.dz<=-3).sort((a,b)=>a.dz-b.dz).slice(0,6);
-  let h=`<h3>Massive games <span class="small muted">· every team, every night</span></h3><div class="scroll"><table class="ach"><tr><th class="l">Player</th><th class="l">Night</th><th class="l">Line</th><th>Game z</th><th>vs norm</th></tr>${lg(hot,"🔥 Blow-ups")}${lg(cold,"🧊 Duds")}</table></div>`;
-  const teamTbl=t=>{const ps=P.players.filter(p=>p.t===t),hot=ps.filter(p=>p.dz>=1).sort((a,b)=>b.dz-a.dz).slice(0,6),cold=ps.filter(p=>p.dz<=-1).sort((a,b)=>a.dz-b.dz).slice(0,3);
-    const row=p=>`<tr><td class="l">${esc(p.n)}${injTag(p.n)}<div class="why">${avgLine(p.act,p.g)} <br><span class="muted">proj ${p.exp?avgLine(p.exp,1):"—"}</span></div></td><td>${p.g}</td><td><span class="${dcls(p.dz)}"><b>${sgn(p.dz,1)}</b></span></td></tr>`;
-    const sec=(arr,head,empty)=>`<tr><th class="l" colspan="3" style="padding-top:8px">${head}</th></tr>`+(arr.length?arr.map(row).join(""):`<tr><td class="l small muted" colspan="3">${empty}</td></tr>`);
-    return `<div><h3>${tl(t,24)} <span class="${dcls(P.team[t])}" style="font:700 18px var(--cond)">${sgn(P.team[t],1)}</span> <span class="small muted">starters vs norm</span></h3>
-      <div class="scroll"><table class="ach"><tr><th class="l">Player · per game, then projection</th><th>G</th><th>vs norm</th></tr>${sec(hot,"🔥 Over",`Nobody well above his norm.`)}${sec(cold,"🧊 Under","Nobody well below.")}</table></div></div>`};
-  h+=`<h3 style="margin-top:16px">By team <span class="small muted">· week totals, all games</span></h3><div class="cols">${TEAMS.map(teamTbl).join("")}</div>`;
-  return h;
+// One matchup: the games that decided it, then each side's over/under performers in a tidy stat table.
+const PSTATS=[["pts","PTS"],["reb","REB"],["ast","AST"],["tpm","3PM"],["stl","STL"],["blk","BLK"],["to","TO"],["fgp","FG%"],["ftp","FT%"]];
+function statCell(k,act,exp,g){
+  const pct=k==="fgp"||k==="ftp",m=k==="fgp"?"fgm":"ftm",a=k==="fgp"?"fga":"fta";
+  const v=pct?(act[a]?act[m]/act[a]:null):act[k]/g,e=exp?(pct?(exp[a]?exp[m]/exp[a]:null):exp[k]):null;
+  if(v==null)return `<td class="muted">—</td>`;
+  const txt=pct?Math.round(v*100):r1(v);let cls="";
+  if(e!=null){const d=v-e,th=pct?(k==="fgp"?.05:.08):Math.max(1,e*.25),good=k==="to"?-d:d;if(pct&&act[a]/g<2){}else if(good>=th)cls="up";else if(good<=-th)cls="dn"}
+  return `<td class="${cls}" title="projected ${e==null?"—":pct?Math.round(e*100)+"%":r1(e)}">${txt}</td>`;
+}
+function teamProdTable(P,t){
+  const ps=P.players.filter(p=>p.t===t),hot=ps.filter(p=>p.dz>=1).sort((a,b)=>b.dz-a.dz).slice(0,6),cold=ps.filter(p=>p.dz<=-1).sort((a,b)=>a.dz-b.dz).slice(0,3);
+  const row=p=>`<tr><td class="l">${esc(p.n)}${injTag(p.n)}</td><td><b class="${dcls(p.dz)}">${sgn(p.dz,1)}</b></td><td class="muted">${p.g}</td>${PSTATS.map(([k])=>statCell(k,p.act,p.exp,p.g)).join("")}</tr>`;
+  const sec=(arr,head)=>arr.length?`<tr class="grp"><td class="l" colspan="${PSTATS.length+3}">${head}</td></tr>`+arr.map(row).join(""):"";
+  return `<div class="ptbl"><h4>${tl(t,22)} <span class="${dcls(P.team[t])}">${sgn(P.team[t],1)}</span> <span class="small muted">starters vs norm</span></h4>
+    <div class="scroll"><table class="prod"><tr><th class="l">Player</th><th>vs norm</th><th>G</th>${PSTATS.map(([,l])=>`<th>${l}</th>`).join("")}</tr>
+    ${sec(hot,"🔥 Over")}${sec(cold,"🧊 Under")}</table></div></div>`;
+}
+function matchGames(P,a,b){
+  const gs=P.games.filter(g=>g.t===a||g.t===b),up=gs.filter(g=>g.dz>=8).sort((x,y)=>y.dz-x.dz).slice(0,4),dn=gs.filter(g=>g.dz<=-8).sort((x,y)=>x.dz-y.dz).slice(0,2);
+  if(!up.length&&!dn.length)return "";
+  const li=g=>`<li>${badge(g.t,18)} <b>${esc(g.n)}</b> <span class="muted">${wkd(g.d)}</span>${onCourt([0,g.slot])?"":' <span class="tag" style="color:var(--bad)">bench</span>'} — ${gameLine(g.line)} <b class="${dcls(g.dz)}">${sgn(g.dz,1)}</b></li>`;
+  return `<ul class="mgames">${up.map(li).join("")}${dn.map(li).join("")}</ul>`;
 }
 function timelineSVG(T,a,b){
   const P=T.pts,N=P.length,w=640,h=200,L=34,R=60,top=14,bot=34,xs=i=>L+(N>1?i*(w-L-R)/(N-1):0),ys=v=>top+(9-v)*(h-top-bot)/9;
@@ -961,8 +979,9 @@ function renderAchievers(){
   const tls=M.map(({a,b,T})=>{if(!T)return "";const e=T.pts[T.pts.length-1];
     return `<div class="achm"><div class="achhead">${tl(a,28)} <span class="sc" style="color:${tcol(a)}">${e.a.toFixed(1)}</span><span class="muted small">exp cats</span><span class="sc" style="color:${tcol(b)}">${e.b.toFixed(1)}</span> ${tl(b,28)}</div>
       ${timelineSVG(T,a,b)}${timelineStory(T,a,b)}
-      <details class="small" style="margin-top:6px"><summary>Category win % night by night</summary><div class="scroll">${catStrip(T,a,b)}</div></details></div>`}).join("");
-  $("ach").innerHTML=(P?prodTables(P):"")+`<h3 style="margin-top:18px">How each matchup moved</h3>`+tls;
+      <details class="small" style="margin-top:6px"><summary>Category win % night by night</summary><div class="scroll">${catStrip(T,a,b)}</div></details>
+      ${P?`<h4 style="margin-top:14px">Games that swung it</h4>${matchGames(P,a,b)}<div class="cols2">${teamProdTable(P,a)}${teamProdTable(P,b)}</div>`:""}</div>`}).join("");
+  $("ach").innerHTML=tls;
   card.hidden=false;
 }
 
