@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-24T16:35:35.319Z",
+ "at": "2026-10-25T01:29:18.209Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -36,18 +36,22 @@
    ],
    "today": "2026-10-24"
   },
-  "poolStats": 285,
+  "poolStats": 289,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 85,
+   "flagged": 88,
    "sample": [
+    [
+     "zach edey",
+     "OUT"
+    ],
     [
      "brandon ingram",
      "OUT"
     ],
     [
      "kyrie irving",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "cooper flagg",
@@ -55,15 +59,15 @@
     ],
     [
      "lebron james",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "aj dybantsa",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "paolo banchero",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "cedric coward",
@@ -71,11 +75,11 @@
     ],
     [
      "jalen duren",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "stephen curry",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "ausar thompson",
@@ -83,20 +87,18 @@
     ],
     [
      "kon knueppel",
-     "DAY_TO_DAY"
-    ],
-    [
-     "fred vanvleet",
-     "DAY_TO_DAY"
+     "OUT"
     ]
    ]
   },
   "rosterChanges": {
-   "added": [],
+   "added": [
+    "Bizzle: Jaden McDaniels ($5 FA)"
+   ],
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 363,
+  "espnPlayers": 368,
   "finalBy": {
    "2026-10-20": "clock",
    "2026-10-21": "clock",
@@ -227,6 +229,7 @@
     "Danna"
    ]
   ],
-  "from": "2026-10-24"
+  "from": "2026-10-24",
+  "tradeBlock": "HTTP 404"
  }
 }
