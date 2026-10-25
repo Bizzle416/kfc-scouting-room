@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-25T12:34:40.191Z",
+ "at": "2026-10-25T17:04:02.121Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -55,7 +55,7 @@
     ],
     [
      "kyrie irving",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "cooper flagg",
@@ -63,7 +63,7 @@
     ],
     [
      "lebron james",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "aj dybantsa",
@@ -83,7 +83,7 @@
     ],
     [
      "stephen curry",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "ausar thompson",
@@ -216,7 +216,7 @@
     "pts": 843
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "pairs": [
    [
