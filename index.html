@@ -1267,8 +1267,9 @@ function renderDoneTrades(){
   const sum=a=>a.reduce((s,p)=>s+(+p.salary||0),0);
   box.innerHTML=T.map(t=>{const[a,b]=t.teams,d=new Date(t.date+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
     const side=(x,y)=>{const out=t.sends[x]||[],inn=t.sends[y]||[],net=sum(inn)-sum(out),cap=(t.capAfter||{})[x];
-      return `<div><h3>${tl(x,22)}</h3><table><tr><th class="l">Gets</th><th>$</th></tr>${inn.map(p=>`<tr><td class="l">${esc(p.n)}</td><td>$${p.salary}</td></tr>`).join("")}<tr><td class="l muted">Sends ${out.map(p=>esc(p.n)+" $"+p.salary).join(", ")}</td><td></td></tr></table>
-      <p class="small">Net salary <b>${net>0?"+":""}$${net}</b>${cap!=null?` · payroll after <b>$${cap}</b> / $550${cap>550?' <span style="color:#c0392b">OVER CAP</span>':""}`:""}</p></div>`};
+      const row=(p,c)=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line,#e5e5e5)"><span${c?' class="muted"':''}>${esc(p.n)}</span><b${c?' class="muted"':''}>$${p.salary}</b></div>`;
+      return `<div style="min-width:0"><h3>${tl(x,22)}</h3><p class="small muted" style="margin:4px 0 0">Gets</p>${inn.map(p=>row(p)).join("")}<p class="small muted" style="margin:8px 0 0">Sends</p>${out.map(p=>row(p,1)).join("")}
+      <p class="small">Net salary <b>${net>0?"+":net<0?"−":""}$${Math.abs(net)}</b>${cap!=null?` · payroll after <b>$${cap}</b> / $550${cap>550?' <span style="color:#c0392b">OVER CAP</span>':""}`:""}</p></div>`};
     return `<div style="border-top:1px solid var(--line,#ddd);padding-top:10px;margin-top:10px"><p class="small muted" style="margin:0 0 6px">${d}</p><div class="picks">${side(a,b)}${side(b,a)}</div></div>`}).join("");
 }
 function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}try{renderAchievers()}catch(e){console.error(e)}if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden){renderTradeLists();renderDoneTrades()}if(!$("tab-audit").hidden)renderAudit()}
