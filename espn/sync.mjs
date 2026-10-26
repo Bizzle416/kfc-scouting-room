@@ -5,6 +5,7 @@
 // Never prints or writes the cookies.
 import fs from "node:fs";
 import path from "node:path";
+import { buildResults, historyFor, seasonFor } from "./results.mjs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const LEAGUE_ID = process.env.ESPN_LEAGUE_ID || "1143837492";
@@ -147,11 +148,14 @@ async function main() {
   if (!myPair) throw new Error(`No ${ME} matchup found in matchup period ${curMP}`);
   const opp = myPair[0] === ME ? myPair[1] : myPair[0];
 
-  for (const sp of mpDays(curMP)) if (sp <= latestSP + 1) await checkFinal(spDate(sp));
+  // This week, plus last week again so ESPN's stat corrections reach the finished week.
+  const fetchMPs = [curMP - 1, curMP].filter((mp) => mp >= 1 && mpDays(mp).length);
+  for (const mp of fetchMPs) for (const sp of mpDays(mp)) if (sp <= latestSP + 1) await checkFinal(spDate(sp));
   status.checks.finalBy = Object.fromEntries([...FINAL].map(([d, f]) => [d, f ? (timeFinal(d) ? "clock" : "scoreboard") : "not yet"]));
   const current = {}, days = {};
   for (const t of TEAMS) { current[t] = {}; for (const k of RAW) current[t][k] = 0; }
-  for (const sp of mpDays(curMP).filter((s) => s <= latestSP && s < curSP + 1 && isFinal(spDate(s)))) {
+  const curDays = new Set(mpDays(curMP));
+  for (const sp of fetchMPs.flatMap(mpDays).filter((s) => s <= latestSP && s < curSP + 1 && isFinal(spDate(s)))) {
     const D = await get(`view=mRoster&scoringPeriodId=${sp}`);
     const date = spDate(sp); days[date] = {};
     for (const t of D.teams || []) {
@@ -164,14 +168,17 @@ async function main() {
         const line = statLine(s.stats), on = !BENCH.has(e.lineupSlotId);
         const nk = ALIAS[norm(pl.fullName)] || norm(pl.fullName);
         days[date][key].push([prevBy.get(nk)?.n || pl.fullName, SLOT[e.lineupSlotId] || String(e.lineupSlotId), ...RAW.map((k) => line[k])]);
-        if (on) for (const k of RAW) current[key][k] += line[k];
+        if (on && curDays.has(sp)) for (const k of RAW) current[key][k] += line[k];
       }
     }
   }
   step(`daily lineups read: ${Object.keys(days).join(", ") || "none yet"}`);
+  // Keep every earlier night: the Recap tab and the season table are built from them.
+  const allDays = { ...(prev.days || {}), ...days };
+  const curDates = new Set(mpDays(curMP).map(spDate));
   // Count games from the first day that isn't final yet (today's live games stay in the projection).
   let fromD = mpFirstDate(curMP); while (isFinal(fromD) && spOf(fromD) <= latestSP) fromD = addDays(fromD, 1);
-  status.checks.finalDays = Object.keys(days);
+  status.checks.finalDays = Object.keys(days).filter((d) => curDates.has(d));
   const espnMPs = [...new Set((L.schedule || []).map((m) => m.matchupPeriodId))].length, regWeeks = REFW.filter((w) => w.w <= 18).length;
   status.checks.matchupPeriods = { espn: espnMPs, siteRegularSeason: regWeeks };
   if (espnMPs && espnMPs < regWeeks) status.warnings.push(`ESPN has ${espnMPs} matchup periods but the site has ${regWeeks} regular-season weeks — check week boundaries.`);
@@ -191,26 +198,34 @@ async function main() {
   const liveNow = Date.now() >= Date.parse(fromD + "T15:00:00Z"); // earliest US tip-offs; ESPN's scoreboard includes live games
   status.checks.scoreboardCompared = !liveNow;
   // ESPN's scoreboard often lags a night behind its box scores; that's not a data problem
-  const lastDay = Object.keys(days).sort().pop(), lag = mism.length && lastDay && TEAMS.every((t) => { const e = espnScore[t]; if (!e) return true;
+  const lastDay = Object.keys(days).filter((d) => curDates.has(d)).sort().pop(), lag = mism.length && lastDay && TEAMS.every((t) => { const e = espnScore[t]; if (!e) return true;
     const rows = (days[lastDay][t] || []).filter((r) => r[1] !== "BE" && r[1] !== "IR"), pts = rows.reduce((s, r) => s + r[r.length - 1], 0); return Math.abs(e.pts - (current[t].pts - pts)) < 0.01; });
   status.checks.scoreboardLagging = !!lag;
   if (mism.length && !liveNow && !lag) status.warnings.push(`Lineup sums disagree with ESPN's scoreboard: ${mism.join("; ")}`);
 
-  // ----- season history from finished matchup periods -----
-  const history = [], season = { w: 0, l: 0, t: 0, weeks: 0 };
-  for (const m of (L.schedule || []).filter((x) => x.matchupPeriodId < curMP && x.winner && x.winner !== "UNDECIDED")) {
-    const h = idToKey[m.home?.teamId], a = idToKey[m.away?.teamId]; if (h !== ME && a !== ME) continue;
-    const mine = h === ME ? m.home : m.away, theirs = h === ME ? a : h, sb = mine.cumulativeScore?.scoreByStat || {};
-    const cats = CAT_IDS.map(([, id]) => ({ WIN: "W", LOSS: "L", TIE: "T" })[sb[id]?.result] || "");
-    const w = cats.filter((c) => c === "W").length, l = cats.filter((c) => c === "L").length, t = cats.filter((c) => c === "T").length;
-    history.push({ week: m.matchupPeriodId, opp: theirs, w, l, t, cats });
-    if (m.matchupPeriodId <= 18) { season.w += w; season.l += l; season.t += t; season.weeks++; }
+  // ----- results for every finished week, all four teams -----
+  // ESPN's result is used once ESPN has decided the matchup; before that, the summed lineups (provisional).
+  const resWeeks = [];
+  for (let mp = 1; mp <= curMP; mp++) {
+    const dates = mpDays(mp).map(spDate);
+    if (!dates.length || !dates.every((d) => isFinal(d) && allDays[d])) continue;
+    const ms = (L.schedule || []).filter((m) => m.matchupPeriodId === mp), official = {};
+    const pairsMP = ms.map((m) => [idToKey[m.home?.teamId], idToKey[m.away?.teamId]]).filter((p) => p[0] && p[1]);
+    for (const m of ms) {
+      const h = idToKey[m.home?.teamId], a = idToKey[m.away?.teamId], sb = m.home?.cumulativeScore?.scoreByStat;
+      if (h && a && sb && m.winner && m.winner !== "UNDECIDED") official[`${h}|${a}`] = CAT_IDS.map(([, id]) => ({ WIN: "W", LOSS: "L", TIE: "T" })[sb[id]?.result] || "");
+    }
+    resWeeks.push({ w: mp, dates, pairs: pairsMP, official });
   }
-  history.sort((a, b) => a.week - b.week);
+  const built = buildResults(allDays, resWeeks);
+  const results = [...(prev.results || []).filter((r) => !built.results.some((x) => x.week === r.week)), ...built.results].sort((a, b) => a.week - b.week);
+  status.warnings.push(...built.warnings);
+  const history = historyFor(results, ME), season = seasonFor(history);
+  status.checks.results = results.map((r) => `wk ${r.week}: ` + r.matchups.map((m) => `${m.home} ${m.score.join("-")} ${m.away} (${m.src})`).join(", "));
 
   // ----- write -----
   const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, season, history, me: ME, logPair: [ME, opp], logWeek: curMP, teams,
-    days, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
+    days: allDays, results, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
   out.matchup = { ...(prev.matchup || {}), home: ME, away: opp, week: curMP, from: fromD, avail: 1, current };
   if (fromD > spDate(mpDays(curMP).slice(-1)[0] || curSP)) out.matchup.from = null;
   fs.writeFileSync(path.join(ROOT, "data", "league.json"), JSON.stringify(out));

@@ -152,6 +152,16 @@ svg text{font-family:var(--font)}
 #race svg{width:100%;height:auto;display:block}
 @media (max-width:600px){ th,td{padding:5px 5px} .tug{grid-template-columns:52px 1fr 52px;gap:6px} .pct{font-size:17px} }
 @media (prefers-reduced-motion:no-preference){ .bar i{transition:width .5s ease} }
+table.stand td,table.stand th{padding:7px 8px;text-align:center}table.stand td.l,table.stand th.l{text-align:left}table.stand tr.cut td{border-bottom:2px dashed var(--bucket)}
+.seed{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font:800 14px var(--cond);border:2px solid var(--line)}.seed.s1{background:var(--bucket);border-color:var(--bucket);color:#fff}.seed.s2{border-color:var(--ink)}.seed.s4{color:var(--muted)}
+.wk{font:700 14px var(--cond);padding:1px 6px;border-radius:6px}.wk.W{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}.wk.L{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}.wk.T{color:var(--warn)}
+.rcard{border-top:4px solid var(--bucket)}.rhead{font:800 28px/1.15 var(--cond);margin:0 0 10px}
+table.rcat td,table.rcat th{padding:6px 8px;text-align:center}table.rcat .l{text-align:left}table.rcat tr.closest td{background:color-mix(in srgb,var(--bucket) 7%,transparent)}
+.rexp p{margin:0 0 8px}
+.rside{border:1px solid var(--line);border-left:5px solid var(--tc);border-radius:10px;padding:12px 14px;min-width:0}
+.rh{font:800 15px var(--cond);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 4px}.rh.ok{color:var(--ok)}.rh.bad{color:var(--bad)}
+.rlist{list-style:none;margin:0;padding:0}.rlist li{padding:8px 0;border-top:1px solid var(--line)}.rlist li:first-child{border-top:0}.rlist .chips{margin:4px 0 3px}
+.rdet{margin-top:14px}.rdet summary{cursor:pointer;font:600 16px var(--cond);color:var(--muted)}
 </style>
 </head>
 <body>
@@ -160,6 +170,7 @@ svg text{font-family:var(--font)}
   <div><h1>KFC Scouting Room</h1><p class="tagline" id="tagline">11 herbs &amp; spices · 9 categories · 10,000 sims</p><p class="small muted" id="syncState" style="margin:2px 0 0">Loading league data…</p></div>
   <nav role="tablist">
     <button role="tab" data-tab="matchup" aria-selected="true">This week</button>
+    <button role="tab" data-tab="recap" aria-selected="false">Recap</button>
     <button role="tab" data-tab="audit" aria-selected="false">Bench audit</button>
     <button role="tab" data-tab="season" aria-selected="false">Season</button>
     <button role="tab" data-tab="trade" aria-selected="false">Trade</button>
@@ -208,6 +219,13 @@ svg text{font-family:var(--font)}
   </div>
 </section>
 
+<section id="tab-recap" hidden>
+  <div class="card"><h2>Weekly recap <span class="small muted">· final scores, and the players who won or lost each matchup</span></h2>
+    <div class="row"><div><label for="rWeek">Week</label><select id="rWeek"></select></div></div>
+    <p class="small muted" id="rNote" style="margin:10px 0 0"></p></div>
+  <div id="recap"></div>
+</section>
+
 <section id="tab-audit" hidden>
   <div class="card"><h2>Heat lamp <span class="small muted">· bench audit</span></h2>
     <p class="small muted" id="auNote"></p>
@@ -222,6 +240,7 @@ svg text{font-family:var(--font)}
 </section>
 
 <section id="tab-season" hidden>
+  <div class="card"><h2>League table</h2><div id="standings"></div></div>
   <div class="card"><h2 id="seasonTitle">Season so far</h2><div id="seasonSummary"></div><div class="scroll" id="seasonChart"></div></div>
   <div class="card"><h3>Record against each rival</h3><div class="scroll" id="rivalTable"></div></div>
   <div class="card"><h2>🍗 Bucket Awards</h2><p class="small muted">Earned from real results — season awards from the Matchup Log, this-week awards from the projections for all four teams.</p><div class="awards" id="awards"></div></div>
@@ -640,6 +659,7 @@ function renderStreamers(){
 
 /* ---------- season ---------- */
 function renderSeason(){
+  renderStandings();
   $("seasonTitle").textContent=poss(tname(state.me||"Bizzle"))+" season so far";
   renderAwards();
   const H=(state.history||[]).filter(h=>h.week<=18).sort((a,b)=>a.week-b.week);
@@ -694,6 +714,162 @@ function renderAwards(){
     cards.push(card("🌶️",`Hot & Spicy · wk ${W.w}`,tl(hot,20),`Projected #1 in ${firsts(hot)} of 9 categories this week.`));
   }
   $("awards").innerHTML=cards.length?cards.join(""):`<div class="empty">The bucket's empty — no league data yet.</div>`;
+}
+
+/* ---------- league table (Season tab) ---------- */
+// Every finished regular-season week for all four teams. Charter seeding: category win % (W + ½T),
+// then head-to-head category record between the tied teams, then most weekly matchups won, then a coin flip.
+function standings(){
+  const R=(state.results||[]).filter(r=>r.week<=18).sort((a,b)=>a.week-b.week),S={};
+  TEAMS.forEach(t=>S[t]={t,w:0,l:0,tt:0,mw:0,ml:0,mt:0,n:0,h2h:{},weeks:{}});
+  const add=(t,o,w,l,x,wk)=>{const s=S[t];if(!s)return;s.w+=w;s.l+=l;s.tt+=x;s.n++;const h=s.h2h[o]=s.h2h[o]||{w:0,l:0,t:0};h.w+=w;h.l+=l;h.t+=x;
+    const res=w>l?"W":w<l?"L":"T";s[res==="W"?"mw":res==="L"?"ml":"mt"]++;s.weeks[wk]={res,w,l,t:x,opp:o}};
+  R.forEach(r=>r.matchups.forEach(m=>{const [w,l,x]=m.score;add(m.home,m.away,w,l,x,r.week);add(m.away,m.home,l,w,x,r.week)}));
+  const pct=s=>{const n=s.w+s.l+s.tt;return n?(s.w+s.tt/2)/n:0};
+  const rows=Object.values(S).map(s=>Object.assign(s,{pct:pct(s)}));
+  const h2hPct=(s,grp)=>{let w=0,l=0,t=0;grp.forEach(o=>{const h=s.h2h[o.t];if(h){w+=h.w;l+=h.l;t+=h.t}});return w+l+t?(w+t/2)/(w+l+t):.5};
+  rows.sort((a,b)=>b.pct-a.pct);
+  const out=[];for(let i=0;i<rows.length;){let j=i;while(j<rows.length&&Math.abs(rows[j].pct-rows[i].pct)<1e-9)j++;
+    const grp=rows.slice(i,j);grp.forEach(s=>{s.hp=h2hPct(s,grp.filter(o=>o!==s));s.tied=grp.length>1});
+    grp.sort((a,b)=>b.hp-a.hp||b.mw-a.mw);
+    grp.forEach((s,k)=>{const nb=grp[k+1]||grp[k-1];s.coin=!!(nb&&nb!==s&&Math.abs(nb.hp-s.hp)<1e-9&&nb.mw===s.mw)});
+    out.push(...grp);i=j}
+  return {rows:out,weeks:R.map(r=>r.week),provisional:R.some(r=>r.matchups.some(m=>m.src!=="espn"))};
+}
+function renderStandings(){
+  const el=$("standings");if(!el)return;const {rows,weeks,provisional}=standings();
+  if(!weeks.length){el.innerHTML=`<div class="empty">No finished weeks yet.</div>`;return}
+  const lead=rows[0],cp=s=>s.w+s.tt/2,seedTag=i=>i===0?`<span class="seed s1" title="Top seed: bye to the Final">1</span>`:i<3?`<span class="seed s2" title="Plays the semi-final">${i+1}</span>`:`<span class="seed s4" title="Outside the top 3">${i+1}</span>`;
+  const res=x=>x?`<span class="wk ${x.res}" title="Week vs ${esc(tname(x.opp))}">${x.w}-${x.l}${x.t?"-"+x.t:""}</span>`:`<span class="wk">—</span>`;
+  const why=s=>s.coin?`<span class="tag" style="color:var(--warn)" title="Level on cat %, head-to-head and weeks won">coin flip</span>`:s.tied?`<span class="tag" style="color:var(--muted)" title="Level on cat %; split by the next tiebreaker">tiebreak</span>`:"";
+  el.innerHTML=`<div class="scroll"><table class="stand"><tr><th></th><th class="l">Team</th><th>Cats W-L-T</th><th>Cat win %</th><th>Back</th><th>Weeks W-L-T</th>${weeks.map(w=>`<th>Wk ${w}</th>`).join("")}</tr>`+
+    rows.map((s,i)=>`<tr${i===2?' class="cut"':""}><td>${seedTag(i)}</td><td class="l">${tl(s.t,24)}${why(s)}</td><td><b>${s.w}-${s.l}-${s.tt}</b></td><td><b>${(s.pct*100).toFixed(1)}%</b></td>
+      <td class="muted">${s===lead?"—":(cp(lead)-cp(s)).toFixed(1)}</td><td>${s.mw}-${s.ml}-${s.mt}</td>${weeks.map(w=>`<td>${res(s.weeks[w])}</td>`).join("")}</tr>`).join("")+`</table></div>
+    <p class="small muted" style="margin:8px 0 0">Seed 1 skips to the Final; 2 v 3 in the semi. Line under 3rd = playoff cut. <b>Back</b> = category wins (½ per tie) behind the leader. Order follows the charter: cat win %, then head-to-head cats between the tied teams, then weeks won, then a coin flip.${provisional?` <b>Provisional:</b> at least one week is scored from the summed ESPN lineups until ESPN closes it — it switches to ESPN's own result automatically.`:""}</p>`;
+}
+
+/* ---------- weekly recap ---------- */
+// Who won it, who lost it. Each started player's week is swapped for a waiver-wire body over the same number of
+// starts. If that swap flips a category, he decided it. Bench and IR games never counted, so they never swing anything.
+// The waiver body is what was really there to be had: the median projected line of the 20 best players no one rosters
+// (in a 4-team league that's roughly the 81st-100th best player, far better than a 12-team replacement level).
+const CPTS={W:1,T:.5,L:0};
+let WAIVER=null;
+function waiverLine(){
+  const own=rostered(),key=[...own.keys()].sort().join(",");if(WAIVER&&WAIVER.key===key)return WAIVER.line;
+  const ps=REF.players.filter(p=>p.pj&&!own.has(norm(p.n))).sort((a,b)=>(b.pj.pts+b.pj.reb+b.pj.ast)-(a.pj.pts+a.pj.reb+a.pj.ast)).slice(0,20);
+  if(ps.length<5)return replLine();
+  const line={};RAW.forEach(k=>{const v=ps.map(p=>p.pj[k]||0).sort((x,y)=>x-y);line[k]=v[Math.floor(v.length/2)]});
+  WAIVER={key,line};return line;
+}
+function recapData(wk){
+  const R=(state.results||[]).find(r=>r.week===wk);if(!R)return null;
+  const W=REF.weeks[wk-1],dates=W?weekDates(W):[];
+  const rep=waiverLine()||zeroLine();zScores();const S=zCache.scale;
+  const v=l=>({fgp:l.fgm-l.fga*S.lgFG,ftp:l.ftm-l.fta*S.lgFT,tpm:l.tpm,reb:l.reb,ast:l.ast,stl:l.stl,blk:l.blk,to:-l.to,pts:l.pts});
+  const vsW=(l,g)=>{const a=v(l),b=v(Object.fromEntries(RAW.map(k=>[k,rep[k]*g])));return CATS.reduce((s,c)=>s+(a[c.k]-b[c.k])/S.ms[c.k][1],0)};
+  const arr=o=>RAW.map(k=>o[k]);
+  const ms=R.matchups.map(m=>{
+    const sides=[m.home,m.away].map(t=>{const o=t===m.home?m.away:m.home,P={};
+      dates.forEach(d=>dayRows(d,t).forEach(r=>{const p=P[r[0]]=P[r[0]]||{n:r[0],t,g:0,bg:0,line:zeroLine(),bench:zeroLine()};
+        if(onCourt(r)){p.g++;addLine(p.line,r)}else if(r[1]==="BE"){p.bg++;addLine(p.bench,r)}}));
+      const tot=m.tot[t],opp=m.tot[o],base=catScore(arr(tot),arr(opp));
+      const players=Object.values(P).map(p=>{
+        const cf=Object.fromEntries(RAW.map(k=>[k,tot[k]-p.line[k]+rep[k]*p.g])),c=catScore(arr(cf),arr(opp));
+        const flips=CATS.map((cat,i)=>({cat,from:base.cats[i],to:c.cats[i],d:CPTS[base.cats[i]]-CPTS[c.cats[i]]})).filter(f=>Math.abs(f.d)>1e-9);
+        const sw=flips.reduce((s,f)=>s+f.d,0),bw=base.w>base.l,bl=base.w<base.l,cw=c.w>c.l,cl=c.w<c.l;
+        return Object.assign(p,{flips,sw,z:p.g?vsW(p.line,p.g):0,cf:c,decider:p.g&&bw&&!cw?"won":p.g&&bl&&!cl?"cost":null})});
+      const bench=players.reduce((s,p)=>{RAW.forEach(k=>s[k]+=p.bench[k]);s.g+=p.bg;return s},Object.assign({g:0},zeroLine()));
+      return {t,o,tot,base,players,bench}});
+    const off=m.cats.join(""),mine=sides[0].base.cats.join("");
+    return Object.assign({},m,{sides,mismatch:off!==mine});
+  });
+  return {R,W,dates,ms,rep:!!waiverLine(),wl:rep};
+}
+const pctTxt=v=>(v*100).toFixed(1)+"%";
+const catV=(o,k)=>k==="fgp"?(o.fga?o.fgm/o.fga:0):k==="ftp"?(o.fta?o.ftm/o.fta:0):o[k];
+function recapCatTable(m){
+  const H=m.home,A=m.away,a=m.tot[H],b=m.tot[A];
+  // closeness on a common scale: margin as a share of the pair's average (percentages: share of 10 points)
+  const close=CATS.map((c,i)=>{const x=catV(a,c.k),y=catV(b,c.k),pct=c.k.endsWith("p");return {i,r:pct?Math.abs(x-y)/.10:Math.abs(x-y)/Math.max(1,(x+y)/2)}}).sort((p,q)=>p.r-q.r)[0];
+  return `<div class="scroll"><table class="rcat"><tr><th class="l">Cat</th><th>${badge(H,18)}</th><th>${badge(A,18)}</th><th>Margin</th><th class="l">Won by</th></tr>`+CATS.map((c,i)=>{
+    const x=catV(a,c.k),y=catV(b,c.k),r=m.cats[i],win=r==="W"?H:r==="L"?A:null,pct=c.k.endsWith("p");
+    const mg=pct?`${Math.abs((x-y)*100).toFixed(1)} pts`:`${Math.abs(x-y)}`;
+    return `<tr${i===close.i?' class="closest"':""}><td class="l"><b>${c.l}</b>${c.low?' <span class="small muted">(fewer)</span>':""}</td>
+      <td${win===H?` style="color:${tcol(H)};font-weight:800"`:""}>${pct?pctTxt(x):x}</td><td${win===A?` style="color:${tcol(A)};font-weight:800"`:""}>${pct?pctTxt(y):y}</td>
+      <td class="muted">${r==="T"?"level":mg}</td><td class="l">${win?tl(win,18):`<span class="tag" style="color:var(--warn)">tie</span>`}${i===close.i?' <span class="tag" style="color:var(--bucket)">closest</span>':""}</td></tr>`}).join("")+`</table></div>`;
+}
+const flipChip=f=>{const good=f.d>0;return `<span class="chip" style="border-color:var(--${good?"ok":"bad"});color:var(--${good?"ok":"bad"})" title="Swap him for a waiver body: ${f.cat.l} goes ${f.from} → ${f.to}">${f.cat.l} ${f.from}→${f.to}</span>`};
+const wkLine=p=>{const l=p.line,g=p.g,a=k=>r1(l[k]/g);return `${g} start${g===1?"":"s"} · ${a("pts")} pts · ${a("reb")} reb · ${a("ast")} ast · ${a("tpm")} 3s · ${a("stl")} stl · ${a("blk")} blk · ${a("to")} to · ${l.fgm}/${l.fga} FG · ${l.ftm}/${l.fta} FT`};
+function recapSide(s){
+  // Full flips (W↔L) name names. Flips through a tie (W↔T, T↔L) are worth half and are usually shared by most of
+  // the roster (a tied category moves with anyone's swap), so they're summarised per category instead.
+  const full=p=>p.flips.filter(f=>Math.abs(f.d)>.75);
+  const won=s.players.filter(p=>full(p).some(f=>f.d>0)).sort((a,b)=>b.sw-a.sw||b.z-a.z),cost=s.players.filter(p=>full(p).some(f=>f.d<0)).sort((a,b)=>a.sw-b.sw||a.z-b.z);
+  const sc=c=>`${c.w}-${c.l}${c.t?"-"+c.t:""}`;
+  const li=(p,sign)=>`<li><div><b>${esc(p.n)}</b>${injTag(p.n)} ${p.decider==="won"?'<span class="tag" style="color:var(--ok)">won the week</span>':p.decider==="cost"?'<span class="tag" style="color:var(--bad)">cost the week</span>':""}
+      <span class="small ${dcls(p.z)}" title="9-cat z over a waiver body in the same starts">${sgn(p.z,1)} vs waiver</span></div>
+    <div class="chips">${full(p).sort((a,b)=>sign*(b.d-a.d)).map(flipChip).join("")}<span class="small muted" style="align-self:center">with a waiver body: ${sc(p.cf)}</span></div>
+    <div class="small muted">${wkLine(p)}</div></li>`;
+  const list=(arr,sign,empty)=>{if(!arr.length)return `<ul class="rlist"><li class="small muted">${empty}</li></ul>`;
+    const top=arr.slice(0,4),more=arr.slice(4);
+    return `<ul class="rlist">${top.map(p=>li(p,sign)).join("")}</ul>${more.length?`<details class="small"><summary>${more.length} more</summary><ul class="rlist">${more.map(p=>li(p,sign)).join("")}</ul></details>`:""}`};
+  const ties=CATS.map((c,i)=>{const up=s.players.filter(p=>p.flips.some(f=>f.cat===c&&Math.abs(f.d)<.75&&f.d>0)),dn=s.players.filter(p=>p.flips.some(f=>f.cat===c&&Math.abs(f.d)<.75&&f.d<0));
+    if(!up.length&&!dn.length)return "";const st=s.players.filter(p=>p.g).length;
+    return s.base.cats[i]==="T"?`<b>${c.l}</b> finished level: swap ${up.length===st?"any":up.length} of the ${st} who started for a waiver body and it's lost${dn.length?`; swapping out ${dn.map(p=>esc(p.n)).join(" or ")} instead would have won it`:""}.`
+      :`<b>${c.l}</b>: ${up.length?`${up.length} swap${up.length>1?"s":""} would make it a tie (${up.map(p=>esc(p.n)).join(", ")})`:""}${dn.length?`${up.length?"; ":""}${dn.length} would drag it level (${dn.map(p=>esc(p.n)).join(", ")})`:""}.`}).filter(Boolean);
+  return `<div class="rside" style="--tc:${tcol(s.t)}"><h4>${tl(s.t,24)} <span class="small muted">${sc(s.base)}</span></h4>
+    <p class="rh ok">Won it</p>${list(won,1,"No single swap hands back a category they won — nobody carried one on his own.")}
+    <p class="rh bad">Cost it</p>${list(cost,-1,"No single swap wins back a category they lost.")}
+    ${ties.length?`<p class="small muted" style="margin:10px 0 0">${ties.join("<br>")}</p>`:""}</div>`;
+}
+function recapTable(s){
+  const tot=(l,k)=>k==="fgp"?(l.fga?`${l.fgm}/${l.fga}`:"—"):k==="ftp"?(l.fta?`${l.ftm}/${l.fta}`:"—"):l[k];
+  const ord=s.players.slice().sort((a,b)=>(b.g>0)-(a.g>0)||b.sw-a.sw||b.z-a.z);
+  return `<div class="scroll"><table class="prod"><tr><th class="l">${esc(s.t)}</th><th>Starts</th><th title="Category points his swap moves (W↔L = 1, via a tie = ½)">Swing</th><th>vs waiver</th>${PSTATS.map(([,l])=>`<th>${l}</th>`).join("")}<th title="Games on the bench (never counted)">Bench G</th></tr>`+
+    ord.map(p=>`<tr${p.g?"":' class="muted"'}><td class="l">${esc(p.n)}</td><td>${p.g}</td><td><b class="${dcls(p.sw)}">${p.g?sgn(p.sw,1):"—"}</b></td><td class="${dcls(p.z)}">${p.g?sgn(p.z,1):"—"}</td>${PSTATS.map(([k])=>`<td>${p.g?tot(p.line,k):"—"}</td>`).join("")}<td>${p.bg||""}</td></tr>`).join("")+
+    `<tr class="grp"><td class="l">Bench (didn't count)</td><td>${s.bench.g}</td><td></td><td></td>${PSTATS.map(([k])=>`<td>${s.bench.g?tot(s.bench,k):"—"}</td>`).join("")}<td></td></tr></table></div>`;
+}
+let recapTL={};
+function recapTimeline(wk,a,b){
+  const key=[state.updatedAt,wk,a,b].join("|");if(recapTL[key])return recapTL[key];
+  const W=REF.weeks[wk-1],ds=weekDates(W),keep=state.pubFrom;state.pubFrom=addDays(ds[ds.length-1],1); // the week is over: the last point is the final
+  try{const T=matchupTimeline(a,b,wk);return recapTL[key]=T?timelineSVG(T,a,b)+timelineStory(T,a,b):""}finally{state.pubFrom=keep}
+}
+function recapAwards(D){
+  const all=D.ms.flatMap(m=>m.sides.flatMap(s=>s.players.filter(p=>p.g>0)));if(!all.length)return "";
+  const card=(ic,title,who,why)=>`<div class="award"><div class="ic">${ic}</div><h4>${title}</h4><p class="who">${who}</p><p>${why}</p></div>`;
+  const best=all.slice().sort((a,b)=>b.z-a.z)[0],dud=all.filter(p=>p.g>=2).sort((a,b)=>a.z-b.z)[0]||all.slice().sort((a,b)=>a.z-b.z)[0];
+  const hero=all.slice().sort((a,b)=>b.sw-a.sw||b.z-a.z)[0],goat=all.slice().sort((a,b)=>a.sw-b.sw||a.z-b.z)[0];
+  const c=[card("🍗","Colonel of the Week",`${badge(best.t,18)} <b>${esc(best.n)}</b>`,`${sgn(best.z,1)} over a waiver body across ${best.g} starts. ${r1(best.line.pts/best.g)} pts a night.`)];
+  const cl=(p,sg)=>p.flips.filter(f=>sg*f.d>0).map(f=>f.cat.l+(Math.abs(f.d)<.75?" (tie)":"")).join(", "),nCat=x=>`${x%1?x.toFixed(1):x} categor${x===1?"y":"ies"}`;
+  if(hero.sw>=1)c.push(card("🪣","Bucket Carrier",`${badge(hero.t,18)} <b>${esc(hero.n)}</b>`,`Swap him for a waiver body and ${esc(hero.t)} gives back ${nCat(hero.sw)}: ${cl(hero,1)}.`));
+  if(goat.sw<=-1)c.push(card("🦴","Left on the Bone",`${badge(goat.t,18)} <b>${esc(goat.n)}</b>`,`A waiver body in his ${goat.g} starts wins ${esc(goat.t)} ${nCat(-goat.sw)} more: ${cl(goat,-1)}.`));
+  if(dud&&dud!==best)c.push(card("🍟","Soggy Chips",`${badge(dud.t,18)} <b>${esc(dud.n)}</b>`,`${sgn(dud.z,1)} vs a waiver body over ${dud.g} starts. Same slot, worse result.`));
+  const wasted=D.ms.flatMap(m=>m.sides).sort((a,b)=>b.bench.pts-a.bench.pts)[0];
+  if(wasted&&wasted.bench.g)c.push(card("🗑️","Wasted Bucket",tl(wasted.t,18),`${wasted.bench.g} bench games, ${wasted.bench.pts} pts that never counted.`));
+  return `<div class="card"><h3>Week ${D.R.week} Bucket Awards</h3><div class="awards">${c.join("")}</div></div>`;
+}
+function renderRecap(){
+  const sel=$("rWeek"),R=(state.results||[]).slice().sort((a,b)=>b.week-a.week);
+  if(!R.length){sel.innerHTML="";$("rNote").textContent="";$("recap").innerHTML=`<div class="card empty">No finished weeks yet. The recap fills in the morning after a week's last game.</div>`;return}
+  const cur=+sel.value&&R.some(r=>r.week===+sel.value)?+sel.value:R[0].week;
+  sel.innerHTML=R.map(r=>`<option value="${r.week}"${r.week===cur?" selected":""}>Week ${r.week}${r.week>18?" (playoffs)":""} · ${dayLabel(r.start)} → ${dayLabel(r.end)}</option>`).join("");
+  const D=recapData(cur);if(!D){$("recap").innerHTML="";return}
+  const prov=D.ms.some(m=>m.src!=="espn");
+  $("rNote").innerHTML=(prov?`<b>Provisional.</b> Scored from the summed ESPN lineups (every night is final). ESPN hasn't closed the week yet; once it does, its own result replaces this, stat corrections included.`
+    :`Official — category results are ESPN's own.`)+(D.rep?"":` <b>No replacement-level line available, so swaps are against an empty slot.</b>`);
+  $("recap").innerHTML=recapAwards(D)+D.ms.map((m,i)=>{const [w,l,t]=m.score,H=m.home,A=m.away,win=w>l?H:w<l?A:null,lose=win===H?A:H;
+    const head=win?`<span style="color:${tcol(win)}">${esc(tname(win))}</span> beat ${esc(tname(lose))} <b>${Math.max(w,l)}-${Math.min(w,l)}${t?"-"+t:""}</b>`:`${esc(tname(H))} and ${esc(tname(A))} split it <b>${w}-${l}-${t}</b>`;
+    return `<div class="card rcard"><h2 class="rhead">${head}</h2>
+      ${m.mismatch?`<p class="small" style="color:var(--warn)">ESPN's result differs from the summed lineups (stat correction). Score is ESPN's; the swaps below use the lineup totals.</p>`:""}
+      <div class="cols2" style="margin-top:0"><div>${recapCatTable(m)}</div><div class="small muted rexp"><p><b>How to read "won it / cost it":</b> each player's starts are swapped for a waiver-wire body playing the same number of games. The waiver body is the median projected line of the 20 best players nobody rosters — someone you could actually have picked up. If the swap flips a category, he decided it. Green = a category he won, red = one a waiver body would have won back. Ties are summarised underneath. <b>Won the week</b> / <b>cost the week</b> = the swap alone changes who wins the matchup.</p>
+        <p>Bench games never counted, so they never swing anything. Percentages flip both ways: a 3-for-15 night can hand over FG% on its own.</p></div></div>
+      <div class="cols2">${m.sides.map(recapSide).join("")}</div>
+      <details class="rdet" data-tl="${i}"><summary>How the week unfolded · expected cats night by night</summary><div class="rtl"><p class="small muted">Running 4,000 sims per night…</p></div></details>
+      <details class="rdet"><summary>Every player's week</summary><div class="cols2">${m.sides.map(recapTable).join("")}</div></details></div>`}).join("");
+  document.querySelectorAll("#recap details[data-tl]").forEach(d=>d.addEventListener("toggle",()=>{if(!d.open||d.dataset.done)return;d.dataset.done=1;const m=D.ms[+d.dataset.tl];
+    setTimeout(()=>{try{d.querySelector(".rtl").innerHTML=recapTimeline(cur,m.home,m.away)||'<p class="small muted">Not enough data to rebuild the week.</p>'}catch(e){console.error(e);d.querySelector(".rtl").innerHTML='<p class="small muted">Couldn\'t rebuild the week.</p>'}},30)}));
 }
 
 /* ---------- trade ---------- */
@@ -1082,17 +1258,18 @@ document.addEventListener("click",async e=>{
     if(!pin){$("tbAddWrap").open=true;$("tbMgr").value=r.manager;renderTradeBlock();$("tbMsg").innerHTML=`Only ${esc(r.manager)} can pull ${esc(r.player)}. Enter ${esc(r.manager)}'s PIN above, then press Remove again.`;$("tbPin").focus();return}
     try{await tbCall("tb_remove",{p_id:r.id,p_manager:r.manager,p_pin:pin});$("tbMsg").textContent=`${r.player} is off the block.`;await tbLoad()}catch(err){$("tbAddWrap").open=true;$("tbMsg").textContent=err.message}}
 });
-function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}try{renderAchievers()}catch(e){console.error(e)}if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
+function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}try{renderAchievers()}catch(e){console.error(e)}if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
-  ({audit:renderAudit,players:renderPlayers,season:renderSeason,trade:()=>{renderTradeLists();tbLoad()}})[b.dataset.tab]?.();
+  ({audit:renderAudit,players:renderPlayers,season:renderSeason,recap:renderRecap,trade:()=>{renderTradeLists();tbLoad()}})[b.dataset.tab]?.();
 }));
 ["mHome","mAway"].forEach(id=>$(id).addEventListener("change",e=>{state.matchup[id==="mHome"?"home":"away"]=e.target.value;save();renderMatchupInputs();runMatchup()}));
 $("mWeek").addEventListener("change",e=>{state.matchup.week=+e.target.value;state.matchup.from=null;state.matchup.current={};TEAMS.forEach(t=>(state.teams[t]||[]).forEach(p=>p.gl=null));save();renderMatchupInputs();runMatchup()});
 $("mFrom").addEventListener("change",e=>{state.matchup.from=e.target.value;save();runMatchup()});
 $("mAvail").addEventListener("change",e=>{state.matchup.avail=+e.target.value;save();runMatchup()});
 $("runBtn").addEventListener("click",runMatchup);
+$("rWeek").addEventListener("change",renderRecap);
 $("curTable").addEventListener("change",e=>{const t=e.target.dataset.cur;if(!t)return;const box=pairOK()?(state.matchup.current=state.matchup.current||{}):(state.whatif=state.whatif||{});box[t]=box[t]||{};box[t][e.target.dataset.k]=Math.max(0,num(e.target.value));runMatchup()});
 $("glTable").addEventListener("change",e=>{const d=e.target.dataset,t=d.gl||d.st;if(!t)return;const p=state.teams[t][+d.i];
   if(d.gl)p.gl=e.target.value===""?null:Math.max(0,num(e.target.value));else p.status=e.target.value;save();runMatchup()});

@@ -13,7 +13,13 @@ The workbook itself never goes in this repo — it holds sealed keeper plans.
 
 ## Files
 - `index.html` — the whole app (no build step).
-- `data/league.json` — rosters, salaries, ESPN stats, NBA schedule, matchup log.
+- `data/league.json` — rosters, salaries, ESPN stats, NBA schedule, every night's lineups (`days`, kept all season) and `results` for every finished week, all four teams.
+- `espn/results.mjs` — the one scoring rule for finished weeks (used by the sync).
+
+## Recap and Season tabs
+- **Season → League table:** all four teams from `results`, seeded by the charter (cat win %, head-to-head cats, weeks won, coin flip).
+- **Recap:** final category scores for both matchups, then *won it / cost it*: each player's starts swapped for a waiver body (median projection of the 20 best unrostered players). A swap that flips a category names him. Ties are summarised, not listed.
+- A week is scored from the summed lineups as soon as every night is final (marked provisional). Once ESPN closes the week its own result replaces it, and a warning lands in `data/espn-status.json` if the two disagree. Last week's lineups are re-read every sync so stat corrections come through.
 
 ## Fryer Radio (audio previews and reviews)
 Kev (hype) and Nigel (dry analyst) talk through each week. Free, automatic, and built only from this repo's data.
