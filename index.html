@@ -273,6 +273,9 @@ table.rcat td,table.rcat th{padding:6px 8px;text-align:center}table.rcat .l{text
       <div id="tbMsg" class="small" style="margin-top:6px"></div>
     </details>
   </div>
+  <div class="card" id="doneCard"><h2>Completed trades <span class="small muted">· salaries travel as-is</span></h2>
+    <div id="doneList"><p class="small muted">No trades yet.</p></div>
+  </div>
 </section>
 
 
@@ -1258,11 +1261,21 @@ document.addEventListener("click",async e=>{
     if(!pin){$("tbAddWrap").open=true;$("tbMgr").value=r.manager;renderTradeBlock();$("tbMsg").innerHTML=`Only ${esc(r.manager)} can pull ${esc(r.player)}. Enter ${esc(r.manager)}'s PIN above, then press Remove again.`;$("tbPin").focus();return}
     try{await tbCall("tb_remove",{p_id:r.id,p_manager:r.manager,p_pin:pin});$("tbMsg").textContent=`${r.player} is off the block.`;await tbLoad()}catch(err){$("tbAddWrap").open=true;$("tbMsg").textContent=err.message}}
 });
-function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}try{renderAchievers()}catch(e){console.error(e)}if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden)renderTradeLists();if(!$("tab-audit").hidden)renderAudit()}
+function renderDoneTrades(){
+  const box=$("doneList");if(!box)return;const T=(state.trades||[]).slice().sort((x,y)=>y.date<x.date?-1:1);
+  if(!T.length){box.innerHTML=`<p class="small muted">No trades yet. They're logged automatically when ESPN processes one.</p>`;return}
+  const sum=a=>a.reduce((s,p)=>s+(+p.salary||0),0);
+  box.innerHTML=T.map(t=>{const[a,b]=t.teams,d=new Date(t.date+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+    const side=(x,y)=>{const out=t.sends[x]||[],inn=t.sends[y]||[],net=sum(inn)-sum(out),cap=(t.capAfter||{})[x];
+      return `<div><h3>${tl(x,22)}</h3><table><tr><th class="l">Gets</th><th>$</th></tr>${inn.map(p=>`<tr><td class="l">${esc(p.n)}</td><td>$${p.salary}</td></tr>`).join("")}<tr><td class="l muted">Sends ${out.map(p=>esc(p.n)+" $"+p.salary).join(", ")}</td><td></td></tr></table>
+      <p class="small">Net salary <b>${net>0?"+":""}$${net}</b>${cap!=null?` · payroll after <b>$${cap}</b> / $550${cap>550?' <span style="color:#c0392b">OVER CAP</span>':""}`:""}</p></div>`};
+    return `<div style="border-top:1px solid var(--line,#ddd);padding-top:10px;margin-top:10px"><p class="small muted" style="margin:0 0 6px">${d}</p><div class="picks">${side(a,b)}${side(b,a)}</div></div>`}).join("");
+}
+function renderAll(){renderMatchupInputs();runMatchup();try{renderLeagueWeek()}catch(e){console.error(e)}try{renderAchievers()}catch(e){console.error(e)}if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden){renderTradeLists();renderDoneTrades()}if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
-  ({audit:renderAudit,players:renderPlayers,season:renderSeason,recap:renderRecap,trade:()=>{renderTradeLists();tbLoad()}})[b.dataset.tab]?.();
+  ({audit:renderAudit,players:renderPlayers,season:renderSeason,recap:renderRecap,trade:()=>{renderTradeLists();renderDoneTrades();tbLoad()}})[b.dataset.tab]?.();
 }));
 ["mHome","mAway"].forEach(id=>$(id).addEventListener("change",e=>{state.matchup[id==="mHome"?"home":"away"]=e.target.value;save();renderMatchupInputs();runMatchup()}));
 $("mWeek").addEventListener("change",e=>{state.matchup.week=+e.target.value;state.matchup.from=null;state.matchup.current={};TEAMS.forEach(t=>(state.teams[t]||[]).forEach(p=>p.gl=null));save();renderMatchupInputs();runMatchup()});

@@ -89,7 +89,7 @@ async function main() {
   // ----- rosters, with salaries carried from the current league.json -----
   const prevBy = new Map();
   for (const t of TEAMS) for (const p of prev.teams?.[t] || []) prevBy.set(p.id ? `id:${p.id}` : norm(p.n), { ...p, team: t }), prevBy.set(norm(p.n), { ...p, team: t });
-  const seen = new Set(), teams = {}, espn = {}, added = [], moved = [];
+  const seen = new Set(), teams = {}, espn = {}, added = [], moved = [], movedP = [];
   for (const t of L.teams) {
     const key = idToKey[t.id]; teams[key] = [];
     for (const e of t.roster?.entries || []) {
@@ -98,7 +98,7 @@ async function main() {
       const old = prevBy.get(`id:${id}`) || prevBy.get(nk);
       const n = old ? old.n : en;
       const salary = old ? old.salary : 5;
-      if (!old) added.push(`${key}: ${en} ($5 FA)`); else if (old.team !== key) moved.push(`${en}: ${old.team} → ${key} ($${salary})`);
+      if (!old) added.push(`${key}: ${en} ($5 FA)`); else if (old.team !== key) { moved.push(`${en}: ${old.team} → ${key} ($${salary})`); movedP.push({ n, salary, from: old.team, to: key }); }
       const st = e.lineupSlotId === IR_SLOT ? "ir" : (pl.injuryStatus === "OUT" ? "out" : "active");
       teams[key].push({ n, salary, status: st, id, inj: pl.injuryStatus && pl.injuryStatus !== "ACTIVE" ? pl.injuryStatus : undefined });
       seen.add(norm(n));
@@ -134,6 +134,21 @@ async function main() {
   for (const t of TEAMS) for (const p of prev.teams?.[t] || []) if (!seen.has(norm(p.n))) gone.push({ t, p });
   if (gone.length > 4) { status.warnings.push(`${gone.length} players vanished in one sync — looks like a name mismatch, not real drops. Dead cap NOT applied: ${gone.map((g) => g.p.n).join(", ")}`); }
   else for (const { t, p } of gone) { dead[t] += +p.salary || 0; if (!dropped[t].includes(norm(p.n))) dropped[t].push(norm(p.n)); }
+  // ----- trades: players who changed teams this sync, grouped by the two teams involved. Salaries travel as-is. -----
+  const trades = [...(prev.trades || [])];
+  const tPairs = new Map();
+  for (const m of movedP) { const k = [m.from, m.to].sort().join("|"); if (!tPairs.has(k)) tPairs.set(k, []); tPairs.get(k).push(m); }
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Melbourne" });
+  const payroll = (t) => (teams[t] || []).reduce((s, p) => s + (+p.salary || 0), 0) + (dead[t] || 0);
+  for (const [k, ms] of tPairs) {
+    const [a, b] = k.split("|");
+    const sends = { [a]: ms.filter((m) => m.from === a).map(({ n, salary }) => ({ n, salary })), [b]: ms.filter((m) => m.from === b).map(({ n, salary }) => ({ n, salary })) };
+    const sig = `${today}|${k}|${ms.map((m) => m.n).sort().join(",")}`;
+    if (trades.some((t) => t.sig === sig)) continue;
+    trades.push({ sig, date: today, teams: [a, b], sends, capAfter: { [a]: payroll(a), [b]: payroll(b) } });
+    if (!sends[a].length || !sends[b].length) status.warnings.push(`One-way player move logged as a trade (${a} ↔ ${b}) — check ESPN.`);
+  }
+  status.checks.trades = trades.length;
   status.checks.rosterChanges = { added, moved, dropped: gone.map((g) => `${g.t}: ${g.p.n} ($${g.p.salary} dead)`) };
 
   // ----- stat sanity: 2*FGM + 3PM + FTM must equal PTS for every player -----
@@ -230,7 +245,7 @@ async function main() {
   status.checks.results = results.map((r) => `wk ${r.week}: ` + r.matchups.map((m) => `${m.home} ${m.score.join("-")} ${m.away} (${m.src})`).join(", "));
 
   // ----- write -----
-  const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, season, history, me: ME, logPair: [ME, opp], logWeek: liveMP, teams,
+  const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, trades, season, history, me: ME, logPair: [ME, opp], logWeek: liveMP, teams,
     days: allDays, results, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
   out.matchup = { ...(prev.matchup || {}), home: ME, away: opp, week: liveMP, from: fromD, avail: 1, current };
   if (fromD > spDate(mpDays(liveMP).slice(-1)[0] || curSP)) out.matchup.from = null;
