@@ -1,6 +1,17 @@
 {
  "episodes": [
   {
+   "id": "wk02-preview",
+   "type": "preview",
+   "week": 2,
+   "title": "Week 2 preview",
+   "createdAt": "2026-10-26T05:29:26.342Z",
+   "seconds": 92,
+   "audio": "radio/episodes/wk02-preview.mp3",
+   "script": "radio/episodes/wk02-preview.json",
+   "writer": "templates"
+  },
+  {
    "id": "wk01-review",
    "type": "review",
    "week": 1,
