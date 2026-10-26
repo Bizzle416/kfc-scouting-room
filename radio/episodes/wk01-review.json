@@ -1,0 +1,638 @@
+{
+ "id": "wk01-review",
+ "type": "review",
+ "week": 1,
+ "title": "Week 1 full time",
+ "createdAt": "2026-10-26T05:11:56.866Z",
+ "dataUpdatedAt": "2026-10-26T05:10:23.998Z",
+ "receipts": {
+  "week": 1,
+  "me": "Bizzle",
+  "opp": "Danna",
+  "result": {
+   "w": 2,
+   "l": 6,
+   "t": 1,
+   "cats": [
+    "L",
+    "W",
+    "L",
+    "T",
+    "L",
+    "W",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "preview": {
+   "week": 1,
+   "start": "2026-10-20",
+   "days": 6,
+   "from": "2026-10-20",
+   "daily": true,
+   "home": {
+    "team": "Bizzle",
+    "name": "Bizzle Analytics",
+    "winPct": 0.601,
+    "expCats": 4.8624,
+    "drumsticks": 3,
+    "starts": 41.914634146341456,
+    "wasted": 13,
+    "wastedBy": [
+     {
+      "n": "Alexandre Sarr",
+      "g": 3
+     },
+     {
+      "n": "Cameron Boozer",
+      "g": 2
+     },
+     {
+      "n": "Darryn Peterson",
+      "g": 2
+     },
+     {
+      "n": "Paolo Banchero",
+      "g": 2
+     },
+     {
+      "n": "Cedric Coward",
+      "g": 2
+     },
+     {
+      "n": "Dylan Harper",
+      "g": 2
+     }
+    ],
+    "all": [
+     {
+      "n": "Anthony Davis",
+      "games": 3,
+      "starts": 3,
+      "z": 6.07,
+      "impact": 15.3,
+      "salary": 3
+     },
+     {
+      "n": "Anthony Edwards",
+      "games": 3,
+      "starts": 3,
+      "z": 5.3,
+      "impact": 14.5,
+      "salary": 80
+     },
+     {
+      "n": "Cade Cunningham",
+      "games": 3,
+      "starts": 3,
+      "z": 4.6,
+      "impact": 12.3,
+      "salary": 60
+     },
+     {
+      "n": "Jayson Tatum",
+      "games": 2,
+      "starts": 2,
+      "z": 4.92,
+      "impact": 8.9,
+      "salary": 45
+     },
+     {
+      "n": "Cooper Flagg",
+      "games": 3,
+      "starts": 3,
+      "z": 3.11,
+      "impact": 8.5,
+      "salary": 85
+     },
+     {
+      "n": "LeBron James",
+      "games": 4,
+      "starts": 4,
+      "z": 2.51,
+      "impact": 8.3,
+      "salary": 10
+     },
+     {
+      "n": "Tyler Herro",
+      "games": 3,
+      "starts": 3,
+      "z": 2.35,
+      "impact": 6.2,
+      "salary": 4
+     },
+     {
+      "n": "Michael Porter Jr.",
+      "games": 3,
+      "starts": 3,
+      "z": 1.58,
+      "impact": 4.2,
+      "salary": 5
+     },
+     {
+      "n": "Devin Booker",
+      "games": 2,
+      "starts": 2,
+      "z": 2.22,
+      "impact": 4.1,
+      "salary": 8
+     },
+     {
+      "n": "Onyeka Okongwu",
+      "games": 3,
+      "starts": 3,
+      "z": 1.5,
+      "impact": 4.1,
+      "salary": 5
+     },
+     {
+      "n": "VJ Edgecombe",
+      "games": 4,
+      "starts": 4,
+      "z": 1.07,
+      "impact": 3.9,
+      "salary": 8
+     },
+     {
+      "n": "Jaren Jackson Jr.",
+      "games": 3,
+      "starts": 3,
+      "z": 1.35,
+      "impact": 3.5,
+      "salary": 2
+     },
+     {
+      "n": "Alperen Seng\u00fcn",
+      "games": 3,
+      "starts": 3,
+      "z": 1.14,
+      "impact": 3.1,
+      "salary": 75
+     },
+     {
+      "n": "AJ Dybantsa",
+      "games": 3,
+      "starts": 3,
+      "z": 0.83,
+      "impact": 2.3,
+      "salary": 8
+     },
+     {
+      "n": "Cameron Boozer",
+      "games": 3,
+      "starts": 1,
+      "z": 0.62,
+      "impact": 0.6,
+      "salary": 16
+     },
+     {
+      "n": "Darryn Peterson",
+      "games": 3,
+      "starts": 1,
+      "z": -0.17,
+      "impact": -0.2,
+      "salary": 22
+     },
+     {
+      "n": "Paolo Banchero",
+      "games": 3,
+      "starts": 1,
+      "z": -0.41,
+      "impact": -0.4,
+      "salary": 8
+     },
+     {
+      "n": "Dylan Harper",
+      "games": 3,
+      "starts": 1,
+      "z": -0.54,
+      "impact": -0.5,
+      "salary": 11
+     },
+     {
+      "n": "Cedric Coward",
+      "games": 3,
+      "starts": 1,
+      "z": -1.12,
+      "impact": -1,
+      "salary": 1
+     }
+    ],
+    "payroll": 467,
+    "dead": 2,
+    "dropped": [
+     "anthony black"
+    ],
+    "outs": [],
+    "noData": [],
+    "streamers": [
+     {
+      "cat": "3PM",
+      "fa": {
+       "n": "Coby White",
+       "nba": "CHA",
+       "per": 3,
+       "games": 3
+      }
+     },
+     {
+      "cat": "AST",
+      "fa": {
+       "n": "Darius Acuff Jr.",
+       "nba": "SAC",
+       "per": 6.65,
+       "games": 3
+      }
+     },
+     {
+      "cat": "STL",
+      "fa": {
+       "n": "Cason Wallace",
+       "nba": "OKC",
+       "per": 1.69,
+       "games": 3
+      }
+     }
+    ]
+   },
+   "away": {
+    "team": "Danna",
+    "name": "Nilumbik Nets",
+    "winPct": 0.3651,
+    "expCats": 3.9934,
+    "drumsticks": 5,
+    "starts": 42.71951219512195,
+    "wasted": 4,
+    "wastedBy": [
+     {
+      "n": "Jonathan Kuminga",
+      "g": 2
+     },
+     {
+      "n": "Stephon Castle",
+      "g": 1
+     },
+     {
+      "n": "RJ Barrett",
+      "g": 1
+     }
+    ],
+    "all": [
+     {
+      "n": "Shai Gilgeous-Alexander",
+      "games": 3,
+      "starts": 3,
+      "z": 10.14,
+      "impact": 28.6,
+      "salary": 129
+     },
+     {
+      "n": "Nikola Jokic",
+      "games": 2,
+      "starts": 2,
+      "z": 11.89,
+      "impact": 21.7,
+      "salary": 130
+     },
+     {
+      "n": "Kyrie Irving",
+      "games": 3,
+      "starts": 3,
+      "z": 5.59,
+      "impact": 13.9,
+      "salary": 4
+     },
+     {
+      "n": "OG Anunoby",
+      "games": 3,
+      "starts": 3,
+      "z": 3.38,
+      "impact": 9,
+      "salary": 3
+     },
+     {
+      "n": "Austin Reaves",
+      "games": 3,
+      "starts": 3,
+      "z": 2.15,
+      "impact": 5.7,
+      "salary": 26
+     },
+     {
+      "n": "Evan Mobley",
+      "games": 2,
+      "starts": 2,
+      "z": 3.01,
+      "impact": 5.3,
+      "salary": 41
+     },
+     {
+      "n": "Paul George",
+      "games": 2,
+      "starts": 2,
+      "z": 3.25,
+      "impact": 5,
+      "salary": 1
+     },
+     {
+      "n": "Ty Jerome",
+      "games": 3,
+      "starts": 3,
+      "z": 1.48,
+      "impact": 3.9,
+      "salary": 5
+     },
+     {
+      "n": "Josh Hart",
+      "games": 3,
+      "starts": 3,
+      "z": 1.23,
+      "impact": 3.3,
+      "salary": 1
+     },
+     {
+      "n": "Jaylen Brown",
+      "games": 4,
+      "starts": 4,
+      "z": 0.74,
+      "impact": 2.7,
+      "salary": 9
+     },
+     {
+      "n": "Dejounte Murray",
+      "games": 3,
+      "starts": 3,
+      "z": 0.26,
+      "impact": 0.7,
+      "salary": 1
+     },
+     {
+      "n": "Matas Buzelis",
+      "games": 3,
+      "starts": 3,
+      "z": -0.05,
+      "impact": -0.1,
+      "salary": 5
+     },
+     {
+      "n": "Keyonte George",
+      "games": 3,
+      "starts": 3,
+      "z": -0.42,
+      "impact": -1.1,
+      "salary": 15
+     },
+     {
+      "n": "Kel'el Ware",
+      "games": 3,
+      "starts": 3,
+      "z": -1.06,
+      "impact": -2.9,
+      "salary": 8
+     },
+     {
+      "n": "Stephon Castle",
+      "games": 3,
+      "starts": 2,
+      "z": -1.85,
+      "impact": -3.4,
+      "salary": 10
+     },
+     {
+      "n": "Jonathan Kuminga",
+      "games": 3,
+      "starts": 1,
+      "z": -4.58,
+      "impact": -4,
+      "salary": 1
+     },
+     {
+      "n": "RJ Barrett",
+      "games": 3,
+      "starts": 2,
+      "z": -2.67,
+      "impact": -4.7,
+      "salary": 1
+     },
+     {
+      "n": "Julius Randle",
+      "games": 3,
+      "starts": 3,
+      "z": -1.73,
+      "impact": -4.8,
+      "salary": 3
+     }
+    ],
+    "payroll": 428,
+    "dead": 0,
+    "dropped": [],
+    "outs": [
+     {
+      "n": "Walker Kessler",
+      "status": "out",
+      "salary": 16,
+      "injFlag": true
+     },
+     {
+      "n": "Domantas Sabonis",
+      "status": "out",
+      "salary": 15,
+      "injFlag": true
+     },
+     {
+      "n": "Brandon Ingram",
+      "status": "ir",
+      "salary": 4,
+      "injFlag": false
+     }
+    ],
+    "noData": [],
+    "streamers": [
+     {
+      "cat": "PTS",
+      "fa": {
+       "n": "Joel Embiid",
+       "nba": "PHI",
+       "per": 26.14,
+       "games": 4
+      }
+     }
+    ]
+   },
+   "tiePct": 0.0339,
+   "expTies": 0.1442,
+   "coinFlips": 1,
+   "likelyScore": {
+    "home": 5,
+    "dist": [
+     0.0003,
+     0.0066,
+     0.0373,
+     0.1284,
+     0.2295,
+     0.2661,
+     0.2079,
+     0.0939,
+     0.0272,
+     0.0028
+    ]
+   },
+   "cats": [
+    {
+     "k": "fgp",
+     "l": "FG%",
+     "win": 0.3806,
+     "tie": 0.0024,
+     "lose": 0.617,
+     "side": -1,
+     "home": 0.4752397114270348,
+     "away": 0.4834086262964811
+    },
+    {
+     "k": "ftp",
+     "l": "FT%",
+     "win": 0.4336,
+     "tie": 0.0023,
+     "lose": 0.5641,
+     "side": -1,
+     "home": 0.8013487802884105,
+     "away": 0.8078467937182892
+    },
+    {
+     "k": "tpm",
+     "l": "3PM",
+     "win": 0.4919,
+     "tie": 0.0256,
+     "lose": 0.4825,
+     "side": 0,
+     "home": 78.26573170731707,
+     "away": 77.95329268292686
+    },
+    {
+     "k": "reb",
+     "l": "REB",
+     "win": 0.7729,
+     "tie": 0.0097,
+     "lose": 0.21739999999999998,
+     "side": 1,
+     "home": 275.8451219512195,
+     "away": 251.6475609756098
+    },
+    {
+     "k": "ast",
+     "l": "AST",
+     "win": 0.4402,
+     "tie": 0.0138,
+     "lose": 0.546,
+     "side": -1,
+     "home": 189.75243902439027,
+     "away": 193.48329268292682
+    },
+    {
+     "k": "stl",
+     "l": "STL",
+     "win": 0.4315,
+     "tie": 0.0341,
+     "lose": 0.5344,
+     "side": -1,
+     "home": 46.21378048780488,
+     "away": 47.68158536585366
+    },
+    {
+     "k": "blk",
+     "l": "BLK",
+     "win": 0.7512,
+     "tie": 0.032,
+     "lose": 0.21680000000000002,
+     "side": 1,
+     "home": 31.366951219512195,
+     "away": 24.574878048780487
+    },
+    {
+     "k": "to",
+     "l": "TO",
+     "win": 0.4176,
+     "tie": 0.0202,
+     "lose": 0.5622,
+     "side": -1,
+     "home": 102.2879268292683,
+     "away": 99.06621951219513
+    },
+    {
+     "k": "pts",
+     "l": "PTS",
+     "win": 0.7429,
+     "tie": 0.0041,
+     "lose": 0.253,
+     "side": 1,
+     "home": 876.444268292683,
+     "away": 829.4260975609758
+    }
+   ],
+   "swing": [
+    "FG%",
+    "FT%",
+    "3PM",
+    "AST",
+    "STL",
+    "TO",
+    "PTS"
+   ],
+   "locked": {
+    "home": [],
+    "away": []
+   },
+   "usedLiveTotals": false
+  },
+  "season": {
+   "w": 2,
+   "l": 6,
+   "t": 1
+  }
+ },
+ "lines": [
+  {
+   "host": "KEV",
+   "text": "Fryer Radio, full time, week 1!"
+  },
+  {
+   "host": "KEV",
+   "text": "Bizzle against Danna. Final score in categories: 2, 6, with 1 tied!"
+  },
+  {
+   "host": "KEV",
+   "text": "Bizzle goes down!"
+  },
+  {
+   "host": "NIGEL",
+   "text": "The model said about 5 categories for Bizzle. Got 2. That aged like milk in the sun."
+  },
+  {
+   "host": "KEV",
+   "text": "Where did the model get it wrong, Nigel?"
+  },
+  {
+   "host": "NIGEL",
+   "text": "Blocks. It had Bizzle at 75 percent there, and Danna took it. It also missed points and steals."
+  },
+  {
+   "host": "NIGEL",
+   "text": "That makes the season 2, 6, 1 in categories for Bizzle."
+  },
+  {
+   "host": "KEV",
+   "text": "And Mamba against Slav?"
+  },
+  {
+   "host": "NIGEL",
+   "text": "Not in the Matchup Log, so no receipts. And no receipts means no roast. Log it, lads."
+  },
+  {
+   "host": "KEV",
+   "text": "That's full time! Fryer Radio, out!"
+  }
+ ],
+ "writer": "templates",
+ "seconds": 40
+}

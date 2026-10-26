@@ -1,6 +1,17 @@
 {
  "episodes": [
   {
+   "id": "wk01-review",
+   "type": "review",
+   "week": 1,
+   "title": "Week 1 full time",
+   "createdAt": "2026-10-26T05:11:56.866Z",
+   "seconds": 40,
+   "audio": "radio/episodes/wk01-review.mp3",
+   "script": "radio/episodes/wk01-review.json",
+   "writer": "templates"
+  },
+  {
    "id": "wk01-update-1023",
    "type": "update",
    "week": 1,
