@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-26T04:57:56.944Z",
+ "at": "2026-10-26T05:10:22.707Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -219,6 +219,9 @@
   },
   "scoreboardCompared": true,
   "scoreboardLagging": true,
+  "results": [
+   "wk 1: Slav 7-2-0 Mamba (lineups), Bizzle 2-6-1 Danna (lineups)"
+  ],
   "pairs": [
    [
     "Slav",
