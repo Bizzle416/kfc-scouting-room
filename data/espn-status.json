@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-26T05:28:48.740Z",
+ "at": "2026-10-26T08:44:21.060Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -23,9 +23,9 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 6,
-   "latestScoringPeriod": 6,
-   "currentMatchupPeriod": 1,
+   "currentScoringPeriod": 7,
+   "latestScoringPeriod": 7,
+   "currentMatchupPeriod": 2,
    "mp1": [
     1,
     2,
@@ -34,19 +34,15 @@
     5,
     6
    ],
-   "today": "2026-10-25"
+   "today": "2026-10-26"
   },
-  "poolStats": 308,
+  "poolStats": 307,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 92,
    "sample": [
     [
      "jalen williams",
-     "DAY_TO_DAY"
-    ],
-    [
-     "ivica zubac",
      "DAY_TO_DAY"
     ],
     [
@@ -78,6 +74,10 @@
      "OUT"
     ],
     [
+     "ivica zubac",
+     "DAY_TO_DAY"
+    ],
+    [
      "jalen duren",
      "OUT"
     ],
@@ -91,24 +91,33 @@
     ]
    ]
   },
+  "trades": 1,
   "rosterChanges": {
-   "added": [],
-   "moved": [],
+   "added": [
+    "Mamba: De'Aaron Fox ($5 FA)"
+   ],
+   "moved": [
+    "LeBron James: Bizzle → Mamba ($10)",
+    "Jaren Jackson Jr.: Bizzle → Mamba ($2)",
+    "Ivica Zubac: Mamba → Bizzle ($4)",
+    "James Harden: Mamba → Bizzle ($1)"
+   ],
    "dropped": []
   },
   "espnPlayers": 387,
   "liveWeek": {
-   "espn": 1,
+   "espn": 2,
    "site": 2
   },
   "finalBy": {
+   "2026-10-26": "not yet",
+   "2026-10-27": "not yet",
    "2026-10-20": "clock",
    "2026-10-21": "clock",
    "2026-10-22": "clock",
    "2026-10-23": "clock",
    "2026-10-24": "clock",
-   "2026-10-25": "scoreboard",
-   "2026-10-26": "not yet"
+   "2026-10-25": "clock"
   },
   "finalDays": [],
   "matchupPeriods": {
@@ -169,11 +178,56 @@
     "pts": 0
    }
   },
-  "espnScoreboard": {},
+  "espnScoreboard": {
+   "Mamba": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Danna": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Bizzle": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Slav": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   }
+  },
   "scoreboardCompared": true,
   "scoreboardLagging": false,
   "results": [
-   "wk 1: Slav 7-2-0 Mamba (lineups), Bizzle 2-6-1 Danna (lineups)"
+   "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)"
   ],
   "pairs": [
    [
