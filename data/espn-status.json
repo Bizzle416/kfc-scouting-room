@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-26T08:44:21.060Z",
+ "at": "2026-10-26T14:16:46.251Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -36,22 +36,22 @@
    ],
    "today": "2026-10-26"
   },
-  "poolStats": 307,
+  "poolStats": 306,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 92,
+   "flagged": 93,
    "sample": [
     [
      "jalen williams",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "zach edey",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "joel embiid",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "brandon ingram",
@@ -71,7 +71,7 @@
     ],
     [
      "vj edgecombe",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "ivica zubac",
@@ -83,7 +83,7 @@
     ],
     [
      "ausar thompson",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "kon knueppel",
@@ -93,18 +93,11 @@
   },
   "trades": 1,
   "rosterChanges": {
-   "added": [
-    "Mamba: De'Aaron Fox ($5 FA)"
-   ],
-   "moved": [
-    "LeBron James: Bizzle → Mamba ($10)",
-    "Jaren Jackson Jr.: Bizzle → Mamba ($2)",
-    "Ivica Zubac: Mamba → Bizzle ($4)",
-    "James Harden: Mamba → Bizzle ($1)"
-   ],
+   "added": [],
+   "moved": [],
    "dropped": []
   },
-  "espnPlayers": 387,
+  "espnPlayers": 386,
   "liveWeek": {
    "espn": 2,
    "site": 2
