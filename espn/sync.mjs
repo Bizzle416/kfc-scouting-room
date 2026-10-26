@@ -142,19 +142,25 @@ async function main() {
   if (bad.length) throw new Error(`Stat ids look wrong (points don't add up) for: ${bad.slice(0, 5).join(", ")}`);
 
   // ----- matchups: pairings + live lineup totals from day-by-day ESPN rosters -----
-  const sched = (L.schedule || []).filter((m) => m.matchupPeriodId === curMP);
+  // ESPN only moves to the next matchup period overnight (it can sit on a finished week for most of a day).
+  // Once every night of ESPN's current week is final, the site moves on to the next week straight away.
+  for (const sp of mpDays(curMP)) if (sp <= latestSP + 1) await checkFinal(spDate(sp));
+  const curDone = mpDays(curMP).length > 0 && mpDays(curMP).every((sp) => sp <= latestSP && isFinal(spDate(sp)));
+  const liveMP = curDone && mpDays(curMP + 1).length ? curMP + 1 : curMP;
+  status.checks.liveWeek = { espn: curMP, site: liveMP };
+  const sched = (L.schedule || []).filter((m) => m.matchupPeriodId === liveMP);
   const pairs = sched.map((m) => [idToKey[m.home?.teamId], idToKey[m.away?.teamId]]).filter((p) => p[0] && p[1]);
   const myPair = pairs.find((p) => p.includes(ME));
-  if (!myPair) throw new Error(`No ${ME} matchup found in matchup period ${curMP}`);
+  if (!myPair) throw new Error(`No ${ME} matchup found in matchup period ${liveMP}`);
   const opp = myPair[0] === ME ? myPair[1] : myPair[0];
 
   // This week, plus last week again so ESPN's stat corrections reach the finished week.
-  const fetchMPs = [curMP - 1, curMP].filter((mp) => mp >= 1 && mpDays(mp).length);
-  for (const mp of fetchMPs) for (const sp of mpDays(mp)) if (sp <= latestSP + 1) await checkFinal(spDate(sp));
+  const fetchMPs = [liveMP - 1, liveMP].filter((mp) => mp >= 1 && mpDays(mp).length);
+  for (const mp of fetchMPs) for (const sp of mpDays(mp)) if (sp <= latestSP + 1 && !FINAL.has(spDate(sp))) await checkFinal(spDate(sp));
   status.checks.finalBy = Object.fromEntries([...FINAL].map(([d, f]) => [d, f ? (timeFinal(d) ? "clock" : "scoreboard") : "not yet"]));
   const current = {}, days = {};
   for (const t of TEAMS) { current[t] = {}; for (const k of RAW) current[t][k] = 0; }
-  const curDays = new Set(mpDays(curMP));
+  const curDays = new Set(mpDays(liveMP));
   for (const sp of fetchMPs.flatMap(mpDays).filter((s) => s <= latestSP && s < curSP + 1 && isFinal(spDate(s)))) {
     const D = await get(`view=mRoster&scoringPeriodId=${sp}`);
     const date = spDate(sp); days[date] = {};
@@ -175,9 +181,9 @@ async function main() {
   step(`daily lineups read: ${Object.keys(days).join(", ") || "none yet"}`);
   // Keep every earlier night: the Recap tab and the season table are built from them.
   const allDays = { ...(prev.days || {}), ...days };
-  const curDates = new Set(mpDays(curMP).map(spDate));
+  const curDates = new Set(mpDays(liveMP).map(spDate));
   // Count games from the first day that isn't final yet (today's live games stay in the projection).
-  let fromD = mpFirstDate(curMP); while (isFinal(fromD) && spOf(fromD) <= latestSP) fromD = addDays(fromD, 1);
+  let fromD = mpFirstDate(liveMP); while (isFinal(fromD) && spOf(fromD) <= latestSP) fromD = addDays(fromD, 1);
   status.checks.finalDays = Object.keys(days).filter((d) => curDates.has(d));
   const espnMPs = [...new Set((L.schedule || []).map((m) => m.matchupPeriodId))].length, regWeeks = REFW.filter((w) => w.w <= 18).length;
   status.checks.matchupPeriods = { espn: espnMPs, siteRegularSeason: regWeeks };
@@ -206,7 +212,7 @@ async function main() {
   // ----- results for every finished week, all four teams -----
   // ESPN's result is used once ESPN has decided the matchup; before that, the summed lineups (provisional).
   const resWeeks = [];
-  for (let mp = 1; mp <= curMP; mp++) {
+  for (let mp = 1; mp <= liveMP; mp++) {
     const dates = mpDays(mp).map(spDate);
     if (!dates.length || !dates.every((d) => isFinal(d) && allDays[d])) continue;
     const ms = (L.schedule || []).filter((m) => m.matchupPeriodId === mp), official = {};
@@ -224,10 +230,10 @@ async function main() {
   status.checks.results = results.map((r) => `wk ${r.week}: ` + r.matchups.map((m) => `${m.home} ${m.score.join("-")} ${m.away} (${m.src})`).join(", "));
 
   // ----- write -----
-  const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, season, history, me: ME, logPair: [ME, opp], logWeek: curMP, teams,
+  const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, season, history, me: ME, logPair: [ME, opp], logWeek: liveMP, teams,
     days: allDays, results, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
-  out.matchup = { ...(prev.matchup || {}), home: ME, away: opp, week: curMP, from: fromD, avail: 1, current };
-  if (fromD > spDate(mpDays(curMP).slice(-1)[0] || curSP)) out.matchup.from = null;
+  out.matchup = { ...(prev.matchup || {}), home: ME, away: opp, week: liveMP, from: fromD, avail: 1, current };
+  if (fromD > spDate(mpDays(liveMP).slice(-1)[0] || curSP)) out.matchup.from = null;
   fs.writeFileSync(path.join(ROOT, "data", "league.json"), JSON.stringify(out));
   status.ok = true; status.checks.pairs = pairs; status.checks.from = out.matchup.from;
   step("league.json written");
