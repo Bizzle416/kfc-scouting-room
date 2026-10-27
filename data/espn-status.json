@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-27T21:12:04.413Z",
+ "at": "2026-10-27T22:53:30.618Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -38,10 +38,10 @@
    ],
    "today": "2026-10-27"
   },
-  "poolStats": 316,
+  "poolStats": 315,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 98,
+   "flagged": 104,
    "sample": [
     [
      "jalen williams",
@@ -56,12 +56,24 @@
      "OUT"
     ],
     [
+     "ajay mitchell",
+     "DAY_TO_DAY"
+    ],
+    [
      "brandon ingram",
      "OUT"
     ],
     [
+     "kyrie irving",
+     "DAY_TO_DAY"
+    ],
+    [
      "yaxel lendeborg",
      "DAY_TO_DAY"
+    ],
+    [
+     "anthony edwards",
+     "OUT"
     ],
     [
      "alperen sengun",
@@ -77,26 +89,14 @@
     ],
     [
      "ivica zubac",
-     "DAY_TO_DAY"
-    ],
-    [
-     "jalen duren",
      "OUT"
-    ],
-    [
-     "chet holmgren",
-     "DAY_TO_DAY"
-    ],
-    [
-     "derrick white",
-     "DAY_TO_DAY"
     ]
    ]
   },
   "trades": 1,
   "rosterChanges": {
    "added": [
-    "Mamba: Ajay Mitchell ($5 FA)"
+    "Slav: Damian Lillard ($5 FA)"
    ],
    "moved": [],
    "dropped": []
