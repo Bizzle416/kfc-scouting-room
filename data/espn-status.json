@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-27T18:45:30.362Z",
+ "at": "2026-10-27T21:12:04.413Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -38,10 +38,10 @@
    ],
    "today": "2026-10-27"
   },
-  "poolStats": 318,
+  "poolStats": 316,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 93,
+   "flagged": 98,
    "sample": [
     [
      "jalen williams",
@@ -52,15 +52,19 @@
      "DAY_TO_DAY"
     ],
     [
-     "joel embiid",
-     "DAY_TO_DAY"
-    ],
-    [
      "jaren jackson jr",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "brandon ingram",
+     "OUT"
+    ],
+    [
+     "yaxel lendeborg",
+     "DAY_TO_DAY"
+    ],
+    [
+     "alperen sengun",
      "OUT"
     ],
     [
@@ -70,10 +74,6 @@
     [
      "paolo banchero",
      "OUT"
-    ],
-    [
-     "vj edgecombe",
-     "DAY_TO_DAY"
     ],
     [
      "ivica zubac",
@@ -95,11 +95,13 @@
   },
   "trades": 1,
   "rosterChanges": {
-   "added": [],
+   "added": [
+    "Mamba: Ajay Mitchell ($5 FA)"
+   ],
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 398,
+  "espnPlayers": 397,
   "liveWeek": {
    "espn": 2,
    "site": 2
