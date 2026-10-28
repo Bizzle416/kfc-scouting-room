@@ -285,7 +285,7 @@ table.rcat td,table.rcat th{padding:6px 8px;text-align:center}table.rcat .l{text
       <div><label for="pTeam">Show</label><select id="pTeam"></select></div>
       <div><label for="pSearch">Search</label><input id="pSearch" type="search" placeholder="Name"></div>
     </div>
-    <p class="small muted">9-cat z-scores per game across every projected player. Stats blend projections with real ESPN numbers as games get played. Next-year salary is +10% or +$2, rounded.</p>
+    <p class="small muted">9-cat z-scores per game across every projected player. Stats blend preseason projections with each player's ESPN season average, weighted by games played: 50% actual at 3 games, 73% at 8, 87% at 20. Next-year salary is +10% or +$2, rounded.</p>
     <div class="scroll" id="pTable"></div></div>
   <p class="small muted">Projections: FantasyPros consensus (preseason, fetched 28 Sep 2026). ADP: Hashtag Basketball blend of Yahoo, ESPN and Fantrax, 17 Oct 2026. Injury tags, rosters, lineups and stats: ESPN Fantasy auto-sync. Weekly game counts: Hashtag Basketball. Daily schedule: Fixture Download.</p>
 </section>
@@ -310,7 +310,7 @@ const poss=n=>n.endsWith("s")?n+"'":n+"'s";
 const tl=(t,sz)=>`<span class="tl">${badge(t,sz)}${esc(tname(t))}</span>`;
 function paintTeams(){const M=state.matchup,r=document.documentElement.style;r.setProperty("--me",tcol(M.home));r.setProperty("--opp",tcol(M.away))}
 const TAGS=["11 herbs & spices · 9 categories · 10,000 sims","Finger-lickin' projections since week 1","Original Recipe analytics · extra crispy","Secret recipe: z-scores and gravy","Hot & Spicy pickups, served daily"];
-const SIMS=10000, BLEND_K=10, HARD_CAP=550, KEEP_CAP=400;
+const SIMS=10000, BLEND_K=3, HARD_CAP=550, KEEP_CAP=400;
 const NBA_CODES={"Atlanta Hawks":"ATL","Boston Celtics":"BOS","Brooklyn Nets":"BKN","Charlotte Hornets":"CHA","Chicago Bulls":"CHI","Cleveland Cavaliers":"CLE","Dallas Mavericks":"DAL","Denver Nuggets":"DEN","Detroit Pistons":"DET","Golden State Warriors":"GS","Houston Rockets":"HOU","Indiana Pacers":"IND","LA Clippers":"LAC","Los Angeles Clippers":"LAC","Los Angeles Lakers":"LAL","Memphis Grizzlies":"MEM","Miami Heat":"MIA","Milwaukee Bucks":"MIL","Minnesota Timberwolves":"MIN","New Orleans Pelicans":"NO","New York Knicks":"NY","Oklahoma City Thunder":"OKC","Orlando Magic":"ORL","Philadelphia 76ers":"PHI","Phoenix Suns":"PHO","Portland Trail Blazers":"POR","Sacramento Kings":"SAC","San Antonio Spurs":"SA","Toronto Raptors":"TOR","Utah Jazz":"UTA","Washington Wizards":"WAS"};
 const norm=s=>String(s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[.'’]/g,"").replace(/\s+/g," ").trim();
 const PMAP=new Map(REF.players.map(p=>[norm(p.n),p]));
