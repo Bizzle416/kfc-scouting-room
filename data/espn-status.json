@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-10-27T22:53:30.618Z",
+ "at": "2026-10-28T06:22:31.038Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-24, 2026-10-25, 2026-10-26",
+  "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-24, 2026-10-25, 2026-10-26, 2026-10-27",
   "league.json written"
  ],
  "warnings": [
@@ -38,10 +38,10 @@
    ],
    "today": "2026-10-27"
   },
-  "poolStats": 315,
+  "poolStats": 320,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 104,
+   "flagged": 103,
    "sample": [
     [
      "jalen williams",
@@ -95,20 +95,18 @@
   },
   "trades": 1,
   "rosterChanges": {
-   "added": [
-    "Slav: Damian Lillard ($5 FA)"
-   ],
+   "added": [],
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 397,
+  "espnPlayers": 402,
   "liveWeek": {
    "espn": 2,
    "site": 2
   },
   "finalBy": {
    "2026-10-26": "clock",
-   "2026-10-27": "not yet",
+   "2026-10-27": "scoreboard",
    "2026-10-28": "not yet",
    "2026-10-20": "clock",
    "2026-10-21": "clock",
@@ -118,7 +116,8 @@
    "2026-10-25": "clock"
   },
   "finalDays": [
-   "2026-10-26"
+   "2026-10-26",
+   "2026-10-27"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -126,56 +125,56 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 85,
-    "fga": 170,
-    "ftm": 37,
-    "fta": 46,
-    "tpm": 22,
-    "reb": 66,
-    "ast": 61,
-    "stl": 18,
-    "blk": 8,
-    "to": 24,
-    "pts": 229
+    "fgm": 116,
+    "fga": 231,
+    "ftm": 64,
+    "fta": 80,
+    "tpm": 32,
+    "reb": 98,
+    "ast": 85,
+    "stl": 20,
+    "blk": 12,
+    "to": 31,
+    "pts": 328
    },
    "Danna": {
-    "fgm": 68,
-    "fga": 153,
-    "ftm": 40,
-    "fta": 54,
-    "tpm": 15,
-    "reb": 59,
-    "ast": 49,
-    "stl": 6,
-    "blk": 9,
-    "to": 21,
-    "pts": 191
+    "fgm": 119,
+    "fga": 256,
+    "ftm": 60,
+    "fta": 79,
+    "tpm": 24,
+    "reb": 113,
+    "ast": 82,
+    "stl": 14,
+    "blk": 13,
+    "to": 40,
+    "pts": 322
    },
    "Mamba": {
-    "fgm": 64,
-    "fga": 126,
-    "ftm": 28,
-    "fta": 41,
-    "tpm": 14,
-    "reb": 49,
-    "ast": 41,
-    "stl": 11,
-    "blk": 8,
-    "to": 31,
-    "pts": 170
+    "fgm": 90,
+    "fga": 173,
+    "ftm": 46,
+    "fta": 69,
+    "tpm": 28,
+    "reb": 72,
+    "ast": 66,
+    "stl": 12,
+    "blk": 10,
+    "to": 40,
+    "pts": 254
    },
    "Slav": {
-    "fgm": 54,
-    "fga": 108,
-    "ftm": 21,
-    "fta": 24,
-    "tpm": 16,
-    "reb": 48,
-    "ast": 46,
-    "stl": 10,
-    "blk": 7,
-    "to": 23,
-    "pts": 145
+    "fgm": 100,
+    "fga": 204,
+    "ftm": 50,
+    "fta": 62,
+    "tpm": 22,
+    "reb": 95,
+    "ast": 71,
+    "stl": 14,
+    "blk": 13,
+    "to": 40,
+    "pts": 272
    }
   },
   "espnScoreboard": {
@@ -224,8 +223,8 @@
     "pts": 145
    }
   },
-  "scoreboardCompared": false,
-  "scoreboardLagging": false,
+  "scoreboardCompared": true,
+  "scoreboardLagging": true,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)"
   ],
@@ -239,6 +238,6 @@
     "Slav"
    ]
   ],
-  "from": "2026-10-27"
+  "from": "2026-10-28"
  }
 }
