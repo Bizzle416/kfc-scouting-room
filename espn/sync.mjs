@@ -1,5 +1,5 @@
 // ESPN Fantasy -> data/league.json
-// Reads the KFC league straight from ESPN (lineups, rosters, stats, both matchups) and keeps the
+// Reads the league straight from ESPN (lineups, rosters, stats, both matchups) and keeps the
 // workbook-only fields (salaries, dead cap, keeper rules, NBA schedule) from the current league.json.
 // Always writes data/espn-status.json so a run can be checked without reading Action logs.
 // Never prints or writes the cookies.
@@ -49,7 +49,7 @@ const step = (s) => status.steps.push(s);
 
 async function get(params, extra = {}) {
   const url = `${process.env.ESPN_BASE || "https://lm-api-reads.fantasy.espn.com"}/apis/v3/games/fba/seasons/${SEASON}/segments/0/leagues/${LEAGUE_ID}?${params}`;
-  const headers = { Accept: "application/json", "User-Agent": "kfc-scouting-room-sync", ...extra };
+  const headers = { Accept: "application/json", "User-Agent": "fantasy-analytics-sync", ...extra };
   if (S2 && SWID) headers.Cookie = `espn_s2=${S2}; SWID=${SWID}`;
   for (let i = 0; i < 3; i++) {
     const r = await fetch(url, { headers, redirect: "follow" });

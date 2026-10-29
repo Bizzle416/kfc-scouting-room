@@ -1,42 +1,32 @@
-# KFC Scouting Room
+# Fantasy Analytics
 
-Matchup predictor and league analysis for the KFC Fantasy Cup (ESPN, 4 teams, 9-cat H2H each category).
+Gameweek analysis for a 4-team ESPN fantasy basketball league (9-category head-to-head, each category scored).
 
-**Live site:** https://YOUR-USERNAME.github.io/kfc-scouting-room/
+**Live site:** https://bizzle416.github.io/kfc-scouting-room/
 
-## Updating (commissioner)
-1. Save the KFC workbook.
-2. Open the site → **Update data** → load the workbook (read in the browser only) → **Download league.json**.
-3. In this repo: `data/` → Add file → Upload files → `league.json` → Commit.
+## Tabs
+- **Gameweek** (default): the league's week to date and the projection for the rest of the week.
+  - *League this week*: every team's week-to-date category totals, ranked, with the score now, projected categories and win chance.
+  - *One panel per matchup*: KPIs (score now, projected final, win chance, starts so far and left), a category table with win probabilities, starts per day (played vs projected), expected categories night by night, a day-by-day stat table, a player table (week totals, performance vs projection, starts left) and the lineup plan for the remaining days.
+  - *Free agents for the rest of the week*, for the commissioner's team.
+  - Past weeks can be selected; they show the final numbers.
+- **Recap**: final category scores and the players who decided each matchup.
+- **Bench audit**: tests every idle game in the lineup plan against legal swaps.
+- **Season**: league table (charter seeding) and the commissioner's season.
+- **Trade**: trade analyser, trade block (Supabase) and completed trades.
+- **Players**: 9-cat z-score values and salaries.
 
-The workbook itself never goes in this repo — it holds sealed keeper plans.
+## Data
+`data/league.json` is rebuilt automatically by the **ESPN sync** GitHub Action (`espn/sync.mjs`), several times a day after US games finish. It reads ESPN with the `ESPN_S2` / `ESPN_SWID` repo secrets, since the league is private. A game day only counts once it's final. Run it by hand from Actions → ESPN sync → Run workflow.
+
+Week to date is the sum of ESPN's nightly lineups (started games only). The Gameweek tab checks that this sum matches ESPN's live week totals and flags it if it doesn't.
+
+## Model
+- Per-game line per player: preseason FantasyPros projection blended with his ESPN season average, weighted by games played (`gp / (gp + 3)`: 50% actual at 3 games, 73% at 8, 87% at 20).
+- Lineup plan: each remaining day, the best 10 available players fill PG, SG, SF, PF, C, G, F and 3 UTIL.
+- 10,000 simulated finishes per matchup on top of the week-to-date totals.
 
 ## Files
-- `index.html` — the whole app (no build step).
-- `data/league.json` — rosters, salaries, ESPN stats, NBA schedule, every night's lineups (`days`, kept all season) and `results` for every finished week, all four teams.
-- `espn/results.mjs` — the one scoring rule for finished weeks (used by the sync).
-
-## Recap and Season tabs
-- **Season → League table:** all four teams from `results`, seeded by the charter (cat win %, head-to-head cats, weeks won, coin flip).
-- **Recap:** final category scores for both matchups, then *won it / cost it*: each player's starts swapped for a waiver body (median projection of the 20 best unrostered players). A swap that flips a category names him. Ties are summarised, not listed.
-- A week is scored from the summed lineups as soon as every night is final (marked provisional). Once ESPN closes the week its own result replaces it, and a warning lands in `data/espn-status.json` if the two disagree. Last week's lineups are re-read every sync so stat corrections come through.
-
-## Fryer Radio (audio previews and reviews)
-Kev (hype) and Nigel (dry analyst) talk through each week. Free, automatic, and built only from this repo's data.
-
-**How it runs:** every time `data/league.json` is uploaded, the *Fryer Radio* GitHub Action:
-1. Runs the site's own sim code (straight out of `index.html`, seeded so it's repeatable) for both matchups.
-2. Makes a **preview** for the current week if there isn't one yet. Once made it's frozen, so the model can be graded later.
-3. Makes a **review** for any finished week in the Matchup Log, grading the frozen preview against the result.
-4. Voices it with Kokoro (open-source, runs inside the Action, no account) and commits the mp3 to `radio/episodes/`.
-5. The player at the top of *This week* plays the latest episode, with a transcript.
-
-**Timing:** upload before the first game of the week → preview. Upload once the week's row in the Matchup Log is complete → review (and next week's preview in the same run).
-
-**Optional punch-up:** add a free Google Gemini key as a repo secret named `GEMINI_API_KEY` (Settings → Secrets and variables → Actions). Gemini rewrites the jokes, but any rewrite that contains a number not in the original script is thrown away and the template script is used instead. No key = template script, same facts.
-
-**Files:** `radio/engine.mjs` (runs the sims), `radio/writer.mjs` (the script), `radio/storylines.json` (running jokes — edit these), `radio/tts.py` (voices), `radio/build.mjs` (puts it together).
-
-**Re-run by hand:** Actions → Fryer Radio → Run workflow (tick *force* to remake this week's preview).
-
-**Limits:** only the commissioner's game has logged results, so reviews only cover that game. Each episode is about 1.5 MB.
+- `index.html`: the whole app (no build step).
+- `data/league.json`: rosters, salaries, ESPN stats, NBA schedule, every night's lineups and results for every finished week.
+- `espn/sync.mjs`, `espn/results.mjs`: the ESPN sync and the scoring rule for finished weeks.

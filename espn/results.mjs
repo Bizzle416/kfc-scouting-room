@@ -43,7 +43,7 @@ export function buildResults(days, weeks) {
   return { results: out, warnings };
 }
 
-// The old single-team log (radio and awards read it): one row per finished week for `me`.
+// The old single-team log (the Season tab reads it): one row per finished week for `me`.
 export function historyFor(results, me) {
   const h = [];
   for (const R of results) for (const m of R.matchups) {
