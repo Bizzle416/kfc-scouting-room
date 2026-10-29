@@ -179,11 +179,14 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
 .alerts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.alerts .flag{margin-left:0}
 .sbar{display:flex;gap:2px;width:140px;height:12px}.sbar i{display:block;height:100%;min-width:0}.sbar i:first-child{border-radius:3px 0 0 3px}.sbar i:last-child{border-radius:0 3px 3px 0}
 .kpi .v.delta-neg{color:var(--bad)}
+.punt{display:inline-block;margin-top:6px;font-size:13px;position:relative}.punt summary{cursor:pointer;color:var(--ink);font-weight:500;padding:2px 10px;border:1px solid var(--line);border-radius:999px;list-style:none}
+.punt summary::-webkit-details-marker{display:none}.punt[open] .pbox{position:absolute;z-index:20;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:6px;width:260px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.punt .pbox label{display:inline-flex;gap:5px;align-items:center;width:30%;margin:2px 0;color:var(--ink);font-size:13px}
 </style>
 </head>
 <body>
 <header>
-  <div><h1>Fantasy Analytics</h1><p class="small muted" style="margin:2px 0 0">4-team ESPN league · 9-category head-to-head · <span id="syncState">Loading league data…</span></p></div>
+  <div><h1>Fantasy Analytics</h1><p class="small muted" style="margin:2px 0 0">4-team ESPN league · 9-category head-to-head · <span id="syncState">Loading league data…</span></p><details class="punt" id="puntCtl"><summary>Punting: none</summary><div class="pbox"></div></details></div>
   <nav role="tablist">
     <button role="tab" data-tab="gw" aria-selected="true">Gameweek</button>
     <button role="tab" data-tab="recap" aria-selected="false">Recap</button>
@@ -243,8 +246,18 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
 </section>
 
 <section id="tab-trade" hidden>
+  <div class="card"><h2>Free-agent signing</h2>
+    <p class="small muted">Pick a free agent and who goes to make room. Scores the move for a typical week, the rest of this week and the cap.</p>
+    <div class="row" style="margin-bottom:6px">
+      <div><label for="sTeam">Team</label><select id="sTeam"></select></div>
+      <div style="min-width:0;flex:1 1 260px"><label for="sAdd">Sign</label><select id="sAdd" style="width:100%"></select></div>
+      <div style="min-width:0;flex:1 1 220px"><label for="sDrop">Make room</label><select id="sDrop" style="width:100%"></select></div>
+      <button class="primary" id="sGo">Analyse signing</button>
+    </div>
+    <p class="small muted" id="sNote" style="margin:0"></p>
+  </div>
   <div class="card"><h2>Trade analyser</h2>
-    <p class="small muted">Tick the players moving each way. Results use a full week of the selected week's schedule and your current stats blend.</p>
+    <p class="small muted">Tick the players moving each way. Scores the trade for a typical week, the rest of this week and the cap, for both teams.</p>
     <div class="row" style="margin-bottom:12px">
       <div><label for="tA">Your side</label><select id="tA"></select></div>
       <div><label for="tB">Trading with</label><select id="tB"></select></div>
@@ -281,7 +294,7 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
       <div><label for="pTeam">Show</label><select id="pTeam"></select></div>
       <div><label for="pSearch">Search</label><input id="pSearch" type="search" placeholder="Name"></div>
     </div>
-    <p class="small muted">9-cat z-scores per game across every projected player. Stats blend preseason projections with each player's ESPN season average, weighted by games played: 50% actual at 3 games, 73% at 8, 87% at 20. Next-year salary is +10% or +$2, rounded.</p>
+    <p class="small muted">9-cat z-scores per game across every projected player. Value leaves out any categories you punt (switch under the site title). Stats blend preseason projections with each player's ESPN season average, weighted by games played: 50% actual at 3 games, 73% at 8, 87% at 20. Next-year salary is +10% or +$2, rounded.</p>
     <div class="scroll" id="pTable"></div></div>
   <p class="small muted">Projections: FantasyPros consensus (preseason, fetched 28 Sep 2026). ADP: Hashtag Basketball blend of Yahoo, ESPN and Fantrax, 17 Oct 2026. Injury tags, rosters, lineups and stats: ESPN Fantasy auto-sync. Weekly game counts: Hashtag Basketball. Daily schedule: Fixture Download.</p>
 </section>
@@ -391,10 +404,10 @@ function zScores(){
   const base=top.map(vals),ms={};
   CATS.forEach(c=>{const xs=base.map(a=>a[c.k]);const m=xs.reduce((a,b)=>a+b,0)/xs.length;const sd=Math.sqrt(xs.reduce((a,b)=>a+(b-m)**2,0)/xs.length)||1;ms[c.k]=[m,sd]});
   zCache=new Map();zCache.scale={ms,lgFG,lgFT};
-  pool.forEach(([k,e])=>{const v=vals(e),z={};let tot=0;CATS.forEach(c=>{z[c.k]=(v[c.k]-ms[c.k][0])/ms[c.k][1];tot+=z[c.k]});z.total=tot;zCache.set(k,z)});
+  pool.forEach(([k,e])=>{const v=vals(e),z={};let tot=0,all=0;CATS.forEach(c=>{z[c.k]=(v[c.k]-ms[c.k][0])/ms[c.k][1];all+=z[c.k];if(!PUNT.has(c.k))tot+=z[c.k]});z.total=tot;z.all=all;zCache.set(k,z)});
   return zCache;
 }
-const zOf=n=>(zScores().get(norm(n))||{}).total??-5;
+const zOf=n=>(zScores().get(norm(n))||{}).all??-5; // lineup planning always uses all 9 categories
 
 /* ---------- lineup planning ---------- */
 function assignDay(cands){ // cands sorted by value desc; transversal-matroid greedy = optimal
@@ -695,44 +708,6 @@ function renderTradeLists(){
 }
 function payroll(roster,t){return roster.reduce((s,p)=>s+(p.salary||0),0)+((state.dead||{})[t]||0)}
 function teamWeekDist(roster,W){return distFrom(planRoster(roster,W,W.start))}
-function analyseTrade(){
-  const a=$("tA").value,b=$("tB").value,out=$("tResult");
-  if(a===b){out.innerHTML=`<div class="card empty">Pick two different teams.</div>`;return}
-  if(!tradeSel.A.size&&!tradeSel.B.size){out.innerHTML=`<div class="card empty">Tick at least one player.</div>`;return}
-  const W=week(),before={},after={};
-  TEAMS.forEach(t=>{before[t]=(state.teams[t]||[]).slice();after[t]=before[t]})
-  const outA=before[a].filter(p=>tradeSel.A.has(p.n)),outB=before[b].filter(p=>tradeSel.B.has(p.n));
-  after[a]=before[a].filter(p=>!tradeSel.A.has(p.n)).concat(outB);after[b]=before[b].filter(p=>!tradeSel.B.has(p.n)).concat(outA);
-  const D0={},D1={};TEAMS.forEach(t=>{D0[t]=teamWeekDist(before[t],W);D1[t]=teamWeekDist(after[t],W)});
-  const vsLeague=(D,t)=>TEAMS.filter(x=>x!==t).map(x=>({x,e:expCats(simulate(D[t],D[x],{},{},1500),1500)}));
-  const la0=vsLeague(D0,a),la1=vsLeague(D1,a),lb0=vsLeague(D0,b),lb1=vsLeague(D1,b);
-  const avg=arr=>arr.reduce((s,v)=>s+v.e,0)/arr.length;
-  const val=(d,k)=>k==="fgp"?(d.m.fga?d.m.fgm/d.m.fga:0):k==="ftp"?(d.m.fta?d.m.ftm/d.m.fta:0):d.m[k];
-  const rank=(D,t,c)=>1+TEAMS.filter(x=>x!==t&&(c.low?val(D[x],c.k)<val(D[t],c.k):val(D[x],c.k)>val(D[t],c.k))).length;
-  const f=(k,x)=>k.endsWith("p")?(x*100).toFixed(1)+"%":Math.round(x);
-  const dcls=(c,d)=>{const small=c.k.endsWith("p")?Math.abs(d)<0.0005:Math.abs(d)<0.5;if(small)return "";return (c.low?d<0:d>0)?"delta-pos":"delta-neg"};
-  const dfmt=(c,d)=>c.k.endsWith("p")?(d>=0?"+":"")+(d*100).toFixed(1):(d>=0?"+":"")+Math.round(d);
-  const catRows=CATS.map(c=>{const b0=val(D0[a],c.k),b1=val(D1[a],c.k),r0=rank(D0,a,c),r1=rank(D1,a,c);
-    return `<tr><td>${c.l}</td><td>${f(c.k,b0)}</td><td>${f(c.k,b1)}</td><td class="${dcls(c,b1-b0)}">${dfmt(c,b1-b0)}</td><td>#${r0} → <b>#${r1}</b></td></tr>`}).join("");
-  const cap=(t,ros)=>({now:payroll(ros,t),next:ros.reduce((s,p)=>s+escal(p.salary||0),0),active:ros.filter(p=>p.status!=="ir").length});
-  const cA0=cap(a,before[a]),cA1=cap(a,after[a]),cB0=cap(b,before[b]),cB1=cap(b,after[b]);
-  const e0=avg(la0),e1=avg(la1),eb0=avg(lb0),eb1=avg(lb1);
-  const net=(e1-e0)-(eb1-eb0),win=net>=0?a:b,ax=Math.abs(net);
-  const verdictTxt=ax<0.1?"Even trade":ax<0.3?`Slight edge to ${tname(win)}`:ax<0.6?`Clear edge to ${tname(win)}`:`Strongly favours ${tname(win)}`;
-  const verdict=esc(verdictTxt)+` <span class="muted small">(net ${net>=0?"+":""}${net.toFixed(2)} expected cats/week to ${esc(tname(a))} vs ${esc(tname(b))})</span>`;
-  const warn=[];
-  [[a,cA1],[b,cB1]].forEach(([t,c])=>{if(c.now>HARD_CAP)warn.push(`${esc(t)} would be $${c.now-HARD_CAP} over the $${HARD_CAP} hard cap — ESPN move gets reversed.`);if(c.active>20)warn.push(`${esc(t)} would have ${c.active} active players — needs a drop.`)});
-  if(W.w>=16)warn.push("Check the trade deadline: ESPN is set to 1 Feb 2027.");
-  out.innerHTML=`<div class="card"><h2>${verdict}</h2>
-    <p>Expected categories per week against the league: <b>${esc(tname(a))} ${e0.toFixed(2)} → ${e1.toFixed(2)}</b> (${(e1-e0>=0?"+":"")+(e1-e0).toFixed(2)}) · ${esc(tname(b))} ${eb0.toFixed(2)} → ${eb1.toFixed(2)} (${(eb1-eb0>=0?"+":"")+(eb1-eb0).toFixed(2)}).</p>
-    <p class="small muted">Over the rest of the regular season, ${(e1-e0>=0?"+":"")+(e1-e0).toFixed(2)} a week is worth about ${Math.round(Math.abs(e1-e0)*Math.max(0,18-W.w+1))} category ${e1>=e0?"wins":"losses"} in the standings from week ${W.w}.</p></div>
-  ${warn.map(w=>`<div class="notice">${w}</div>`).join("")}
-  <div class="cols"><div class="card"><h3>${tl(a,22)} by category (week ${W.w})</h3><div class="scroll"><table><tr><th>Cat</th><th>Before</th><th>After</th><th>Change</th><th>League rank</th></tr>${catRows}</table></div></div>
-  <div class="card"><h3>Against each rival</h3><table><tr><th>Opponent</th><th>Before</th><th>After</th></tr>${la0.map((x,i)=>`<tr><td>${tl(x.x,20)}</td><td>${x.e.toFixed(1)}</td><td class="${la1[i].e-x.e>0.1?"delta-pos":la1[i].e-x.e<-0.1?"delta-neg":""}">${la1[i].e.toFixed(1)}</td></tr>`).join("")}</table>
-  <h3 style="margin-top:14px">Cap</h3><table><tr><th>Team</th><th>26/27 now → after</th><th>27/28 keep-all → after</th></tr>
-  ${[[a,cA0,cA1],[b,cB0,cB1]].map(([t,c0,c1])=>`<tr><td>${tl(t,20)}</td><td>$${c0.now} → <b style="color:${c1.now>HARD_CAP?"var(--bad)":"inherit"}">$${c1.now}</b></td><td>$${c0.next} → <b>$${c1.next}</b> <span class="small muted">(${c1.next>KEEP_CAP?"cut $"+(c1.next-KEEP_CAP):"under $400"})</span></td></tr>`).join("")}</table>
-  <p class="small muted">Cap includes dead money from dropped players. 27/28 assumes every contract is kept, so compare it with your keeper plan.</p></div></div>`;
-}
 
 
 /* ---------- league ---------- */
@@ -747,7 +722,7 @@ function renderPlayers(){
   rows=rows.filter(x=>cur==="Rostered"?x.t!=="FA":cur==="Free agents"?x.t==="FA":x.t===cur).filter(x=>!q||x.k.includes(q)).filter(x=>z.has(x.k)||x.t!=="FA");
   rows.sort((a,b)=>((z.get(b.k)||{}).total??-99)-((z.get(a.k)||{}).total??-99));rows=rows.slice(0,150);
   const zc=v=>v==null?"":`style="color:${v>=.5?"var(--ok)":v<=-.5?"var(--bad)":"inherit"}"`;
-  let h=`<table><tr><th>Player</th><th>Owner</th><th>NBA</th><th>Pos</th><th>$ 26/27</th><th>$ 27/28</th><th>Stats</th><th>Value</th>${CATS.map(c=>`<th>${c.l}</th>`).join("")}<th>Value per $</th></tr>`;
+  let h=`<table><tr><th>Player</th><th>Owner</th><th>NBA</th><th>Pos</th><th>$ 26/27</th><th>$ 27/28</th><th>Stats</th><th>Value</th>${CATS.map(c=>`<th${PUNT.has(c.k)?' class="muted" title="Punted: not in Value"':""}>${c.l}</th>`).join("")}<th>Value per $</th></tr>`;
   rows.forEach(({r,k,t})=>{const tp=byName.get(k),z1=z.get(k),e=eff(tp||{n:r.n}),sal=tp&&tp.salary;
     h+=`<tr><td>${esc(r.n)}${injTag(r.n)}${tp&&tp.status!=="active"&&!(tp.status==="out"&&injOf(r.n)==="OUT")?` <span class="tag">${esc(tp.status)}</span>`:""}</td><td>${t==="FA"?"FA":badge(t,20)}</td><td>${esc(r.t)}</td><td>${esc(r.p||"")}</td><td>${sal?"$"+sal:"—"}</td><td>${sal?"$"+escal(sal):"—"}</td><td class="muted small">${e?e.src:"—"}</td>
     <td><b ${zc(z1&&z1.total/3)}>${z1?z1.total.toFixed(1):"—"}</b></td>${CATS.map(c=>`<td ${zc(z1&&z1[c.k])}>${z1?z1[c.k].toFixed(1):""}</td>`).join("")}<td>${z1&&sal?(z1.total/escal(sal)*10).toFixed(2):""}</td></tr>`});
@@ -1191,14 +1166,14 @@ const nextSal=s=>{const r=RULES.esc[KC.rule]||RULES.esc.agreed;return s>0?Math.m
 function marketCurve(){
   const z=zScores(),own=rostered();
   const sal=TEAMS.flatMap(t=>(state.teams[t]||[]).map(p=>p.salary||0)).sort((a,b)=>b-a);
-  const pool=[...new Set([...REF.players.map(p=>norm(p.n)),...own.keys()])].filter(k=>z.has(k)).map(k=>[k,z.get(k).total]).sort((a,b)=>b[1]-a[1]);
+  const pool=[...new Set([...REF.players.map(p=>norm(p.n)),...own.keys()])].filter(k=>z.has(k)).map(k=>[k,z.get(k).all]).sort((a,b)=>b[1]-a[1]);
   const worth=new Map();pool.forEach(([k],i)=>worth.set(k,i<sal.length?Math.max(1,sal[i]):1));
   const rank=new Map(pool.map(([k],i)=>[k,i+1]));
   return {worth,rank};
 }
 function kcRows(t,MC){
   return (state.teams[t]||[]).map(p=>{const k=norm(p.n),zz=zScores().get(k),nx=nextSal(p.salary||0),w=MC.worth.get(k)||1;
-    return {p,n:p.n,sal:p.salary||0,next:nx,z:zz?zz.total:null,worth:w,surplus:w-nx,rank:MC.rank.get(k)||null,gp:(state.espn[k]||{}).gp||0}}).sort((a,b)=>b.surplus-a.surplus);
+    return {p,n:p.n,sal:p.salary||0,next:nx,z:zz?zz.all:null,worth:w,surplus:w-nx,rank:MC.rank.get(k)||null,gp:(state.espn[k]||{}).gp||0}}).sort((a,b)=>b.surplus-a.surplus);
 }
 // Best keeper list: maximise total surplus with next-year salaries under the keeper cap (0/1 knapsack over whole dollars).
 function kcSuggest(rows){
@@ -1320,11 +1295,122 @@ function renderPlayoffOdds(){
       <p class="small muted">${PO.n.toLocaleString()} simulated seasons: the live week from today's totals, then weeks ${P.lw+1}–${RULES.regWeeks} from each roster's lineup plan, using today's rosters and projections. Top ${RULES.playoffTeams} make it; seeding follows the charter (cat win %, head-to-head cats, weeks won, coin flip). Semi = 2nd v 3rd over weeks ${RULES.regWeeks+1}–${RULES.regWeeks+2}, final = 1st v the winner over weeks ${RULES.regWeeks+3}–${RULES.regWeeks+4}, both decided on categories across the two weeks. Schedule: ${esc(P.src)}. Trades, pickups, injuries and form changes aren't modelled, so treat early-season odds as a rough guide.</p>`},30);
 }
 
-function renderAll(){try{renderGameweek()}catch(e){console.error(e)}if(!$("tab-keepers").hidden)renderKeepers();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden){renderSeason();renderPlayoffOdds()}if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden){renderTradeLists();renderDoneTrades()}if(!$("tab-audit").hidden)renderAudit()}
+/* ---------- punt ---------- */
+// Categories this viewer is punting. Player values, rankings and the analysers count only the rest;
+// lineup plans and matchup simulations keep all nine (that's how ESPN scores, and how rivals set lineups).
+const PUNT=new Set();try{JSON.parse(localStorage.getItem("fa-punt")||"[]").forEach(k=>{if(CATS.some(c=>c.k===k))PUNT.add(k)})}catch(e){}
+const liveCats=()=>CATS.filter(c=>!PUNT.has(c.k));
+function renderPuntCtl(){const el=$("puntCtl");if(!el)return;
+  el.querySelector("summary").textContent="Punting: "+(PUNT.size?CATS.filter(c=>PUNT.has(c.k)).map(c=>c.l).join(", "):"none");
+  el.querySelector(".pbox").innerHTML=CATS.map(c=>`<label><input type="checkbox" data-punt="${c.k}" ${PUNT.has(c.k)?"checked":""}> ${c.l}</label>`).join("")+
+    `<p class="small muted" style="margin:6px 0 0">Values, rankings and the analysers ignore punted categories. Saved on this device.</p>`}
+document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.punt;if(!k)return;
+  if(e.target.checked){if(PUNT.size>=6){e.target.checked=false;return}PUNT.add(k)}else PUNT.delete(k);
+  try{localStorage.setItem("fa-punt",JSON.stringify([...PUNT]))}catch(x){}invalidate();PO.cache=null;renderPuntCtl();renderAll();
+  if(!$("tab-trade").hidden){renderSignLists();$("tResult").innerHTML=""}});
+
+/* ---------- trade & signing analyser ---------- */
+// A roster change scored three ways: a typical full week against each rival (all 9 and the categories you're
+// not punting), the rest of this week against the real opponent, and cap / keeper money.
+// A typical week = the average of the next four weeks' lineup plans, so one light or heavy schedule week doesn't skew it.
+function typicalWeeks(){const lw=+state.logWeek||1,ws=[];for(let w=lw+1;w<=Math.min(RULES.regWeeks,lw+4);w++)if(REF.weeks[w-1])ws.push(REF.weeks[w-1]);return ws.length?ws:[week()]}
+function typicalDist(roster,ws){const ds=ws.map(W=>distFrom(planRoster(roster,W,W.start))),n=ds.length,o={m:{},v:{},lFG:0,lFT:0,games:0};
+  Object.keys(ds[0].m).forEach(k=>{o.m[k]=ds.reduce((s,d)=>s+d.m[k],0)/n;o.v[k]=ds.reduce((s,d)=>s+d.v[k],0)/n});["lFG","lFT","games"].forEach(k=>o[k]=ds.reduce((s,d)=>s+d[k],0)/n);return o}
+function rosterImpact(changes,focus){
+  const ws=typicalWeeks(),n=2000,D0={},D1={};
+  TEAMS.forEach(t=>{D0[t]=typicalDist(state.teams[t]||[],ws);D1[t]=changes[t]?typicalDist(changes[t],ws):D0[t]});
+  const vs=(D,t)=>{let all=0,tgt=0;const per=[];TEAMS.filter(x=>x!==t).forEach(x=>{const r=simulate(D[t],D[x],{},{},n),a=expCats(r,n),g=liveCats().reduce((s,c)=>s+r.cat[c.k].w/n,0);all+=a;tgt+=g;per.push({x,a,g})});return {all:all/3,tgt:tgt/3,per}};
+  const R={wLabel:ws.length>1?`weeks ${ws[0].w}–${ws[ws.length-1].w} average`:`week ${ws[0].w}`,teams:{}};Object.keys(changes).forEach(t=>R.teams[t]={b:vs(D0,t),a:vs(D1,t)});
+  const val=(d,k)=>k==="fgp"?(d.m.fga?d.m.fgm/d.m.fga:0):k==="ftp"?(d.m.fta?d.m.ftm/d.m.fta:0):d.m[k];
+  const rank=(D,t,c)=>1+TEAMS.filter(x=>x!==t&&(c.low?val(D[x],c.k)<val(D[t],c.k):val(D[x],c.k)>val(D[t],c.k))).length;
+  R.cats=CATS.map(c=>({c,b:val(D0[focus],c.k),a:val(D1[focus],c.k),rb:rank(D0,focus,c),ra:rank(D1,focus,c)}));
+  const wk=+state.logWeek,opp=gwOpp(focus,wk);
+  if(opp){const m0=gwModel(focus,opp,wk);if(m0&&!m0.final){const keep={};Object.keys(changes).forEach(t=>{keep[t]=state.teams[t];state.teams[t]=changes[t]});invalidate();
+    let m1;try{m1=gwModel(focus,opp,wk)}finally{Object.assign(state.teams,keep);invalidate()}R.week={opp,b:m0,a:m1}}}
+  R.weeksLeft=Math.max(0,RULES.regWeeks-(+state.logWeek||1));
+  return R;
+}
+function impactHTML(R,focus,other,{title,caps,warn=[],notes=[]}){
+  const P=PUNT.size>0,T=R.teams[focus],O=other?R.teams[other]:null;
+  const key=x=>P?x.tgt:x.all,dMe=key(T.a)-key(T.b),dOp=O?key(O.a)-key(O.b):0,net=O?dMe-dOp:dMe,ax=Math.abs(net);
+  const sg=(x,dp=2)=>(x>=0?"+":"−")+Math.abs(x).toFixed(dp);
+  const who=net>=0?focus:other;
+  const verdict=O?(ax<0.1?"Even trade":`${ax<0.3?"Slight":ax<0.6?"Clear":"Strong"} edge to ${tname(who)}`):(dMe>=0.15?"Worth doing":dMe>=0.05?"Small gain":dMe>-0.05?"No real change":"Makes the team worse");
+  const k=(l,v,s,cls="")=>`<div class="kpi"><div class="l">${l}</div><div class="v ${cls}">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const cls=x=>x>=0.05?"delta-pos":x<=-0.05?"delta-neg":"";
+  const lab=P?`Target cats / week (${CATS.length-PUNT.size})`:"Expected cats / week";
+  const wkK=R.week?k(`This week v ${esc(R.week.opp)}`,`${Math.round(R.week.b.winA*100)}% → ${Math.round(R.week.a.winA*100)}%`,`win chance · exp cats ${fmt1(R.week.b.expW)} → ${fmt1(R.week.a.expW)}`):"";
+  const capK=caps[0]?k("Hard cap after",`$${caps[0].after}`,`$${RULES.hardCap-caps[0].after} room · ${Math.max(0,Math.floor((RULES.hardCap-caps[0].after)/RULES.faSalary))} pickups left`,caps[0].after>RULES.hardCap?"delta-neg":""):"";
+  const f=(c,x)=>c.k.endsWith("p")?(x*100).toFixed(1)+"%":Math.round(x);
+  const dcl=(c,d)=>{const small=c.k.endsWith("p")?Math.abs(d)<0.0005:Math.abs(d)<0.5;return small?"":(c.low?d<0:d>0)?"delta-pos":"delta-neg"};
+  const dfm=(c,d)=>c.k.endsWith("p")?(d>=0?"+":"")+(d*100).toFixed(1):(d>=0?"+":"")+Math.round(d);
+  return `<div class="card"><h2>${esc(verdict)} <span class="muted small">· ${esc(title)}</span></h2>
+    <div class="kpis">${k(lab,`${key(T.b).toFixed(2)} → ${key(T.a).toFixed(2)}`,`${sg(dMe)} a week · about ${(()=>{const n=Math.round(Math.abs(dMe)*R.weeksLeft);return `${n} category ${dMe>=0?(n===1?"win":"wins"):(n===1?"loss":"losses")}`})()} over the ${R.weeksLeft} weeks left`,cls(dMe))}
+      ${P?k("All 9 cats / week",`${T.b.all.toFixed(2)} → ${T.a.all.toFixed(2)}`,`${sg(T.a.all-T.b.all)} a week`,cls(T.a.all-T.b.all)):""}
+      ${O?k(`${esc(tname(other))}`,`${key(O.b).toFixed(2)} → ${key(O.a).toFixed(2)}`,`${sg(dOp)} a week for them`,cls(dOp)):""}
+      ${wkK}${capK}</div>
+    ${warn.map(w=>`<div class="notice">${w}</div>`).join("")}
+    <div class="cols"><div><h3>${esc(tname(focus))} by category <span class="muted small">· typical week (${R.wLabel})</span></h3><div class="scroll"><table class="bi"><thead><tr><th>Cat</th><th>Before</th><th>After</th><th>Change</th><th>League rank</th></tr></thead><tbody>${
+      R.cats.map(x=>{const pu=PUNT.has(x.c.k);return `<tr${pu?' class="muted"':""}><td>${x.c.l}${pu?' <span class="small">(punted)</span>':""}</td><td>${f(x.c,x.b)}</td><td>${f(x.c,x.a)}</td><td class="${pu?"":dcl(x.c,x.a-x.b)}">${dfm(x.c,x.a-x.b)}</td><td>#${x.rb} → <b>#${x.ra}</b></td></tr>`}).join("")}</tbody></table></div></div>
+    <div><h3>Against each rival <span class="muted small">· expected ${P?"target ":""}cats a week</span></h3><table class="bi"><thead><tr><th>Opponent</th><th>Before</th><th>After</th></tr></thead><tbody>${T.b.per.map((x,i)=>{const b=P?x.g:x.a,a=P?T.a.per[i].g:T.a.per[i].a;return `<tr><td>${esc(tname(x.x))}</td><td>${b.toFixed(2)}</td><td class="${cls(a-b)}">${a.toFixed(2)}</td></tr>`}).join("")}</tbody></table>
+    <h3>Cap and keepers</h3><table class="bi"><thead><tr><th>Team</th><th>Cap now → after</th><th>Next-year salary</th><th>Keeper surplus</th></tr></thead><tbody>${caps.map(c=>`<tr><td>${esc(tname(c.t))}</td><td>$${c.now} → <b class="${c.after>RULES.hardCap?"delta-neg":""}">$${c.after}</b></td><td>${c.nextD>0?"+":c.nextD<0?"−":"±"}$${Math.abs(c.nextD)}</td><td class="${c.surD>0?"delta-pos":c.surD<0?"delta-neg":""}">${c.surD>0?"+":c.surD<0?"−":"±"}$${Math.abs(c.surD)}</td></tr>`).join("")}</tbody></table>
+    ${notes.map(n=>`<p class="small muted" style="margin-top:6px">${n}</p>`).join("")}</div></div>
+    <p class="small muted">Typical week = the average of the lineup plans for ${R.wLabel}, 2,000 sims against each rival. This week = the rest of the live week from today's totals, 10,000 sims. Keeper surplus = market value (what this season's prices paid for that value rank) minus next-year salary, summed over players in minus players out. Next year uses ${esc((RULES.esc[KC.rule]||RULES.esc.agreed).label)}.</p></div>`;
+}
+const moneyOf=(ps,MC)=>ps.reduce((s,p)=>{const nx=nextSal(p.salary||0);return {next:s.next+nx,sur:s.sur+((MC.worth.get(norm(p.n))||1)-nx)}},{next:0,sur:0});
+function analyseTrade(){
+  const a=$("tA").value,b=$("tB").value,out=$("tResult");
+  if(a===b){out.innerHTML=`<div class="card empty">Pick two different teams.</div>`;return}
+  if(!tradeSel.A.size&&!tradeSel.B.size){out.innerHTML=`<div class="card empty">Tick at least one player.</div>`;return}
+  out.innerHTML=`<div class="card"><p class="small muted">Simulating…</p></div>`;
+  setTimeout(()=>{
+    const ra=state.teams[a]||[],rb=state.teams[b]||[],outA=ra.filter(p=>tradeSel.A.has(p.n)),outB=rb.filter(p=>tradeSel.B.has(p.n));
+    const newA=ra.filter(p=>!tradeSel.A.has(p.n)).concat(outB),newB=rb.filter(p=>!tradeSel.B.has(p.n)).concat(outA);
+    const R=rosterImpact({[a]:newA,[b]:newB},a),MC=marketCurve();
+    const cap=(t,gets,gives)=>{const c=kcCapRow(t),g=moneyOf(gets,MC),v=moneyOf(gives,MC);return {t,now:c.tot,after:c.tot+gets.reduce((s,p)=>s+(p.salary||0),0)-gives.reduce((s,p)=>s+(p.salary||0),0),nextD:g.next-v.next,surD:g.sur-v.sur}};
+    const caps=[cap(a,outB,outA),cap(b,outA,outB)];
+    const warn=[];caps.forEach(c=>{if(c.after>RULES.hardCap)warn.push(`${esc(tname(c.t))} would be $${c.after-RULES.hardCap} over the $${RULES.hardCap} hard cap. ESPN reverses the move.`)});
+    [[a,newA],[b,newB]].forEach(([t,r])=>{const act=r.filter(p=>p.status!=="ir").length;if(act>RULES.roster)warn.push(`${esc(tname(t))} would have ${act} active players, so ${act-RULES.roster} must be dropped. A drop leaves his salary as dead money and isn't modelled here.`)});
+    const lw=+state.logWeek||1;if(lw>=14)warn.push("Charter trade deadline: before the first game of Week 16 (8 Feb 2027). Check ESPN's deadline matches.");
+    const banned=[...outB.filter(p=>((state.dropped||{})[a]||[]).includes(norm(p.n))),...outA.filter(p=>((state.dropped||{})[b]||[]).includes(norm(p.n)))];
+    if(banned.length)warn.push(`Not allowed: ${banned.map(p=>esc(p.n)).join(", ")} can't go back to a team that released him this season.`);
+    out.innerHTML=impactHTML(R,a,b,{title:`${a} gets ${outB.map(p=>p.n).join(", ")||"nothing"} · ${b} gets ${outA.map(p=>p.n).join(", ")||"nothing"}`,caps,warn});
+  },20);
+}
+function faPool(t){const z=zScores(),own=rostered(),ban=new Set((state.dropped||{})[t]||[]);
+  return REF.players.filter(p=>!own.has(norm(p.n))&&!ban.has(norm(p.n))&&z.has(norm(p.n))).map(p=>({p,z:z.get(norm(p.n)).total,inj:injOf(p.n),gp:(state.espn[norm(p.n)]||{}).gp||0})).sort((a,b)=>b.z-a.z).slice(0,60)}
+function renderSignLists(){
+  const t=$("sTeam").value||state.me||"Bizzle";teamOpts($("sTeam"),t);
+  const curA=$("sAdd").value,curD=$("sDrop").value,z=zScores();
+  $("sAdd").innerHTML=faPool(t).map(x=>`<option value="${esc(x.p.n)}"${x.p.n===curA?" selected":""}>${esc(x.p.n)} · ${esc(x.p.t)} ${esc(x.p.p||"")} · value ${fmt1(x.z)}${x.inj?" · "+esc(x.inj.toLowerCase().replace(/_/g," ")):""}</option>`).join("");
+  const c=kcCapRow(t),ros=(state.teams[t]||[]).filter(p=>p.status!=="ir").slice().sort((x,y)=>((z.get(norm(x.n))||{}).total??-9)-((z.get(norm(y.n))||{}).total??-9));
+  $("sDrop").innerHTML=(c.open?`<option value="">Empty roster spot (no drop)</option>`:"")+ros.map(p=>`<option value="${esc(p.n)}"${p.n===curD?" selected":""}>${esc(p.n)} · $${p.salary} · value ${fmt1((z.get(norm(p.n))||{}).total??0)}</option>`).join("");
+  $("sNote").textContent=`${tname(t)}: $${c.room} under the hard cap (${c.picks} pickups left)${c.open?`, ${c.open} empty roster spot${c.open>1?"s":""}`:", roster full"}.`;
+}
+function analyseSigning(){
+  const t=$("sTeam").value,add=$("sAdd").value,drop=$("sDrop").value,out=$("tResult");
+  if(!add){out.innerHTML=`<div class="card empty">Pick a free agent.</div>`;return}
+  const ros=state.teams[t]||[],dp=ros.find(p=>p.n===drop),c=kcCapRow(t);
+  if(!dp&&!c.open){out.innerHTML=`<div class="card empty">Roster is full. Pick a player to drop.</div>`;return}
+  out.innerHTML=`<div class="card"><p class="small muted">Simulating…</p></div>`;
+  setTimeout(()=>{
+    const sal=RULES.faSalary,signed={n:add,salary:sal,status:"active"},newRos=ros.filter(p=>p!==dp).concat([signed]);
+    const R=rosterImpact({[t]:newRos},t),MC=marketCurve(),g=moneyOf([signed],MC),v=moneyOf(dp?[dp]:[],MC);
+    const caps=[{t,now:c.tot,after:c.tot+sal,nextD:g.next-v.next,surD:g.sur-v.sur}];
+    const warn=[];if(c.tot+sal>RULES.hardCap)warn.push(`This takes ${esc(tname(t))} $${c.tot+sal-RULES.hardCap} over the $${RULES.hardCap} hard cap. ESPN reverses the move.`);
+    const inj=injOf(add);if(inj)warn.push(`ESPN lists ${esc(add)} as ${esc(inj.toLowerCase().replace(/_/g," "))}.`);
+    const prev=TEAMS.filter(x=>((state.dropped||{})[x]||[]).includes(norm(add)));if(prev.length)warn.push(`${esc(add)} was dropped by ${prev.map(esc).join(", ")} this season, so his salary is his old salary (minimum $${sal}), not $${sal}. Check The Block before signing.`);
+    const notes=[dp?`Dropping ${esc(dp.n)} leaves $${dp.salary} of dead money on the cap for the rest of the season, and ${esc(t)} can't get him back until the offseason.`:"Uses the empty roster spot, so nothing is dropped.",
+      `${esc(add)} signs at $${sal}; next year he'd cost $${nextSal(sal)} to keep.`];
+    out.innerHTML=impactHTML(R,t,null,{title:`${t} signs ${add}${dp?`, drops ${dp.n}`:""}`,caps,warn,notes});
+  },20);
+}
+
+function renderAll(){renderPuntCtl();try{renderGameweek()}catch(e){console.error(e)}if(!$("tab-keepers").hidden)renderKeepers();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden){renderSeason();renderPlayoffOdds()}if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden){renderTradeLists();renderSignLists();renderDoneTrades()}if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
-  ({audit:renderAudit,players:renderPlayers,keepers:renderKeepers,season:()=>{renderSeason();renderPlayoffOdds()},recap:renderRecap,trade:()=>{renderTradeLists();renderDoneTrades();tbLoad()}})[b.dataset.tab]?.();
+  ({audit:renderAudit,players:renderPlayers,keepers:renderKeepers,season:()=>{renderSeason();renderPlayoffOdds()},recap:renderRecap,trade:()=>{renderTradeLists();renderSignLists();renderDoneTrades();tbLoad()}})[b.dataset.tab]?.();
 }));
 $("gwWeek").addEventListener("change",e=>{GW.wk=+e.target.value;GW.side={};renderGameweek()});
 $("gwAvail").addEventListener("change",e=>{state.matchup.avail=+e.target.value;save();invalidate();renderGameweek()});
@@ -1337,6 +1423,8 @@ $("pTeam").addEventListener("change",renderPlayers);$("pSearch").addEventListene
 ["tA","tB"].forEach(id=>$(id).addEventListener("change",()=>{tradeSel.A.clear();tradeSel.B.clear();renderTradeLists();$("tResult").innerHTML=""}));
 document.addEventListener("change",e=>{const s=e.target.dataset&&e.target.dataset.side;if(!s)return;e.target.checked?tradeSel[s].add(e.target.value):tradeSel[s].delete(e.target.value)});
 $("tGo").addEventListener("click",analyseTrade);
+$("sGo").addEventListener("click",analyseSigning);
+$("sTeam").addEventListener("change",()=>{$("sAdd").value="";$("sDrop").value="";renderSignLists();$("tResult").innerHTML=""});
 $("tClear").addEventListener("click",()=>{tradeSel.A.clear();tradeSel.B.clear();renderTradeLists();$("tResult").innerHTML=""});
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>renderAll())}catch(e){}
 load();
