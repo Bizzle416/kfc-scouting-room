@@ -244,9 +244,13 @@ async function main() {
   const history = historyFor(results, ME), season = seasonFor(history);
   status.checks.results = results.map((r) => `wk ${r.week}: ` + r.matchups.map((m) => `${m.home} ${m.score.join("-")} ${m.away} (${m.src})`).join(", "));
 
+  // ----- full schedule (every matchup period) for the playoff odds -----
+  const fixtures = (L.schedule || []).map((m) => ({ week: m.matchupPeriodId, home: idToKey[m.home?.teamId], away: idToKey[m.away?.teamId] })).filter((f) => f.week && f.home && f.away).sort((x, y) => x.week - y.week);
+  status.checks.fixtures = fixtures.length;
+
   // ----- write -----
   const out = { ...prev, espn, injuries: poolN >= 200 ? injuries : { ...(prev.injuries || {}), ...injuries }, injuriesAt: new Date().toISOString(), dead, dropped, trades, season, history, me: ME, logPair: [ME, opp], logWeek: liveMP, teams,
-    days: allDays, results, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
+    days: allDays, results, fixtures, updatedAt: new Date().toISOString(), source: { file: "ESPN Fantasy (auto-sync)", at: new Date().toISOString(), espn: true } };
   out.matchup = { ...(prev.matchup || {}), home: ME, away: opp, week: liveMP, from: fromD, avail: 1, current };
   if (fromD > spDate(mpDays(liveMP).slice(-1)[0] || curSP)) out.matchup.from = null;
   fs.writeFileSync(path.join(ROOT, "data", "league.json"), JSON.stringify(out));

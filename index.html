@@ -176,6 +176,9 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
 .mpanel details{margin-top:14px}.mpanel summary{cursor:pointer;font-weight:600;font-size:14px}
 #tip{position:fixed;z-index:50;pointer-events:none;opacity:0;background:var(--ink);color:var(--card);font-size:12px;padding:5px 8px;border-radius:6px;max-width:320px;transition:opacity .08s}
 @media (max-width:600px){main{padding:8px 12px 40px}header{padding:16px 12px 6px}.card{padding:14px}.kpi .v{font-size:20px}}
+.alerts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.alerts .flag{margin-left:0}
+.sbar{display:flex;gap:2px;width:140px;height:12px}.sbar i{display:block;height:100%;min-width:0}.sbar i:first-child{border-radius:3px 0 0 3px}.sbar i:last-child{border-radius:0 3px 3px 0}
+.kpi .v.delta-neg{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -186,6 +189,7 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
     <button role="tab" data-tab="recap" aria-selected="false">Recap</button>
     <button role="tab" data-tab="audit" aria-selected="false">Bench audit</button>
     <button role="tab" data-tab="season" aria-selected="false">Season</button>
+    <button role="tab" data-tab="keepers" aria-selected="false">Keepers &amp; cap</button>
     <button role="tab" data-tab="trade" aria-selected="false">Trade</button>
     <button role="tab" data-tab="players" aria-selected="false">Players</button>
   </nav>
@@ -222,9 +226,20 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
 </section>
 
 <section id="tab-season" hidden>
+  <div class="card"><h2>Playoff odds</h2>
+    <div class="gwbar"><div><label for="poRet">Injured players (IR / OUT) return</label><select id="poRet"><option value="2">After 2 weeks</option><option value="4">After 4 weeks</option><option value="8" selected>After 8 weeks</option><option value="-1">Not this season</option></select></div></div>
+    <div id="poBox"></div></div>
   <div class="card"><h2>League table</h2><div id="standings"></div></div>
   <div class="card"><h2 id="seasonTitle">Season so far</h2><div id="seasonSummary"></div><div class="scroll" id="seasonChart"></div></div>
   <div class="card"><h3>Record against each rival</h3><div class="scroll" id="rivalTable"></div></div>
+</section>
+
+<section id="tab-keepers" hidden>
+  <div class="gwbar">
+    <div><label for="kcTeam">Team</label><select id="kcTeam"></select></div>
+    <div><label for="kcRule">Salary escalation</label><select id="kcRule"></select></div>
+  </div>
+  <div id="kc"></div>
 </section>
 
 <section id="tab-trade" hidden>
@@ -306,7 +321,7 @@ let db=null,readOnly=false,saveTimer=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const num=v=>{const n=parseFloat(String(v).replace(/[$,%]/g,""));return isFinite(n)?n:0};
-const escal=s=>s>0?Math.max(Math.round(s*1.1),s+2):0;
+const escal=s=>nextSal(s); // next-year salary under the selected escalation rule (Keepers & cap tab)
 
 /* ---------- dates ---------- */
 const addDays=(iso,n)=>{const d=new Date(iso+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
@@ -1164,16 +1179,160 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
   document.addEventListener("mousemove",e=>{const t=e.target.closest&&e.target.closest("[data-tip]");if(!t){tip.style.opacity=0;return}
     tip.textContent=t.getAttribute("data-tip");tip.style.opacity=1;const w=tip.offsetWidth;tip.style.left=Math.min(innerWidth-w-8,e.clientX+12)+"px";tip.style.top=(e.clientY+14)+"px"})})();
 
-function renderAll(){try{renderGameweek()}catch(e){console.error(e)}if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden)renderSeason();if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden){renderTradeLists();renderDoneTrades()}if(!$("tab-audit").hidden)renderAudit()}
+/* ---------- keepers & cap ---------- */
+// League rules in one place. Escalation has two versions until the charter is updated: the agreed one (default) and charter v3.
+const RULES={hardCap:550,keeperCap:400,auctionCap:500,roster:20,irSlots:2,faSalary:5,regWeeks:18,playoffTeams:3,
+  esc:{agreed:{pct:.10,min:2,label:"Agreed: +10% or +$2"},charter:{pct:.20,min:5,label:"Charter v3: +20% or +$5"}}};
+const KC={rule:"agreed",team:null,keep:{}};
+try{const k=JSON.parse(localStorage.getItem("fa-keepers")||"null");if(k){KC.rule=k.rule||KC.rule;KC.keep=k.keep||{}}}catch(e){}
+const kcSave=()=>{try{localStorage.setItem("fa-keepers",JSON.stringify({rule:KC.rule,keep:KC.keep}))}catch(e){}};
+const nextSal=s=>{const r=RULES.esc[KC.rule]||RULES.esc.agreed;return s>0?Math.max(Math.round(s*(1+r.pct)),s+r.min):0};
+// Market value: what this season's prices paid for a player of the same value rank (stars carry their real premium).
+function marketCurve(){
+  const z=zScores(),own=rostered();
+  const sal=TEAMS.flatMap(t=>(state.teams[t]||[]).map(p=>p.salary||0)).sort((a,b)=>b-a);
+  const pool=[...new Set([...REF.players.map(p=>norm(p.n)),...own.keys()])].filter(k=>z.has(k)).map(k=>[k,z.get(k).total]).sort((a,b)=>b[1]-a[1]);
+  const worth=new Map();pool.forEach(([k],i)=>worth.set(k,i<sal.length?Math.max(1,sal[i]):1));
+  const rank=new Map(pool.map(([k],i)=>[k,i+1]));
+  return {worth,rank};
+}
+function kcRows(t,MC){
+  return (state.teams[t]||[]).map(p=>{const k=norm(p.n),zz=zScores().get(k),nx=nextSal(p.salary||0),w=MC.worth.get(k)||1;
+    return {p,n:p.n,sal:p.salary||0,next:nx,z:zz?zz.total:null,worth:w,surplus:w-nx,rank:MC.rank.get(k)||null,gp:(state.espn[k]||{}).gp||0}}).sort((a,b)=>b.surplus-a.surplus);
+}
+// Best keeper list: maximise total surplus with next-year salaries under the keeper cap (0/1 knapsack over whole dollars).
+function kcSuggest(rows){
+  const items=rows.filter(r=>r.surplus>0),cap=RULES.keeperCap;const n=items.length;
+  const dp=Array.from({length:n+1},()=>new Float64Array(cap+1));
+  for(let i=1;i<=n;i++){const c=items[i-1].next,v=items[i-1].surplus;for(let b=0;b<=cap;b++){dp[i][b]=dp[i-1][b];if(c<=b&&dp[i-1][b-c]+v>dp[i][b])dp[i][b]=dp[i-1][b-c]+v}}
+  const keep=new Set();let b=cap;for(let i=n;i>0;i--){if(dp[i][b]!==dp[i-1][b]){keep.add(items[i-1].n);b-=items[i-1].next}}
+  return [...keep].slice(0,RULES.roster);
+}
+function kcCapRow(t){
+  const ros=state.teams[t]||[],pay=ros.reduce((s,p)=>s+(p.salary||0),0),dead=(state.dead||{})[t]||0,tot=pay+dead,room=RULES.hardCap-tot;
+  const ir=ros.filter(p=>p.status==="ir").length,act=ros.length-ir,open=Math.max(0,RULES.roster-act),outAct=ros.filter(p=>p.status==="out").map(p=>p.n);
+  const nextAll=ros.reduce((s,p)=>s+nextSal(p.salary||0),0);
+  return {t,pay,dead,tot,room,picks:Math.max(0,Math.floor(room/RULES.faSalary)),act,ir,open,outAct,nextAll,cut:Math.max(0,nextAll-RULES.keeperCap)};
+}
+function renderKeepers(){
+  const box=$("kc");if(!box)return;if(!Object.keys(state.teams).length){box.innerHTML=`<div class="card empty">No league data yet.</div>`;return}
+  KC.team=KC.team||state.me||"Bizzle";
+  $("kcTeam").innerHTML=TEAMS.map(t=>`<option value="${t}"${t===KC.team?" selected":""}>${esc(tname(t))} (${t})</option>`).join("");
+  $("kcRule").innerHTML=Object.entries(RULES.esc).map(([k,v])=>`<option value="${k}"${k===KC.rule?" selected":""}>${esc(v.label)}</option>`).join("");
+  const MC=marketCurve(),caps=TEAMS.map(kcCapRow);
+  const sugg=Object.fromEntries(TEAMS.map(t=>{const rows=kcRows(t,MC),s=kcSuggest(rows),cost=rows.filter(r=>s.includes(r.n)).reduce((a,r)=>a+r.next,0);return [t,{n:s.length,cost}]}));
+  // League cap table + alerts
+  const alerts=[];caps.forEach(c=>{if(c.open)alerts.push(`${esc(tname(c.t))} has ${c.open} empty roster spot${c.open>1?"s":""}`);if(c.ir<RULES.irSlots&&c.t)alerts.push(`${esc(tname(c.t))} has ${RULES.irSlots-c.ir} unused IR slot${RULES.irSlots-c.ir>1?"s":""}`);
+    if(c.outAct.length)alerts.push(`${esc(tname(c.t))} has ESPN-OUT players in active spots: ${c.outAct.map(esc).join(", ")}`);if(c.room<0)alerts.push(`<b>${esc(tname(c.t))} is $${-c.room} over the $${RULES.hardCap} hard cap</b>`)});
+  let h=`<div class="card"><h2>League cap sheet</h2><div class="scroll"><table class="bi"><thead><tr><th>Team</th><th>Payroll</th><th>Dead money</th><th>Total</th><th>Hard-cap room</th><th>$${RULES.faSalary} pickups left</th><th>Active / IR</th><th>Keep-all next year</th><th>Cut to $${RULES.keeperCap}</th><th>Suggested keepers</th><th>Auction budget</th></tr></thead><tbody>`+
+    caps.map(c=>`<tr><td><b>${esc(tname(c.t))}</b> <span class="muted small">${esc(c.t)}</span></td><td>$${c.pay}</td><td>${c.dead?"$"+c.dead:"—"}</td><td>$${c.tot}</td><td class="${c.room<0?"delta-neg":""}">$${c.room}</td><td>${c.picks}</td><td>${c.act}/${RULES.roster} · ${c.ir}/${RULES.irSlots}</td><td>$${c.nextAll}</td><td class="${c.cut?"delta-neg":""}">${c.cut?"$"+c.cut:"—"}</td><td>${sugg[c.t].n} · $${sugg[c.t].cost}</td><td>$${RULES.auctionCap-sugg[c.t].cost}</td></tr>`).join("")+
+    `</tbody></table></div>${alerts.length?`<div class="alerts">${alerts.map(a=>`<span class="flag bad">${a}</span>`).join("")}</div>`:""}
+    <p class="small muted" style="margin-top:8px">Hard cap $${RULES.hardCap} includes IR and dead money. Next year uses ${esc((RULES.esc[KC.rule]||RULES.esc.agreed).label)}. Suggested keepers = the list that maximises surplus under the $${RULES.keeperCap} keeper cap. Auction budget = $${RULES.auctionCap} minus that list.</p></div>`;
+  // Team keeper planner
+  const t=KC.team,rows=kcRows(t,MC);const sug=kcSuggest(rows);
+  if(!KC.keep[t])KC.keep[t]=sug.slice();
+  const keep=new Set(KC.keep[t].filter(n=>rows.some(r=>r.n===n)));
+  const kept=rows.filter(r=>keep.has(r.n)),cost=kept.reduce((s,r)=>s+r.next,0),open=RULES.roster-kept.length,budget=RULES.auctionCap-cost,maxBid=open>0?budget-(open-1):0;
+  const k=(l,v,s,cls="")=>`<div class="kpi"><div class="l">${l}</div><div class="v ${cls}">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  h+=`<div class="card"><h2>Keeper planner · ${esc(tname(t))}</h2>
+    <div class="kpis">${k("Keepers",`${kept.length}`,`of ${rows.length} rostered`)}${k("Keeper salary",`$${cost}`,cost>RULES.keeperCap?`$${cost-RULES.keeperCap} over the $${RULES.keeperCap} cap`:`$${RULES.keeperCap-cost} under the $${RULES.keeperCap} cap`,cost>RULES.keeperCap?"delta-neg":"")}
+    ${k("Auction budget",`$${budget}`,`for ${open} spot${open===1?"":"s"}`)}${k("Max single bid",open>0?`$${maxBid}`:"—",`budget − $1 per other open spot`)}${k("Surplus kept",`$${kept.reduce((s,r)=>s+r.surplus,0)}`,"market value minus next-year salary")}</div>
+    <div class="row" style="margin:12px 0"><button class="ghost" id="kcSuggest">Suggest best list</button><button class="ghost" id="kcAll">Keep all</button><button class="ghost" id="kcNone">Clear</button></div>
+    <div class="scroll"><table class="bi"><thead><tr><th class="l">Keep</th><th class="l">Player</th><th class="l">Pos</th><th class="l">Status</th><th>GP</th><th data-tip="9-cat z per game, same as the Players tab">Value</th><th data-tip="Value rank among all players">Rank</th><th>$ now</th><th>$ next year</th><th data-tip="What this season's prices paid for a player of the same value rank">Market $</th><th>Surplus</th><th class="l">Suggested</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td class="l"><input type="checkbox" data-keep="${esc(r.n)}" ${keep.has(r.n)?"checked":""} aria-label="Keep ${esc(r.n)}"></td><td class="l">${esc(r.n)}${injTag(r.n)}</td><td class="l">${esc(posOf(r.n))}</td><td class="l">${esc(r.p.status)}</td><td>${r.gp}</td><td>${r.z==null?"—":fmt1(r.z)}</td><td>${r.rank||"—"}</td><td>$${r.sal}</td><td>$${r.next}</td><td>$${r.worth}</td><td class="${r.surplus>0?"delta-pos":r.surplus<0?"delta-neg":""}">${r.surplus>0?"+":r.surplus<0?"−":""}$${Math.abs(r.surplus)}</td><td class="l">${sug.includes(r.n)?"Keep":"Release"}</td></tr>`).join("")+
+    `</tbody></table></div>
+    <p class="small muted" style="margin-top:8px">Market $ is based on current production only. It doesn't price age or upside, so tick young players you're building around even when the suggestion says release. Value early in the season rests on a few games. Your ticks are saved on this device only.</p></div>`;
+  box.innerHTML=h;
+}
+document.addEventListener("change",e=>{const n=e.target.dataset&&e.target.dataset.keep;if(n==null)return;const t=KC.team,s=new Set(KC.keep[t]||[]);e.target.checked?s.add(n):s.delete(n);KC.keep[t]=[...s];kcSave();renderKeepers()});
+document.addEventListener("click",e=>{const id=e.target&&e.target.id;if(!["kcSuggest","kcAll","kcNone"].includes(id))return;const t=KC.team,MC=marketCurve(),rows=kcRows(t,MC);
+  KC.keep[t]=id==="kcSuggest"?kcSuggest(rows):id==="kcAll"?rows.map(r=>r.n):[];kcSave();renderKeepers()});
+
+/* ---------- playoff odds ---------- */
+// The remaining regular season simulated week by week from each roster's lineup plan, then seeded the charter's way
+// (category win %, head-to-head categories between tied teams, weeks won, coin flip) and played through the playoffs.
+const PO={n:2000,ret:8,cache:null};
+function poFixtures(){
+  const out=[],known=new Map();
+  if(Array.isArray(state.fixtures)&&state.fixtures.length){state.fixtures.filter(f=>f.week<=RULES.regWeeks).forEach(f=>out.push({week:f.week,a:f.home,b:f.away}));return {fx:out,src:"ESPN schedule"}}
+  // Fallback: 4 teams have 3 possible pairings; take the rotation from the weeks seen so far and repeat it.
+  (state.results||[]).forEach(r=>known.set(r.week,r.matchups.map(m=>[m.home,m.away])));
+  const lw=+state.logWeek;if(lw&&(state.logPair||[]).length===2)known.set(lw,[state.logPair,otherPair()]);
+  const key=ps=>ps.map(p=>p.slice().sort().join("-")).sort().join("|");
+  const all=[[["Bizzle","Danna"],["Mamba","Slav"]],[["Bizzle","Mamba"],["Danna","Slav"]],[["Bizzle","Slav"],["Danna","Mamba"]]];
+  const order=[];[...known.keys()].sort((a,b)=>a-b).forEach(w=>{const k=key(known.get(w));if(!order.includes(k))order.push(k)});
+  all.forEach(ps=>{const k=key(ps);if(!order.includes(k))order.push(k)});
+  const byKey=new Map(all.map(ps=>[key(ps),ps]));
+  for(let w=1;w<=RULES.regWeeks;w++){const ps=known.get(w)||byKey.get(order[(w-1)%order.length]);ps.forEach(([a,b])=>out.push({week:w,a,b}))}
+  return {fx:out,src:"inferred from the rotation so far (the next ESPN sync adds the real schedule)"};
+}
+const poAdd=(x,y)=>{const m={},v={};Object.keys(x.m).forEach(k=>{m[k]=x.m[k]+y.m[k];v[k]=x.v[k]+y.v[k]});return {m,v,lFG:x.lFG+y.lFG,lFT:x.lFT+y.lFT,games:x.games+y.games}};
+function poRoster(t,wk){ // injured players return PO.ret weeks after the live week; the active roster stays at 20
+  const lw=+state.logWeek||1,ros=state.teams[t]||[];if(PO.ret<0||wk<lw+PO.ret)return ros;
+  const back=ros.map(p=>p.status!=="active"?Object.assign({},p,{status:"active"}):p);
+  const keep=new Set(back.slice().sort((x,y)=>zOf(y.n)-zOf(x.n)).slice(0,RULES.roster).map(p=>p.n));
+  return back.map(p=>keep.has(p.n)?p:Object.assign({},p,{status:"ir"}));
+}
+function playoffOdds(){
+  const key=[state.updatedAt,PO.ret,PO.n,state.matchup.avail].join("|");if(PO.cache&&PO.cache.key===key)return PO.cache;
+  const lw=+state.logWeek||1,{fx,src}=poFixtures(),dist={};
+  const D=(t,w,from)=>{const W=REF.weeks[w-1];return distFrom(planRoster(poRoster(t,w),W,from||W.start))};
+  // finished weeks: from results
+  const base={};TEAMS.forEach(t=>base[t]={w:0,l:0,t:0,mw:0,h2h:{}});
+  const addRes=(S,a,b,w,l,x)=>{const A=S[a],B=S[b];A.w+=w;A.l+=l;A.t+=x;B.w+=l;B.l+=w;B.t+=x;(A.h2h[b]=A.h2h[b]||[0,0,0]);A.h2h[b][0]+=w;A.h2h[b][1]+=l;A.h2h[b][2]+=x;(B.h2h[a]=B.h2h[a]||[0,0,0]);B.h2h[a][0]+=l;B.h2h[a][1]+=w;B.h2h[a][2]+=x;if(w>l)A.mw++;else if(l>w)B.mw++};
+  const done=new Set();(state.results||[]).filter(r=>r.week<=RULES.regWeeks).forEach(r=>{done.add(r.week);r.matchups.forEach(m=>addRes(base,m.home,m.away,...m.score))});
+  // live week: current totals + plan from the first unbanked day
+  const games=[];
+  withWeek(lw,()=>{const W=REF.weeks[lw-1];
+    fx.filter(f=>f.week===lw&&!done.has(lw)).forEach(f=>{const g=gwModel(f.a,f.b,lw);if(!g)return;games.push(g.final?{fixed:[g.now.w,g.now.l,g.now.t],a:f.a,b:f.b}:{a:f.a,b:f.b,dA:g.A.dist,dB:g.B.dist,cA:g.A.cur,cB:g.B.cur})})});
+  for(let w=lw+1;w<=RULES.regWeeks;w++){if(!REF.weeks[w-1])continue;TEAMS.forEach(t=>dist[t+"|"+w]=dist[t+"|"+w]||D(t,w));fx.filter(f=>f.week===w).forEach(f=>games.push({a:f.a,b:f.b,dA:dist[f.a+"|"+w],dB:dist[f.b+"|"+w],cA:{},cB:{}}))}
+  const two=(t,w1)=>{const a=REF.weeks[w1-1],b=REF.weeks[w1];return a&&b?poAdd(D(t,w1),D(t,w1+1)):null};
+  const semi={},fin={};TEAMS.forEach(t=>{semi[t]=two(t,RULES.regWeeks+1);fin[t]=two(t,RULES.regWeeks+3)});
+  const play=(dA,dB,cA,cB)=>{const x=draw(dA,cA),y=draw(dB,cB);let w=0,l=0,t=0;CATS.forEach(c=>{const p=x[c.k],q=y[c.k],eq=c.k.endsWith("p")?Math.abs(p-q)<1e-4:p===q;if(eq)t++;else if(c.low?p<q:p>q)w++;else l++});return [w,l,t]};
+  const out={};TEAMS.forEach(t=>out[t]={seed:[0,0,0,0],champ:0,final:0,pct:0,cw:0});
+  for(let s=0;s<PO.n;s++){
+    const S=JSON.parse(JSON.stringify(base));
+    games.forEach(g=>addRes(S,g.a,g.b,...(g.fixed||play(g.dA,g.dB,g.cA,g.cB))));
+    const pct=t=>{const x=S[t],n=x.w+x.l+x.t;return n?(x.w+x.t/2)/n:0};
+    const h2h=(t,grp)=>{let w=0,l=0,x=0;grp.forEach(o=>{const r=S[t].h2h[o];if(r){w+=r[0];l+=r[1];x+=r[2]}});return w+l+x?(w+x/2)/(w+l+x):.5};
+    const rnd=Object.fromEntries(TEAMS.map(t=>[t,Math.random()]));
+    const order=TEAMS.slice().sort((a,b)=>{const d=pct(b)-pct(a);if(Math.abs(d)>1e-9)return d;const grp=TEAMS.filter(t=>Math.abs(pct(t)-pct(a))<1e-9);
+      return (h2h(b,grp.filter(x=>x!==b))-h2h(a,grp.filter(x=>x!==a)))||(S[b].mw-S[a].mw)||(rnd[b]-rnd[a])});
+    order.forEach((t,i)=>{out[t].seed[i]++;out[t].pct+=pct(t);out[t].cw+=S[t].w+S[t].t/2});
+    const [s1,s2,s3]=order;let fWin=s1;
+    if(semi[s2]&&semi[s3]&&fin[s1]){const r=play(semi[s2],semi[s3],{},{}),sw=r[0]>=r[1]?s2:s3;const f=play(fin[s1],fin[sw],{},{});out[sw].final++;out[s1].final++;fWin=f[0]>=f[1]?s1:sw}
+    out[fWin].champ++;
+  }
+  TEAMS.forEach(t=>{const o=out[t];o.pct/=PO.n;o.cw/=PO.n;o.seed=o.seed.map(x=>x/PO.n);o.champ/=PO.n;o.final/=PO.n;o.now=base[t]});
+  PO.cache={key,out,src,lw,weeksLeft:RULES.regWeeks-lw+1};return PO.cache;
+}
+function renderPlayoffOdds(){
+  const box=$("poBox");if(!box)return;if(!Object.keys(state.teams).length){box.innerHTML="";return}
+  $("poRet").value=String(PO.ret);
+  box.innerHTML=`<p class="small muted">Simulating ${PO.n.toLocaleString()} seasons…</p>`;
+  setTimeout(()=>{let P;try{P=playoffOdds()}catch(e){console.error(e);box.innerHTML=`<p class="small muted">Couldn't run the season simulation.</p>`;return}
+    const rows=TEAMS.slice().sort((a,b)=>(P.out[b].seed[0]+P.out[b].seed[1]+P.out[b].seed[2])-(P.out[a].seed[0]+P.out[a].seed[1]+P.out[a].seed[2])||P.out[b].pct-P.out[a].pct);
+    const pc=x=>x>=.995?">99%":x<=.005&&x>0?"<1%":Math.round(x*100)+"%";
+    const seedBar=s=>`<div class="sbar" data-tip="1st ${pc(s[0])} · 2nd ${pc(s[1])} · 3rd ${pc(s[2])} · 4th ${pc(s[3])}">${s.map((x,i)=>`<i style="width:${x*100}%;background:var(--sa);opacity:${[1,.7,.45,.15][i]}"></i>`).join("")}</div>`;
+    box.innerHTML=`<div class="scroll"><table class="bi"><thead><tr><th>Team</th><th>Cats (finished weeks)</th><th>Proj. final cat win %</th><th class="l">Seed (1st → 4th)</th><th>1st seed (bye)</th><th>Make playoffs</th><th>Reach final</th><th>Champion</th></tr></thead><tbody>`+
+      rows.map(t=>{const o=P.out[t],n=o.now,top3=o.seed[0]+o.seed[1]+o.seed[2];return `<tr><td><b>${esc(tname(t))}</b> <span class="muted small">${esc(t)}</span></td><td>${n.w}-${n.l}-${n.t}</td><td>${(o.pct*100).toFixed(1)}%</td><td class="l">${seedBar(o.seed)}</td><td>${pc(o.seed[0])}</td><td><b>${pc(top3)}</b></td><td>${pc(o.final)}</td><td>${pc(o.champ)}</td></tr>`}).join("")+
+      `</tbody></table></div><div class="legend" style="margin-top:8px"><span><i style="background:var(--sa)"></i>1st</span><span><i style="background:var(--sa);opacity:.7"></i>2nd</span><span><i style="background:var(--sa);opacity:.45"></i>3rd</span><span><i style="background:var(--sa);opacity:.15"></i>4th (out)</span></div>
+      <p class="small muted">${PO.n.toLocaleString()} simulated seasons: the live week from today's totals, then weeks ${P.lw+1}–${RULES.regWeeks} from each roster's lineup plan, using today's rosters and projections. Top ${RULES.playoffTeams} make it; seeding follows the charter (cat win %, head-to-head cats, weeks won, coin flip). Semi = 2nd v 3rd over weeks ${RULES.regWeeks+1}–${RULES.regWeeks+2}, final = 1st v the winner over weeks ${RULES.regWeeks+3}–${RULES.regWeeks+4}, both decided on categories across the two weeks. Schedule: ${esc(P.src)}. Trades, pickups, injuries and form changes aren't modelled, so treat early-season odds as a rough guide.</p>`},30);
+}
+
+function renderAll(){try{renderGameweek()}catch(e){console.error(e)}if(!$("tab-keepers").hidden)renderKeepers();if(!$("tab-players").hidden)renderPlayers();if(!$("tab-season").hidden){renderSeason();renderPlayoffOdds()}if(!$("tab-recap").hidden)renderRecap();if(!$("tab-trade").hidden){renderTradeLists();renderDoneTrades()}if(!$("tab-audit").hidden)renderAudit()}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
   document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=="tab-"+b.dataset.tab);
-  ({audit:renderAudit,players:renderPlayers,season:renderSeason,recap:renderRecap,trade:()=>{renderTradeLists();renderDoneTrades();tbLoad()}})[b.dataset.tab]?.();
+  ({audit:renderAudit,players:renderPlayers,keepers:renderKeepers,season:()=>{renderSeason();renderPlayoffOdds()},recap:renderRecap,trade:()=>{renderTradeLists();renderDoneTrades();tbLoad()}})[b.dataset.tab]?.();
 }));
 $("gwWeek").addEventListener("change",e=>{GW.wk=+e.target.value;GW.side={};renderGameweek()});
 $("gwAvail").addEventListener("change",e=>{state.matchup.avail=+e.target.value;save();invalidate();renderGameweek()});
 $("auTeam").addEventListener("change",e=>{const t=e.target.value,o=gwOpp(t,GW.wk);if(o)Object.assign(state.matchup,{home:t,away:o});renderAudit()});
 $("rWeek").addEventListener("change",renderRecap);
+$("kcTeam").addEventListener("change",e=>{KC.team=e.target.value;renderKeepers()});
+$("kcRule").addEventListener("change",e=>{KC.rule=e.target.value;kcSave();renderKeepers()});
+$("poRet").addEventListener("change",e=>{PO.ret=+e.target.value;renderPlayoffOdds()});
 $("pTeam").addEventListener("change",renderPlayers);$("pSearch").addEventListener("input",renderPlayers);
 ["tA","tB"].forEach(id=>$(id).addEventListener("change",()=>{tradeSel.A.clear();tradeSel.B.clear();renderTradeLists();$("tResult").innerHTML=""}));
 document.addEventListener("change",e=>{const s=e.target.dataset&&e.target.dataset.side;if(!s)return;e.target.checked?tradeSel[s].add(e.target.value):tradeSel[s].delete(e.target.value)});
