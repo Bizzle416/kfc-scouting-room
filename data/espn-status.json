@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-31T13:39:31.262Z",
+ "at": "2026-10-31T21:39:37.461Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -38,29 +38,37 @@
    ],
    "today": "2026-10-31"
   },
-  "poolStats": 332,
+  "poolStats": 334,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 95,
+   "flagged": 100,
    "sample": [
     [
      "jalen williams",
      "OUT"
     ],
     [
-     "lauri markkanen",
-     "DAY_TO_DAY"
+     "joel embiid",
+     "OUT"
+    ],
+    [
+     "lebron james",
+     "OUT"
     ],
     [
      "jaren jackson jr",
      "OUT"
     ],
     [
-     "jaylen brown",
+     "stephon castle",
      "DAY_TO_DAY"
     ],
     [
      "brandon ingram",
+     "OUT"
+    ],
+    [
+     "dejounte murray",
      "OUT"
     ],
     [
@@ -70,10 +78,6 @@
     [
      "anthony edwards",
      "OUT"
-    ],
-    [
-     "alperen sengun",
-     "DAY_TO_DAY"
     ],
     [
      "paolo banchero",
@@ -86,10 +90,6 @@
     [
      "jalen duren",
      "OUT"
-    ],
-    [
-     "tyrese haliburton",
-     "OUT"
     ]
    ]
   },
@@ -99,7 +99,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 415,
+  "espnPlayers": 417,
   "liveWeek": {
    "espn": 2,
    "site": 2
@@ -230,7 +230,7 @@
     "pts": 816
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)"
