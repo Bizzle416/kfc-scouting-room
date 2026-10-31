@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-31T05:16:16.143Z",
+ "at": "2026-10-31T13:39:31.262Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -25,8 +25,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 11,
-   "latestScoringPeriod": 11,
+   "currentScoringPeriod": 12,
+   "latestScoringPeriod": 12,
    "currentMatchupPeriod": 2,
    "mp1": [
     1,
@@ -36,7 +36,7 @@
     5,
     6
    ],
-   "today": "2026-10-30"
+   "today": "2026-10-31"
   },
   "poolStats": 332,
   "injuries": {
@@ -109,8 +109,9 @@
    "2026-10-27": "clock",
    "2026-10-28": "clock",
    "2026-10-29": "clock",
-   "2026-10-30": "scoreboard",
+   "2026-10-30": "clock",
    "2026-10-31": "not yet",
+   "2026-11-01": "not yet",
    "2026-10-20": "clock",
    "2026-10-21": "clock",
    "2026-10-22": "clock",
@@ -185,52 +186,52 @@
   },
   "espnScoreboard": {
    "Mamba": {
-    "fgp": 0.5078534,
-    "ftp": 0.69827586,
-    "tpm": 47,
-    "reb": 174,
-    "ast": 135,
-    "stl": 22,
-    "blk": 25,
-    "to": 73,
-    "pts": 516
+    "fgp": 0.49659864,
+    "ftp": 0.71428571,
+    "tpm": 77,
+    "reb": 244,
+    "ast": 195,
+    "stl": 36,
+    "blk": 32,
+    "to": 101,
+    "pts": 776
    },
    "Danna": {
-    "fgp": 0.46017699,
-    "ftp": 0.8,
-    "tpm": 50,
-    "reb": 211,
-    "ast": 132,
-    "stl": 28,
-    "blk": 18,
-    "to": 84,
-    "pts": 574
+    "fgp": 0.4638448,
+    "ftp": 0.80625,
+    "tpm": 65,
+    "reb": 262,
+    "ast": 177,
+    "stl": 36,
+    "blk": 26,
+    "to": 120,
+    "pts": 720
    },
    "Bizzle": {
-    "fgp": 0.48430493,
-    "ftp": 0.80487805,
-    "tpm": 67,
-    "reb": 181,
-    "ast": 151,
-    "stl": 35,
-    "blk": 17,
-    "to": 54,
-    "pts": 598
+    "fgp": 0.48722317,
+    "ftp": 0.81395349,
+    "tpm": 79,
+    "reb": 254,
+    "ast": 185,
+    "stl": 42,
+    "blk": 22,
+    "to": 80,
+    "pts": 791
    },
    "Slav": {
-    "fgp": 0.47835991,
-    "ftp": 0.83974359,
-    "tpm": 53,
-    "reb": 188,
-    "ast": 140,
-    "stl": 36,
-    "blk": 19,
-    "to": 78,
-    "pts": 604
+    "fgp": 0.47236181,
+    "ftp": 0.81944444,
+    "tpm": 75,
+    "reb": 245,
+    "ast": 194,
+    "stl": 50,
+    "blk": 23,
+    "to": 101,
+    "pts": 816
    }
   },
   "scoreboardCompared": true,
-  "scoreboardLagging": true,
+  "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)"
   ],
