@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-31T21:39:37.461Z",
+ "at": "2026-11-01T02:39:11.127Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -38,11 +38,15 @@
    ],
    "today": "2026-10-31"
   },
-  "poolStats": 334,
+  "poolStats": 340,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 100,
    "sample": [
+    [
+     "jalen johnson",
+     "DAY_TO_DAY"
+    ],
     [
      "jalen williams",
      "OUT"
@@ -60,10 +64,6 @@
      "OUT"
     ],
     [
-     "stephon castle",
-     "DAY_TO_DAY"
-    ],
-    [
      "brandon ingram",
      "OUT"
     ],
@@ -73,7 +73,7 @@
     ],
     [
      "ty jerome",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "anthony edwards",
@@ -99,7 +99,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 417,
+  "espnPlayers": 423,
   "liveWeek": {
    "espn": 2,
    "site": 2
