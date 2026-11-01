@@ -1,10 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-01T05:05:54.324Z",
+ "at": "2026-11-01T05:06:31.134Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
+  "rosters read for scoring period 13",
   "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-24, 2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31",
   "league.json written"
  ],
@@ -38,7 +39,7 @@
    ],
    "today": "2026-10-31"
   },
-  "poolStats": 340,
+  "poolStats": 339,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 100,
@@ -95,7 +96,9 @@
   },
   "trades": 1,
   "rosterChanges": {
-   "added": [],
+   "added": [
+    "Bizzle: Immanuel Quickley ($5 FA)"
+   ],
    "moved": [],
    "dropped": []
   },
