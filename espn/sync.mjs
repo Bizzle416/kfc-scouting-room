@@ -86,6 +86,14 @@ async function main() {
   const mpFirstDate = (mp) => spDate((mps[String(mp)] || [1])[0]);
   const mpDays = (mp) => (mps[String(mp)] || []);
 
+  // ----- rosters: ESPN's next-day roster, so adds/drops made after today's lock (or claims that clear overnight) show straight away -----
+  try {
+    const N = await get(`view=mRoster&scoringPeriodId=${latestSP + 1}`);
+    const nt = new Map((N.teams || []).map((t) => [t.id, t]));
+    if ((L.teams || []).every((t) => nt.get(t.id)?.roster?.entries?.length)) { for (const t of L.teams) t.roster = nt.get(t.id).roster; step(`rosters read for scoring period ${latestSP + 1}`); }
+    else status.warnings.push(`Next-day rosters (period ${latestSP + 1}) incomplete, using today's.`);
+  } catch (e) { status.warnings.push(`Couldn't read next-day rosters, using today's: ${e.message}`); }
+
   // ----- rosters, with salaries carried from the current league.json -----
   const prevBy = new Map();
   for (const t of TEAMS) for (const p of prev.teams?.[t] || []) prevBy.set(p.id ? `id:${p.id}` : norm(p.n), { ...p, team: t }), prevBy.set(norm(p.n), { ...p, team: t });
