@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-01T05:06:31.134Z",
+ "at": "2026-11-01T11:31:56.317Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 13",
+  "rosters read for scoring period 14",
   "daily lineups read: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-24, 2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31",
   "league.json written"
  ],
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 12,
-   "latestScoringPeriod": 12,
+   "currentScoringPeriod": 13,
+   "latestScoringPeriod": 13,
    "currentMatchupPeriod": 2,
    "mp1": [
     1,
@@ -37,9 +37,9 @@
     5,
     6
    ],
-   "today": "2026-10-31"
+   "today": "2026-11-01"
   },
-  "poolStats": 339,
+  "poolStats": 338,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 100,
@@ -97,7 +97,7 @@
   "trades": 1,
   "rosterChanges": {
    "added": [
-    "Bizzle: Immanuel Quickley ($5 FA)"
+    "Slav: Desmond Bane ($5 FA)"
    ],
    "moved": [],
    "dropped": []
@@ -113,7 +113,7 @@
    "2026-10-28": "clock",
    "2026-10-29": "clock",
    "2026-10-30": "clock",
-   "2026-10-31": "scoreboard",
+   "2026-10-31": "clock",
    "2026-11-01": "not yet",
    "2026-10-20": "clock",
    "2026-10-21": "clock",
@@ -190,52 +190,52 @@
   },
   "espnScoreboard": {
    "Mamba": {
-    "fgp": 0.49659864,
-    "ftp": 0.71428571,
-    "tpm": 77,
-    "reb": 244,
-    "ast": 195,
-    "stl": 36,
-    "blk": 32,
-    "to": 101,
-    "pts": 776
+    "fgp": 0.4826087,
+    "ftp": 0.74384236,
+    "tpm": 87,
+    "reb": 304,
+    "ast": 224,
+    "stl": 46,
+    "blk": 39,
+    "to": 124,
+    "pts": 904
    },
    "Danna": {
-    "fgp": 0.4638448,
-    "ftp": 0.80625,
-    "tpm": 65,
-    "reb": 262,
-    "ast": 177,
-    "stl": 36,
-    "blk": 26,
-    "to": 120,
-    "pts": 720
+    "fgp": 0.45808383,
+    "ftp": 0.80628272,
+    "tpm": 73,
+    "reb": 305,
+    "ast": 207,
+    "stl": 44,
+    "blk": 27,
+    "to": 136,
+    "pts": 839
    },
    "Bizzle": {
-    "fgp": 0.48722317,
-    "ftp": 0.81395349,
-    "tpm": 79,
-    "reb": 254,
-    "ast": 185,
-    "stl": 42,
-    "blk": 22,
-    "to": 80,
-    "pts": 791
+    "fgp": 0.46969697,
+    "ftp": 0.81773399,
+    "tpm": 100,
+    "reb": 320,
+    "ast": 225,
+    "stl": 51,
+    "blk": 27,
+    "to": 102,
+    "pts": 948
    },
    "Slav": {
-    "fgp": 0.47236181,
-    "ftp": 0.81944444,
-    "tpm": 75,
-    "reb": 245,
-    "ast": 194,
-    "stl": 50,
-    "blk": 23,
-    "to": 101,
-    "pts": 816
+    "fgp": 0.47679325,
+    "ftp": 0.82089552,
+    "tpm": 88,
+    "reb": 283,
+    "ast": 225,
+    "stl": 63,
+    "blk": 34,
+    "to": 121,
+    "pts": 986
    }
   },
   "scoreboardCompared": true,
-  "scoreboardLagging": true,
+  "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)"
   ],
