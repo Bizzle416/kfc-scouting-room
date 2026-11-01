@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-01T11:31:56.317Z",
+ "at": "2026-11-01T14:17:01.010Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,7 +39,7 @@
    ],
    "today": "2026-11-01"
   },
-  "poolStats": 338,
+  "poolStats": 340,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 100,
@@ -96,13 +96,11 @@
   },
   "trades": 1,
   "rosterChanges": {
-   "added": [
-    "Slav: Desmond Bane ($5 FA)"
-   ],
+   "added": [],
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 423,
+  "espnPlayers": 425,
   "liveWeek": {
    "espn": 2,
    "site": 2
