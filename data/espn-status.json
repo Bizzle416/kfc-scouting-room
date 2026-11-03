@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-02T17:04:36.236Z",
+ "at": "2026-11-03T05:54:00.752Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,10 +39,10 @@
    ],
    "today": "2026-11-02"
   },
-  "poolStats": 338,
+  "poolStats": 343,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 103,
+   "flagged": 101,
    "sample": [
     [
      "jalen johnson",
@@ -51,10 +51,6 @@
     [
      "jalen williams",
      "OUT"
-    ],
-    [
-     "joel embiid",
-     "DAY_TO_DAY"
     ],
     [
      "jaren jackson jr",
@@ -66,7 +62,15 @@
     ],
     [
      "kyrie irving",
-     "DAY_TO_DAY"
+     "OUT"
+    ],
+    [
+     "dejounte murray",
+     "OUT"
+    ],
+    [
+     "paul george",
+     "OUT"
     ],
     [
      "anthony edwards",
@@ -87,10 +91,6 @@
     [
      "jalen duren",
      "OUT"
-    ],
-    [
-     "tyrese haliburton",
-     "OUT"
     ]
    ]
   },
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 423,
+  "espnPlayers": 428,
   "liveWeek": {
    "espn": 3,
    "site": 3
