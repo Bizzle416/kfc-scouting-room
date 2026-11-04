@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-03T15:08:42.363Z",
+ "at": "2026-11-04T15:26:46.210Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 16",
-  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02",
+  "rosters read for scoring period 17",
+  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03",
   "league.json written"
  ],
  "warnings": [
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 15,
-   "latestScoringPeriod": 15,
+   "currentScoringPeriod": 16,
+   "latestScoringPeriod": 16,
    "currentMatchupPeriod": 3,
    "mp1": [
     1,
@@ -37,15 +37,19 @@
     5,
     6
    ],
-   "today": "2026-11-03"
+   "today": "2026-11-04"
   },
-  "poolStats": 344,
+  "poolStats": 345,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 102,
+   "flagged": 106,
    "sample": [
     [
      "jalen johnson",
+     "DAY_TO_DAY"
+    ],
+    [
+     "giannis antetokounmpo",
      "DAY_TO_DAY"
     ],
     [
@@ -61,20 +65,12 @@
      "OUT"
     ],
     [
-     "kyrie irving",
-     "DAY_TO_DAY"
-    ],
-    [
-     "dejounte murray",
-     "OUT"
-    ],
-    [
-     "paul george",
-     "DAY_TO_DAY"
-    ],
-    [
      "anthony edwards",
      "OUT"
+    ],
+    [
+     "jayson tatum",
+     "DAY_TO_DAY"
     ],
     [
      "alexandre sarr",
@@ -91,6 +87,10 @@
     [
      "jalen duren",
      "OUT"
+    ],
+    [
+     "tyrese haliburton",
+     "OUT"
     ]
    ]
   },
@@ -100,15 +100,16 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 429,
+  "espnPlayers": 430,
   "liveWeek": {
    "espn": 3,
    "site": 3
   },
   "finalBy": {
    "2026-11-02": "clock",
-   "2026-11-03": "not yet",
+   "2026-11-03": "clock",
    "2026-11-04": "not yet",
+   "2026-11-05": "not yet",
    "2026-10-26": "clock",
    "2026-10-27": "clock",
    "2026-10-28": "clock",
@@ -118,7 +119,8 @@
    "2026-11-01": "clock"
   },
   "finalDays": [
-   "2026-11-02"
+   "2026-11-02",
+   "2026-11-03"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -241,6 +243,6 @@
     "Slav"
    ]
   ],
-  "from": "2026-11-03"
+  "from": "2026-11-04"
  }
 }
