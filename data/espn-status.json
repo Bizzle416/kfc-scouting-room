@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-04T15:26:46.210Z",
+ "at": "2026-11-05T06:25:37.390Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
   "rosters read for scoring period 17",
-  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03",
+  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04",
   "league.json written"
  ],
  "warnings": [
@@ -39,18 +39,14 @@
    ],
    "today": "2026-11-04"
   },
-  "poolStats": 345,
+  "poolStats": 348,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 106,
+   "flagged": 101,
    "sample": [
     [
      "jalen johnson",
-     "DAY_TO_DAY"
-    ],
-    [
-     "giannis antetokounmpo",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "jalen williams",
@@ -70,18 +66,10 @@
     ],
     [
      "jayson tatum",
-     "DAY_TO_DAY"
-    ],
-    [
-     "alexandre sarr",
-     "DAY_TO_DAY"
-    ],
-    [
-     "paolo banchero",
      "OUT"
     ],
     [
-     "ivica zubac",
+     "paolo banchero",
      "OUT"
     ],
     [
@@ -91,16 +79,36 @@
     [
      "tyrese haliburton",
      "OUT"
+    ],
+    [
+     "chet holmgren",
+     "OUT"
+    ],
+    [
+     "trey murphy iii",
+     "OUT"
+    ],
+    [
+     "kon knueppel",
+     "OUT"
     ]
    ]
   },
-  "trades": 1,
+  "trades": 2,
   "rosterChanges": {
-   "added": [],
-   "moved": [],
-   "dropped": []
+   "added": [
+    "Danna: Jabari Smith Jr. ($5 FA)"
+   ],
+   "moved": [
+    "Cade Cunningham: Bizzle → Danna ($60)",
+    "Austin Reaves: Danna → Bizzle ($26)",
+    "Evan Mobley: Danna → Bizzle ($41)"
+   ],
+   "dropped": [
+    "Bizzle: Onyeka Okongwu ($5 dead)"
+   ]
   },
-  "espnPlayers": 430,
+  "espnPlayers": 434,
   "liveWeek": {
    "espn": 3,
    "site": 3
@@ -108,7 +116,7 @@
   "finalBy": {
    "2026-11-02": "clock",
    "2026-11-03": "clock",
-   "2026-11-04": "not yet",
+   "2026-11-04": "scoreboard",
    "2026-11-05": "not yet",
    "2026-10-26": "clock",
    "2026-10-27": "clock",
@@ -120,7 +128,8 @@
   },
   "finalDays": [
    "2026-11-02",
-   "2026-11-03"
+   "2026-11-03",
+   "2026-11-04"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -128,56 +137,56 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 77,
-    "fga": 161,
-    "ftm": 43,
-    "fta": 50,
-    "tpm": 21,
-    "reb": 60,
-    "ast": 51,
-    "stl": 18,
-    "blk": 5,
-    "to": 29,
-    "pts": 218
+    "fgm": 148,
+    "fga": 323,
+    "ftm": 89,
+    "fta": 108,
+    "tpm": 35,
+    "reb": 133,
+    "ast": 88,
+    "stl": 19,
+    "blk": 14,
+    "to": 45,
+    "pts": 420
    },
    "Danna": {
-    "fgm": 75,
-    "fga": 157,
-    "ftm": 45,
-    "fta": 57,
-    "tpm": 19,
-    "reb": 75,
-    "ast": 47,
-    "stl": 13,
-    "blk": 6,
-    "to": 21,
-    "pts": 214
+    "fgm": 158,
+    "fga": 331,
+    "ftm": 98,
+    "fta": 126,
+    "tpm": 45,
+    "reb": 143,
+    "ast": 95,
+    "stl": 27,
+    "blk": 16,
+    "to": 48,
+    "pts": 459
    },
    "Mamba": {
-    "fgm": 84,
-    "fga": 165,
-    "ftm": 49,
-    "fta": 65,
-    "tpm": 21,
-    "reb": 72,
-    "ast": 58,
-    "stl": 12,
-    "blk": 9,
-    "to": 26,
-    "pts": 238
+    "fgm": 141,
+    "fga": 314,
+    "ftm": 106,
+    "fta": 131,
+    "tpm": 34,
+    "reb": 155,
+    "ast": 108,
+    "stl": 22,
+    "blk": 14,
+    "to": 62,
+    "pts": 422
    },
    "Slav": {
-    "fgm": 69,
-    "fga": 146,
-    "ftm": 39,
-    "fta": 54,
-    "tpm": 18,
-    "reb": 64,
-    "ast": 67,
-    "stl": 8,
-    "blk": 6,
-    "to": 30,
-    "pts": 195
+    "fgm": 153,
+    "fga": 312,
+    "ftm": 110,
+    "fta": 133,
+    "tpm": 41,
+    "reb": 116,
+    "ast": 110,
+    "stl": 19,
+    "blk": 21,
+    "to": 47,
+    "pts": 457
    }
   },
   "espnScoreboard": {
@@ -226,8 +235,8 @@
     "pts": 195
    }
   },
-  "scoreboardCompared": false,
-  "scoreboardLagging": false,
+  "scoreboardCompared": true,
+  "scoreboardLagging": true,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)"
@@ -243,6 +252,6 @@
     "Slav"
    ]
   ],
-  "from": "2026-11-04"
+  "from": "2026-11-05"
  }
 }
