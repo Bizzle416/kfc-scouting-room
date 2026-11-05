@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-05T06:25:37.390Z",
+ "at": "2026-11-05T15:27:34.704Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 17",
+  "rosters read for scoring period 18",
   "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04",
   "league.json written"
  ],
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 16,
-   "latestScoringPeriod": 16,
+   "currentScoringPeriod": 17,
+   "latestScoringPeriod": 17,
    "currentMatchupPeriod": 3,
    "mp1": [
     1,
@@ -37,16 +37,16 @@
     5,
     6
    ],
-   "today": "2026-11-04"
+   "today": "2026-11-05"
   },
-  "poolStats": 348,
+  "poolStats": 349,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 101,
    "sample": [
     [
      "jalen johnson",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "jalen williams",
@@ -66,7 +66,7 @@
     ],
     [
      "jayson tatum",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "paolo banchero",
@@ -86,7 +86,7 @@
     ],
     [
      "trey murphy iii",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "kon knueppel",
@@ -96,19 +96,11 @@
   },
   "trades": 2,
   "rosterChanges": {
-   "added": [
-    "Danna: Jabari Smith Jr. ($5 FA)"
-   ],
-   "moved": [
-    "Cade Cunningham: Bizzle → Danna ($60)",
-    "Austin Reaves: Danna → Bizzle ($26)",
-    "Evan Mobley: Danna → Bizzle ($41)"
-   ],
-   "dropped": [
-    "Bizzle: Onyeka Okongwu ($5 dead)"
-   ]
+   "added": [],
+   "moved": [],
+   "dropped": []
   },
-  "espnPlayers": 434,
+  "espnPlayers": 435,
   "liveWeek": {
    "espn": 3,
    "site": 3
@@ -116,8 +108,9 @@
   "finalBy": {
    "2026-11-02": "clock",
    "2026-11-03": "clock",
-   "2026-11-04": "scoreboard",
+   "2026-11-04": "clock",
    "2026-11-05": "not yet",
+   "2026-11-06": "not yet",
    "2026-10-26": "clock",
    "2026-10-27": "clock",
    "2026-10-28": "clock",
@@ -191,52 +184,52 @@
   },
   "espnScoreboard": {
    "Bizzle": {
-    "fgp": 0.47826087,
-    "ftp": 0.86,
-    "tpm": 21,
-    "reb": 60,
-    "ast": 51,
-    "stl": 18,
-    "blk": 5,
-    "to": 29,
-    "pts": 218
+    "fgp": 0.45820433,
+    "ftp": 0.82407407,
+    "tpm": 35,
+    "reb": 133,
+    "ast": 88,
+    "stl": 19,
+    "blk": 14,
+    "to": 45,
+    "pts": 420
    },
    "Mamba": {
-    "fgp": 0.50909091,
-    "ftp": 0.75384615,
-    "tpm": 21,
-    "reb": 72,
-    "ast": 58,
-    "stl": 12,
-    "blk": 9,
-    "to": 26,
-    "pts": 238
+    "fgp": 0.44904459,
+    "ftp": 0.80916031,
+    "tpm": 34,
+    "reb": 155,
+    "ast": 108,
+    "stl": 22,
+    "blk": 14,
+    "to": 62,
+    "pts": 422
    },
    "Danna": {
-    "fgp": 0.47770701,
-    "ftp": 0.78947368,
-    "tpm": 19,
-    "reb": 75,
-    "ast": 47,
-    "stl": 13,
-    "blk": 6,
-    "to": 21,
-    "pts": 214
+    "fgp": 0.47734139,
+    "ftp": 0.77777778,
+    "tpm": 45,
+    "reb": 143,
+    "ast": 95,
+    "stl": 27,
+    "blk": 16,
+    "to": 48,
+    "pts": 459
    },
    "Slav": {
-    "fgp": 0.47260274,
-    "ftp": 0.72222222,
-    "tpm": 18,
-    "reb": 64,
-    "ast": 67,
-    "stl": 8,
-    "blk": 6,
-    "to": 30,
-    "pts": 195
+    "fgp": 0.49038462,
+    "ftp": 0.82706767,
+    "tpm": 41,
+    "reb": 116,
+    "ast": 110,
+    "stl": 19,
+    "blk": 21,
+    "to": 47,
+    "pts": 457
    }
   },
-  "scoreboardCompared": true,
-  "scoreboardLagging": true,
+  "scoreboardCompared": false,
+  "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)"
