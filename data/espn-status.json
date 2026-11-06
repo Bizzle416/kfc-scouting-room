@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-06T00:23:23.601Z",
+ "at": "2026-11-06T15:04:25.357Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 18",
-  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04",
+  "rosters read for scoring period 19",
+  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05",
   "league.json written"
  ],
  "warnings": [
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 17,
-   "latestScoringPeriod": 17,
+   "currentScoringPeriod": 18,
+   "latestScoringPeriod": 18,
    "currentMatchupPeriod": 3,
    "mp1": [
     1,
@@ -37,15 +37,19 @@
     5,
     6
    ],
-   "today": "2026-11-05"
+   "today": "2026-11-06"
   },
-  "poolStats": 349,
+  "poolStats": 348,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 103,
    "sample": [
     [
      "jalen johnson",
+     "DAY_TO_DAY"
+    ],
+    [
+     "scottie barnes",
      "DAY_TO_DAY"
     ],
     [
@@ -87,23 +91,16 @@
     [
      "trey murphy iii",
      "DAY_TO_DAY"
-    ],
-    [
-     "kon knueppel",
-     "OUT"
     ]
    ]
   },
   "trades": 3,
   "rosterChanges": {
    "added": [],
-   "moved": [
-    "Evan Mobley: Bizzle → Mamba ($41)",
-    "LaMelo Ball: Mamba → Bizzle ($12)"
-   ],
+   "moved": [],
    "dropped": []
   },
-  "espnPlayers": 435,
+  "espnPlayers": 434,
   "liveWeek": {
    "espn": 3,
    "site": 3
@@ -112,8 +109,9 @@
    "2026-11-02": "clock",
    "2026-11-03": "clock",
    "2026-11-04": "clock",
-   "2026-11-05": "not yet",
+   "2026-11-05": "clock",
    "2026-11-06": "not yet",
+   "2026-11-07": "not yet",
    "2026-10-26": "clock",
    "2026-10-27": "clock",
    "2026-10-28": "clock",
@@ -125,7 +123,8 @@
   "finalDays": [
    "2026-11-02",
    "2026-11-03",
-   "2026-11-04"
+   "2026-11-04",
+   "2026-11-05"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -133,102 +132,102 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 148,
-    "fga": 323,
-    "ftm": 89,
-    "fta": 108,
-    "tpm": 35,
-    "reb": 133,
-    "ast": 88,
-    "stl": 19,
-    "blk": 14,
-    "to": 45,
-    "pts": 420
-   },
-   "Danna": {
-    "fgm": 158,
-    "fga": 331,
-    "ftm": 98,
-    "fta": 126,
-    "tpm": 45,
-    "reb": 143,
-    "ast": 95,
-    "stl": 27,
-    "blk": 16,
-    "to": 48,
-    "pts": 459
-   },
-   "Mamba": {
-    "fgm": 141,
-    "fga": 314,
-    "ftm": 106,
-    "fta": 131,
-    "tpm": 34,
-    "reb": 155,
-    "ast": 108,
+    "fgm": 159,
+    "fga": 345,
+    "ftm": 93,
+    "fta": 112,
+    "tpm": 39,
+    "reb": 134,
+    "ast": 96,
     "stl": 22,
     "blk": 14,
-    "to": 62,
-    "pts": 422
+    "to": 48,
+    "pts": 450
+   },
+   "Danna": {
+    "fgm": 164,
+    "fga": 345,
+    "ftm": 102,
+    "fta": 132,
+    "tpm": 46,
+    "reb": 151,
+    "ast": 101,
+    "stl": 30,
+    "blk": 17,
+    "to": 50,
+    "pts": 476
+   },
+   "Mamba": {
+    "fgm": 155,
+    "fga": 339,
+    "ftm": 115,
+    "fta": 145,
+    "tpm": 35,
+    "reb": 179,
+    "ast": 112,
+    "stl": 23,
+    "blk": 15,
+    "to": 66,
+    "pts": 460
    },
    "Slav": {
-    "fgm": 153,
-    "fga": 312,
-    "ftm": 110,
-    "fta": 133,
-    "tpm": 41,
-    "reb": 116,
-    "ast": 110,
-    "stl": 19,
+    "fgm": 174,
+    "fga": 356,
+    "ftm": 118,
+    "fta": 145,
+    "tpm": 50,
+    "reb": 131,
+    "ast": 129,
+    "stl": 24,
     "blk": 21,
-    "to": 47,
-    "pts": 457
+    "to": 55,
+    "pts": 516
    }
   },
   "espnScoreboard": {
    "Bizzle": {
-    "fgp": 0.45820433,
-    "ftp": 0.82407407,
-    "tpm": 35,
-    "reb": 133,
-    "ast": 88,
-    "stl": 19,
-    "blk": 14,
-    "to": 45,
-    "pts": 420
-   },
-   "Mamba": {
-    "fgp": 0.44904459,
-    "ftp": 0.80916031,
-    "tpm": 34,
-    "reb": 155,
-    "ast": 108,
+    "fgp": 0.46086957,
+    "ftp": 0.83035714,
+    "tpm": 39,
+    "reb": 134,
+    "ast": 96,
     "stl": 22,
     "blk": 14,
-    "to": 62,
-    "pts": 422
+    "to": 48,
+    "pts": 450
+   },
+   "Mamba": {
+    "fgp": 0.45722714,
+    "ftp": 0.79310345,
+    "tpm": 35,
+    "reb": 179,
+    "ast": 112,
+    "stl": 23,
+    "blk": 15,
+    "to": 66,
+    "pts": 460
    },
    "Danna": {
-    "fgp": 0.47734139,
-    "ftp": 0.77777778,
-    "tpm": 45,
-    "reb": 143,
-    "ast": 95,
-    "stl": 27,
-    "blk": 16,
-    "to": 48,
-    "pts": 459
+    "fgp": 0.47536232,
+    "ftp": 0.77272727,
+    "tpm": 46,
+    "reb": 151,
+    "ast": 101,
+    "stl": 30,
+    "blk": 17,
+    "to": 50,
+    "pts": 476
    },
    "Slav": {
-    "fgp": 0.49038462,
-    "ftp": 0.82706767,
-    "tpm": 41,
-    "reb": 116,
-    "ast": 110,
-    "stl": 19,
+    "fgp": 0.48876404,
+    "ftp": 0.8137931,
+    "tpm": 50,
+    "reb": 131,
+    "ast": 129,
+    "stl": 24,
     "blk": 21,
-    "to": 47,
-    "pts": 457
+    "to": 55,
+    "pts": 516
    }
   },
   "scoreboardCompared": false,
@@ -248,6 +247,6 @@
     "Slav"
    ]
   ],
-  "from": "2026-11-05"
+  "from": "2026-11-06"
  }
 }
