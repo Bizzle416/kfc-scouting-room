@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-05T15:27:34.704Z",
+ "at": "2026-11-06T00:23:23.601Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -42,7 +42,7 @@
   "poolStats": 349,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 101,
+   "flagged": 103,
    "sample": [
     [
      "jalen johnson",
@@ -65,12 +65,12 @@
      "OUT"
     ],
     [
-     "jayson tatum",
-     "DAY_TO_DAY"
-    ],
-    [
      "paolo banchero",
      "OUT"
+    ],
+    [
+     "anthony davis",
+     "DAY_TO_DAY"
     ],
     [
      "jalen duren",
@@ -94,10 +94,13 @@
     ]
    ]
   },
-  "trades": 2,
+  "trades": 3,
   "rosterChanges": {
    "added": [],
-   "moved": [],
+   "moved": [
+    "Evan Mobley: Bizzle → Mamba ($41)",
+    "LaMelo Ball: Mamba → Bizzle ($12)"
+   ],
    "dropped": []
   },
   "espnPlayers": 435,
