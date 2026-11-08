@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-08T11:45:30.031Z",
+ "at": "2026-11-08T14:18:12.027Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -42,7 +42,7 @@
   "poolStats": 355,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 95,
+   "flagged": 96,
    "sample": [
     [
      "luka doncic",
