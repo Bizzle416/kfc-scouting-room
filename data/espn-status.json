@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-07T14:02:43.148Z",
+ "at": "2026-11-08T11:45:30.031Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 20",
-  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06",
+  "rosters read for scoring period 21",
+  "daily lineups read: 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07",
   "league.json written"
  ],
  "warnings": [
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 19,
-   "latestScoringPeriod": 19,
+   "currentScoringPeriod": 20,
+   "latestScoringPeriod": 20,
    "currentMatchupPeriod": 3,
    "mp1": [
     1,
@@ -37,20 +37,20 @@
     5,
     6
    ],
-   "today": "2026-11-07"
+   "today": "2026-11-08"
   },
-  "poolStats": 354,
+  "poolStats": 355,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 101,
+   "flagged": 95,
    "sample": [
     [
-     "jalen johnson",
-     "OUT"
+     "luka doncic",
+     "DAY_TO_DAY"
     ],
     [
      "scottie barnes",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "jalen williams",
@@ -58,6 +58,14 @@
     ],
     [
      "brandon miller",
+     "DAY_TO_DAY"
+    ],
+    [
+     "lauri markkanen",
+     "DAY_TO_DAY"
+    ],
+    [
+     "joel embiid",
      "DAY_TO_DAY"
     ],
     [
@@ -82,15 +90,7 @@
     ],
     [
      "immanuel quickley",
-     "OUT"
-    ],
-    [
-     "jalen duren",
-     "OUT"
-    ],
-    [
-     "tyrese haliburton",
-     "OUT"
+     "DAY_TO_DAY"
     ]
    ]
   },
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 440,
+  "espnPlayers": 441,
   "liveWeek": {
    "espn": 3,
    "site": 3
@@ -111,7 +111,7 @@
    "2026-11-04": "clock",
    "2026-11-05": "clock",
    "2026-11-06": "clock",
-   "2026-11-07": "not yet",
+   "2026-11-07": "clock",
    "2026-11-08": "not yet",
    "2026-10-26": "clock",
    "2026-10-27": "clock",
@@ -126,7 +126,8 @@
    "2026-11-03",
    "2026-11-04",
    "2026-11-05",
-   "2026-11-06"
+   "2026-11-06",
+   "2026-11-07"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -134,102 +135,102 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 221,
-    "fga": 494,
-    "ftm": 156,
-    "fta": 179,
-    "tpm": 57,
-    "reb": 196,
-    "ast": 150,
-    "stl": 34,
-    "blk": 19,
-    "to": 75,
-    "pts": 655
+    "fgm": 270,
+    "fga": 610,
+    "ftm": 176,
+    "fta": 203,
+    "tpm": 67,
+    "reb": 254,
+    "ast": 176,
+    "stl": 38,
+    "blk": 23,
+    "to": 92,
+    "pts": 783
    },
    "Danna": {
-    "fgm": 232,
-    "fga": 497,
-    "ftm": 125,
-    "fta": 158,
-    "tpm": 62,
-    "reb": 202,
-    "ast": 140,
-    "stl": 40,
-    "blk": 22,
-    "to": 76,
-    "pts": 651
+    "fgm": 290,
+    "fga": 620,
+    "ftm": 149,
+    "fta": 185,
+    "tpm": 77,
+    "reb": 257,
+    "ast": 178,
+    "stl": 47,
+    "blk": 30,
+    "to": 97,
+    "pts": 806
    },
    "Mamba": {
-    "fgm": 222,
-    "fga": 482,
-    "ftm": 161,
-    "fta": 205,
-    "tpm": 59,
-    "reb": 237,
-    "ast": 148,
-    "stl": 32,
-    "blk": 23,
-    "to": 95,
-    "pts": 664
+    "fgm": 265,
+    "fga": 573,
+    "ftm": 185,
+    "fta": 236,
+    "tpm": 65,
+    "reb": 282,
+    "ast": 174,
+    "stl": 37,
+    "blk": 27,
+    "to": 108,
+    "pts": 780
    },
    "Slav": {
-    "fgm": 228,
-    "fga": 472,
-    "ftm": 160,
-    "fta": 195,
-    "tpm": 69,
-    "reb": 183,
-    "ast": 183,
-    "stl": 35,
-    "blk": 25,
-    "to": 80,
-    "pts": 685
+    "fgm": 317,
+    "fga": 640,
+    "ftm": 213,
+    "fta": 258,
+    "tpm": 95,
+    "reb": 242,
+    "ast": 237,
+    "stl": 44,
+    "blk": 27,
+    "to": 104,
+    "pts": 942
    }
   },
   "espnScoreboard": {
    "Bizzle": {
-    "fgp": 0.44736842,
-    "ftp": 0.87150838,
-    "tpm": 57,
-    "reb": 196,
-    "ast": 150,
-    "stl": 34,
-    "blk": 19,
-    "to": 75,
-    "pts": 655
+    "fgp": 0.44262295,
+    "ftp": 0.86699507,
+    "tpm": 67,
+    "reb": 254,
+    "ast": 176,
+    "stl": 38,
+    "blk": 23,
+    "to": 92,
+    "pts": 783
    },
    "Mamba": {
-    "fgp": 0.46058091,
-    "ftp": 0.78536585,
-    "tpm": 59,
-    "reb": 237,
-    "ast": 148,
-    "stl": 32,
-    "blk": 23,
-    "to": 95,
-    "pts": 664
+    "fgp": 0.46247818,
+    "ftp": 0.78389831,
+    "tpm": 65,
+    "reb": 282,
+    "ast": 174,
+    "stl": 37,
+    "blk": 27,
+    "to": 108,
+    "pts": 780
    },
    "Danna": {
-    "fgp": 0.4668008,
-    "ftp": 0.79113924,
-    "tpm": 62,
-    "reb": 202,
-    "ast": 140,
-    "stl": 40,
-    "blk": 22,
-    "to": 76,
-    "pts": 651
+    "fgp": 0.46774194,
+    "ftp": 0.80540541,
+    "tpm": 77,
+    "reb": 257,
+    "ast": 178,
+    "stl": 47,
+    "blk": 30,
+    "to": 97,
+    "pts": 806
    },
    "Slav": {
-    "fgp": 0.48305085,
-    "ftp": 0.82051282,
-    "tpm": 69,
-    "reb": 183,
-    "ast": 183,
-    "stl": 35,
-    "blk": 25,
-    "to": 80,
-    "pts": 685
+    "fgp": 0.4953125,
+    "ftp": 0.8255814,
+    "tpm": 95,
+    "reb": 242,
+    "ast": 237,
+    "stl": 44,
+    "blk": 27,
+    "to": 104,
+    "pts": 942
    }
   },
   "scoreboardCompared": true,
@@ -249,6 +250,6 @@
     "Slav"
    ]
   ],
-  "from": "2026-11-07"
+  "from": "2026-11-08"
  }
 }
