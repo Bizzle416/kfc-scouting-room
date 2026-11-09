@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-09T11:05:13.508Z",
+ "at": "2026-11-09T17:30:01.704Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,14 +39,14 @@
    ],
    "today": "2026-11-09"
   },
-  "poolStats": 356,
+  "poolStats": 358,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 103,
    "sample": [
     [
      "luka doncic",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "scottie barnes",
@@ -66,7 +66,7 @@
     ],
     [
      "lauri markkanen",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "jaren jackson jr",
@@ -74,7 +74,7 @@
     ],
     [
      "domantas sabonis",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "keyonte george",
@@ -96,15 +96,11 @@
   },
   "trades": 3,
   "rosterChanges": {
-   "added": [
-    "Danna: Darius Acuff Jr. ($5 FA)"
-   ],
+   "added": [],
    "moved": [],
-   "dropped": [
-    "Danna: Matas Buzelis ($5 dead)"
-   ]
+   "dropped": []
   },
-  "espnPlayers": 442,
+  "espnPlayers": 444,
   "liveWeek": {
    "espn": 4,
    "site": 4
@@ -225,7 +221,7 @@
     "pts": 0
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
