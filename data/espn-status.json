@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-10T15:36:12.493Z",
+ "at": "2026-11-10T23:17:03.009Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,14 +39,14 @@
    ],
    "today": "2026-11-10"
   },
-  "poolStats": 354,
+  "poolStats": 355,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 102,
+   "flagged": 100,
    "sample": [
     [
      "scottie barnes",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "giannis antetokounmpo",
@@ -62,15 +62,11 @@
     ],
     [
      "lauri markkanen",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "jaren jackson jr",
      "OUT"
-    ],
-    [
-     "domantas sabonis",
-     "DAY_TO_DAY"
     ],
     [
      "keyonte george",
@@ -91,16 +87,24 @@
     [
      "tyler herro",
      "DAY_TO_DAY"
+    ],
+    [
+     "jalen duren",
+     "OUT"
     ]
    ]
   },
   "trades": 3,
   "rosterChanges": {
-   "added": [],
+   "added": [
+    "Bizzle: Aday Mara ($5 FA)"
+   ],
    "moved": [],
-   "dropped": []
+   "dropped": [
+    "Bizzle: Immanuel Quickley ($5 dead)"
+   ]
   },
-  "espnPlayers": 440,
+  "espnPlayers": 441,
   "liveWeek": {
    "espn": 4,
    "site": 4
