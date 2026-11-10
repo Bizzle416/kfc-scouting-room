@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-10T06:12:13.363Z",
+ "at": "2026-11-10T11:29:49.856Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 22",
+  "rosters read for scoring period 23",
   "daily lineups read: 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08, 2026-11-09",
   "league.json written"
  ],
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 21,
-   "latestScoringPeriod": 21,
+   "currentScoringPeriod": 22,
+   "latestScoringPeriod": 22,
    "currentMatchupPeriod": 4,
    "mp1": [
     1,
@@ -37,7 +37,7 @@
     5,
     6
    ],
-   "today": "2026-11-09"
+   "today": "2026-11-10"
   },
   "poolStats": 359,
   "injuries": {
@@ -106,8 +106,9 @@
    "site": 4
   },
   "finalBy": {
-   "2026-11-09": "scoreboard",
+   "2026-11-09": "clock",
    "2026-11-10": "not yet",
+   "2026-11-11": "not yet",
    "2026-11-02": "clock",
    "2026-11-03": "clock",
    "2026-11-04": "clock",
@@ -179,48 +180,48 @@
   },
   "espnScoreboard": {
    "Mamba": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.53012048,
+    "ftp": 0.92592593,
+    "tpm": 12,
+    "reb": 46,
+    "ast": 29,
+    "stl": 11,
+    "blk": 6,
+    "to": 20,
+    "pts": 125
    },
    "Slav": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.53,
+    "ftp": 0.82692308,
+    "tpm": 17,
+    "reb": 51,
+    "ast": 44,
+    "stl": 11,
+    "blk": 11,
+    "to": 17,
+    "pts": 166
    },
    "Danna": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.47169811,
+    "ftp": 0.75609756,
+    "tpm": 24,
+    "reb": 64,
+    "ast": 46,
+    "stl": 7,
+    "blk": 6,
+    "to": 17,
+    "pts": 205
    },
    "Bizzle": {
-    "fgp": 0,
-    "ftp": 0,
-    "tpm": 0,
-    "reb": 0,
-    "ast": 0,
-    "stl": 0,
-    "blk": 0,
-    "to": 0,
-    "pts": 0
+    "fgp": 0.59027778,
+    "ftp": 0.81355932,
+    "tpm": 12,
+    "reb": 71,
+    "ast": 37,
+    "stl": 9,
+    "blk": 6,
+    "to": 27,
+    "pts": 230
    }
   },
   "scoreboardCompared": true,
@@ -228,7 +229,7 @@
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)",
-   "wk 3: Bizzle 4-5-0 Mamba (espn), Danna 3-6-0 Slav (espn)"
+   "wk 3: Bizzle 4-4-1 Mamba (espn), Danna 3-6-0 Slav (espn)"
   ],
   "fixtures": 36,
   "pairs": [
