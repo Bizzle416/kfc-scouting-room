@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-12T08:57:13.289Z",
+ "at": "2026-11-12T15:58:51.044Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,7 +39,7 @@
    ],
    "today": "2026-11-12"
   },
-  "poolStats": 356,
+  "poolStats": 357,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 105,
@@ -78,7 +78,7 @@
     ],
     [
      "ajay mitchell",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "brandon ingram",
@@ -94,17 +94,16 @@
     ]
    ]
   },
-  "trades": 3,
+  "trades": 4,
   "rosterChanges": {
-   "added": [
-    "Mamba: Ayo Dosunmu ($5 FA)"
+   "added": [],
+   "moved": [
+    "James Harden: Bizzle → Danna ($1)",
+    "OG Anunoby: Danna → Bizzle ($3)"
    ],
-   "moved": [],
-   "dropped": [
-    "Mamba: Jalen Williams ($30 dead)"
-   ]
+   "dropped": []
   },
-  "espnPlayers": 442,
+  "espnPlayers": 443,
   "liveWeek": {
    "espn": 4,
    "site": 4
@@ -232,7 +231,7 @@
     "pts": 493
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
