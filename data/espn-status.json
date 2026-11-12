@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-11T15:13:04.414Z",
+ "at": "2026-11-12T08:57:13.289Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 24",
-  "daily lineups read: 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10",
+  "rosters read for scoring period 25",
+  "daily lineups read: 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11",
   "league.json written"
  ],
  "warnings": [
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 23,
-   "latestScoringPeriod": 23,
+   "currentScoringPeriod": 24,
+   "latestScoringPeriod": 24,
    "currentMatchupPeriod": 4,
    "mp1": [
     1,
@@ -37,27 +37,39 @@
     5,
     6
    ],
-   "today": "2026-11-11"
+   "today": "2026-11-12"
   },
-  "poolStats": 355,
+  "poolStats": 356,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 98,
+   "flagged": 105,
    "sample": [
+    [
+     "luka doncic",
+     "DAY_TO_DAY"
+    ],
     [
      "scottie barnes",
      "OUT"
     ],
     [
-     "jalen williams",
-     "OUT"
-    ],
-    [
-     "brandon miller",
+     "caleb wilson",
      "DAY_TO_DAY"
     ],
     [
+     "brandon miller",
+     "OUT"
+    ],
+    [
      "lauri markkanen",
+     "OUT"
+    ],
+    [
+     "joel embiid",
+     "DAY_TO_DAY"
+    ],
+    [
+     "lebron james",
      "DAY_TO_DAY"
     ],
     [
@@ -65,42 +77,34 @@
      "OUT"
     ],
     [
-     "keyonte george",
-     "DAY_TO_DAY"
+     "ajay mitchell",
+     "OUT"
     ],
     [
      "brandon ingram",
      "OUT"
     ],
     [
-     "anthony edwards",
-     "OUT"
-    ],
-    [
-     "paolo banchero",
-     "OUT"
-    ],
-    [
-     "tyler herro",
+     "paul george",
      "DAY_TO_DAY"
     ],
     [
-     "jalen duren",
-     "OUT"
-    ],
-    [
-     "tyrese haliburton",
+     "anthony edwards",
      "OUT"
     ]
    ]
   },
   "trades": 3,
   "rosterChanges": {
-   "added": [],
+   "added": [
+    "Mamba: Ayo Dosunmu ($5 FA)"
+   ],
    "moved": [],
-   "dropped": []
+   "dropped": [
+    "Mamba: Jalen Williams ($30 dead)"
+   ]
   },
-  "espnPlayers": 441,
+  "espnPlayers": 442,
   "liveWeek": {
    "espn": 4,
    "site": 4
@@ -108,8 +112,9 @@
   "finalBy": {
    "2026-11-09": "clock",
    "2026-11-10": "clock",
-   "2026-11-11": "not yet",
+   "2026-11-11": "clock",
    "2026-11-12": "not yet",
+   "2026-11-13": "not yet",
    "2026-11-02": "clock",
    "2026-11-03": "clock",
    "2026-11-04": "clock",
@@ -120,7 +125,8 @@
   },
   "finalDays": [
    "2026-11-09",
-   "2026-11-10"
+   "2026-11-10",
+   "2026-11-11"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -128,105 +134,105 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 118,
-    "fga": 214,
-    "ftm": 54,
-    "fta": 68,
-    "tpm": 21,
-    "reb": 98,
-    "ast": 57,
-    "stl": 11,
-    "blk": 10,
-    "to": 40,
-    "pts": 311
+    "fgm": 182,
+    "fga": 364,
+    "ftm": 93,
+    "fta": 114,
+    "tpm": 36,
+    "reb": 180,
+    "ast": 103,
+    "stl": 23,
+    "blk": 19,
+    "to": 54,
+    "pts": 493
    },
    "Danna": {
-    "fgm": 117,
-    "fga": 247,
-    "ftm": 54,
-    "fta": 70,
-    "tpm": 40,
-    "reb": 91,
-    "ast": 65,
-    "stl": 11,
-    "blk": 8,
-    "to": 29,
-    "pts": 328
+    "fgm": 183,
+    "fga": 397,
+    "ftm": 96,
+    "fta": 119,
+    "tpm": 49,
+    "reb": 155,
+    "ast": 100,
+    "stl": 23,
+    "blk": 15,
+    "to": 47,
+    "pts": 511
    },
    "Mamba": {
-    "fgm": 85,
-    "fga": 176,
-    "ftm": 62,
-    "fta": 75,
-    "tpm": 19,
-    "reb": 106,
-    "ast": 63,
-    "stl": 17,
-    "blk": 10,
-    "to": 35,
-    "pts": 251
+    "fgm": 147,
+    "fga": 300,
+    "ftm": 86,
+    "fta": 108,
+    "tpm": 38,
+    "reb": 158,
+    "ast": 107,
+    "stl": 28,
+    "blk": 21,
+    "to": 60,
+    "pts": 418
    },
    "Slav": {
-    "fgm": 99,
-    "fga": 207,
-    "ftm": 81,
-    "fta": 96,
-    "tpm": 33,
-    "reb": 89,
-    "ast": 70,
-    "stl": 16,
-    "blk": 12,
-    "to": 29,
-    "pts": 312
+    "fgm": 181,
+    "fga": 358,
+    "ftm": 133,
+    "fta": 153,
+    "tpm": 53,
+    "reb": 146,
+    "ast": 107,
+    "stl": 24,
+    "blk": 21,
+    "to": 49,
+    "pts": 548
    }
   },
   "espnScoreboard": {
    "Mamba": {
-    "fgp": 0.48295455,
-    "ftp": 0.82666667,
-    "tpm": 19,
-    "reb": 106,
-    "ast": 63,
-    "stl": 17,
-    "blk": 10,
-    "to": 35,
-    "pts": 251
+    "fgp": 0.49,
+    "ftp": 0.7962963,
+    "tpm": 38,
+    "reb": 158,
+    "ast": 107,
+    "stl": 28,
+    "blk": 21,
+    "to": 60,
+    "pts": 418
    },
    "Slav": {
-    "fgp": 0.47826087,
-    "ftp": 0.84375,
-    "tpm": 33,
-    "reb": 89,
-    "ast": 70,
-    "stl": 16,
-    "blk": 12,
-    "to": 29,
-    "pts": 312
+    "fgp": 0.50558659,
+    "ftp": 0.86928105,
+    "tpm": 53,
+    "reb": 146,
+    "ast": 107,
+    "stl": 24,
+    "blk": 21,
+    "to": 49,
+    "pts": 548
    },
    "Danna": {
-    "fgp": 0.47368421,
-    "ftp": 0.77142857,
-    "tpm": 40,
-    "reb": 91,
-    "ast": 65,
-    "stl": 11,
-    "blk": 8,
-    "to": 29,
-    "pts": 328
+    "fgp": 0.46095718,
+    "ftp": 0.80672269,
+    "tpm": 49,
+    "reb": 155,
+    "ast": 100,
+    "stl": 23,
+    "blk": 15,
+    "to": 47,
+    "pts": 511
    },
    "Bizzle": {
-    "fgp": 0.55140187,
-    "ftp": 0.79411765,
-    "tpm": 21,
-    "reb": 98,
-    "ast": 57,
-    "stl": 11,
-    "blk": 10,
-    "to": 40,
-    "pts": 311
+    "fgp": 0.5,
+    "ftp": 0.81578947,
+    "tpm": 36,
+    "reb": 180,
+    "ast": 103,
+    "stl": 23,
+    "blk": 19,
+    "to": 54,
+    "pts": 493
    }
   },
-  "scoreboardCompared": false,
+  "scoreboardCompared": true,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
@@ -244,6 +250,6 @@
     "Bizzle"
    ]
   ],
-  "from": "2026-11-11"
+  "from": "2026-11-12"
  }
 }
