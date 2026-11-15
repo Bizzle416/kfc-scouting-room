@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-14T14:09:28.128Z",
+ "at": "2026-11-15T08:45:19.168Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 27",
-  "daily lineups read: 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13",
+  "rosters read for scoring period 28",
+  "daily lineups read: 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14",
   "league.json written"
  ],
  "warnings": [
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 26,
-   "latestScoringPeriod": 26,
+   "currentScoringPeriod": 27,
+   "latestScoringPeriod": 27,
    "currentMatchupPeriod": 4,
    "mp1": [
     1,
@@ -37,17 +37,13 @@
     5,
     6
    ],
-   "today": "2026-11-14"
+   "today": "2026-11-15"
   },
-  "poolStats": 360,
+  "poolStats": 362,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 106,
+   "flagged": 115,
    "sample": [
-    [
-     "luka doncic",
-     "DAY_TO_DAY"
-    ],
     [
      "scottie barnes",
      "OUT"
@@ -57,20 +53,12 @@
      "OUT"
     ],
     [
-     "brandon miller",
-     "DAY_TO_DAY"
-    ],
-    [
      "lauri markkanen",
      "OUT"
     ],
     [
-     "zach edey",
+     "joel embiid",
      "OUT"
-    ],
-    [
-     "lebron james",
-     "DAY_TO_DAY"
     ],
     [
      "jaren jackson jr",
@@ -78,7 +66,7 @@
     ],
     [
      "ajay mitchell",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "evan mobley",
@@ -91,18 +79,32 @@
     [
      "dejounte murray",
      "OUT"
+    ],
+    [
+     "ty jerome",
+     "OUT"
+    ],
+    [
+     "james harden",
+     "OUT"
+    ],
+    [
+     "anthony edwards",
+     "OUT"
     ]
    ]
   },
   "trades": 5,
   "rosterChanges": {
    "added": [
-    "Danna: Davion Mitchell ($5 FA)"
+    "Mamba: Onyeka Okongwu ($5 FA)"
    ],
    "moved": [],
-   "dropped": []
+   "dropped": [
+    "Mamba: Zach Edey ($1 dead)"
+   ]
   },
-  "espnPlayers": 447,
+  "espnPlayers": 449,
   "liveWeek": {
    "espn": 4,
    "site": 4
@@ -113,7 +115,7 @@
    "2026-11-11": "clock",
    "2026-11-12": "clock",
    "2026-11-13": "clock",
-   "2026-11-14": "not yet",
+   "2026-11-14": "clock",
    "2026-11-15": "not yet",
    "2026-11-02": "clock",
    "2026-11-03": "clock",
@@ -128,7 +130,8 @@
    "2026-11-10",
    "2026-11-11",
    "2026-11-12",
-   "2026-11-13"
+   "2026-11-13",
+   "2026-11-14"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -136,102 +139,102 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 307,
-    "fga": 600,
-    "ftm": 132,
-    "fta": 164,
-    "tpm": 64,
-    "reb": 298,
-    "ast": 167,
-    "stl": 47,
-    "blk": 33,
-    "to": 85,
-    "pts": 810
+    "fgm": 341,
+    "fga": 681,
+    "ftm": 147,
+    "fta": 185,
+    "tpm": 74,
+    "reb": 339,
+    "ast": 193,
+    "stl": 57,
+    "blk": 39,
+    "to": 93,
+    "pts": 903
    },
    "Danna": {
-    "fgm": 285,
-    "fga": 620,
-    "ftm": 134,
-    "fta": 172,
-    "tpm": 70,
-    "reb": 250,
-    "ast": 157,
-    "stl": 39,
-    "blk": 24,
-    "to": 82,
-    "pts": 774
+    "fgm": 333,
+    "fga": 709,
+    "ftm": 165,
+    "fta": 211,
+    "tpm": 85,
+    "reb": 289,
+    "ast": 197,
+    "stl": 52,
+    "blk": 30,
+    "to": 99,
+    "pts": 916
    },
    "Mamba": {
-    "fgm": 243,
-    "fga": 474,
-    "ftm": 151,
-    "fta": 181,
-    "tpm": 59,
-    "reb": 234,
-    "ast": 170,
-    "stl": 33,
-    "blk": 31,
-    "to": 83,
-    "pts": 696
+    "fgm": 278,
+    "fga": 544,
+    "ftm": 183,
+    "fta": 218,
+    "tpm": 65,
+    "reb": 264,
+    "ast": 196,
+    "stl": 40,
+    "blk": 37,
+    "to": 95,
+    "pts": 804
    },
    "Slav": {
-    "fgm": 279,
-    "fga": 564,
-    "ftm": 206,
-    "fta": 239,
-    "tpm": 83,
-    "reb": 227,
-    "ast": 200,
-    "stl": 43,
-    "blk": 29,
-    "to": 78,
-    "pts": 847
+    "fgm": 293,
+    "fga": 588,
+    "ftm": 210,
+    "fta": 247,
+    "tpm": 85,
+    "reb": 241,
+    "ast": 207,
+    "stl": 45,
+    "blk": 33,
+    "to": 82,
+    "pts": 881
    }
   },
   "espnScoreboard": {
    "Mamba": {
-    "fgp": 0.51265823,
-    "ftp": 0.83425414,
-    "tpm": 59,
-    "reb": 234,
-    "ast": 170,
-    "stl": 33,
-    "blk": 31,
-    "to": 83,
-    "pts": 696
+    "fgp": 0.51102941,
+    "ftp": 0.83944954,
+    "tpm": 65,
+    "reb": 264,
+    "ast": 196,
+    "stl": 40,
+    "blk": 37,
+    "to": 95,
+    "pts": 804
    },
    "Slav": {
-    "fgp": 0.49468085,
-    "ftp": 0.86192469,
-    "tpm": 83,
-    "reb": 227,
-    "ast": 200,
-    "stl": 43,
-    "blk": 29,
-    "to": 78,
-    "pts": 847
+    "fgp": 0.49829932,
+    "ftp": 0.85020243,
+    "tpm": 85,
+    "reb": 241,
+    "ast": 207,
+    "stl": 45,
+    "blk": 33,
+    "to": 82,
+    "pts": 881
    },
    "Danna": {
-    "fgp": 0.45967742,
-    "ftp": 0.77906977,
-    "tpm": 70,
-    "reb": 250,
-    "ast": 157,
-    "stl": 39,
-    "blk": 24,
-    "to": 82,
-    "pts": 774
+    "fgp": 0.4696756,
+    "ftp": 0.78199052,
+    "tpm": 85,
+    "reb": 289,
+    "ast": 197,
+    "stl": 52,
+    "blk": 30,
+    "to": 99,
+    "pts": 916
    },
    "Bizzle": {
-    "fgp": 0.51166667,
-    "ftp": 0.80487805,
-    "tpm": 64,
-    "reb": 298,
-    "ast": 167,
-    "stl": 47,
-    "blk": 33,
-    "to": 85,
-    "pts": 810
+    "fgp": 0.50073421,
+    "ftp": 0.79459459,
+    "tpm": 74,
+    "reb": 339,
+    "ast": 193,
+    "stl": 57,
+    "blk": 39,
+    "to": 93,
+    "pts": 903
    }
   },
   "scoreboardCompared": true,
@@ -252,6 +255,6 @@
     "Bizzle"
    ]
   ],
-  "from": "2026-11-14"
+  "from": "2026-11-15"
  }
 }
