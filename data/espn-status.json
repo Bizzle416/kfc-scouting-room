@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-15T08:45:19.168Z",
+ "at": "2026-11-15T14:45:21.528Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -96,13 +96,9 @@
   },
   "trades": 5,
   "rosterChanges": {
-   "added": [
-    "Mamba: Onyeka Okongwu ($5 FA)"
-   ],
+   "added": [],
    "moved": [],
-   "dropped": [
-    "Mamba: Zach Edey ($1 dead)"
-   ]
+   "dropped": []
   },
   "espnPlayers": 449,
   "liveWeek": {
