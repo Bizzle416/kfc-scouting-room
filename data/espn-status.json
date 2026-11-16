@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-16T04:44:52.638Z",
+ "at": "2026-11-16T17:01:55.667Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 28",
+  "rosters read for scoring period 29",
   "daily lineups read: 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14, 2026-11-15",
   "league.json written"
  ],
@@ -26,9 +26,9 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 27,
-   "latestScoringPeriod": 27,
-   "currentMatchupPeriod": 4,
+   "currentScoringPeriod": 28,
+   "latestScoringPeriod": 28,
+   "currentMatchupPeriod": 5,
    "mp1": [
     1,
     2,
@@ -37,7 +37,7 @@
     5,
     6
    ],
-   "today": "2026-11-15"
+   "today": "2026-11-16"
   },
   "poolStats": 364,
   "injuries": {
@@ -62,7 +62,7 @@
     ],
     [
      "deaaron fox",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "evan mobley",
@@ -74,7 +74,7 @@
     ],
     [
      "kyrie irving",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "dejounte murray",
@@ -102,18 +102,19 @@
   },
   "espnPlayers": 451,
   "liveWeek": {
-   "espn": 4,
+   "espn": 5,
    "site": 5
   },
   "finalBy": {
+   "2026-11-16": "not yet",
+   "2026-11-17": "not yet",
    "2026-11-09": "clock",
    "2026-11-10": "clock",
    "2026-11-11": "clock",
    "2026-11-12": "clock",
    "2026-11-13": "clock",
    "2026-11-14": "clock",
-   "2026-11-15": "scoreboard",
-   "2026-11-16": "not yet"
+   "2026-11-15": "clock"
   },
   "finalDays": [],
   "matchupPeriods": {
@@ -174,14 +175,59 @@
     "pts": 0
    }
   },
-  "espnScoreboard": {},
-  "scoreboardCompared": true,
+  "espnScoreboard": {
+   "Danna": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Mamba": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Slav": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Bizzle": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   }
+  },
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)",
    "wk 3: Bizzle 4-4-1 Mamba (espn), Danna 3-6-0 Slav (espn)",
-   "wk 4: Mamba 3-6-0 Slav (lineups), Danna 2-6-1 Bizzle (lineups)"
+   "wk 4: Mamba 3-6-0 Slav (espn), Danna 2-6-1 Bizzle (espn)"
   ],
   "fixtures": 36,
   "pairs": [
