@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-16T17:01:55.667Z",
+ "at": "2026-11-16T22:17:05.639Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -42,8 +42,12 @@
   "poolStats": 364,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 108,
+   "flagged": 112,
    "sample": [
+    [
+     "amen thompson",
+     "DAY_TO_DAY"
+    ],
     [
      "caleb wilson",
      "OUT"
@@ -55,6 +59,10 @@
     [
      "joel embiid",
      "DAY_TO_DAY"
+    ],
+    [
+     "lebron james",
+     "OUT"
     ],
     [
      "jaren jackson jr",
@@ -82,14 +90,6 @@
     ],
     [
      "ty jerome",
-     "OUT"
-    ],
-    [
-     "anthony edwards",
-     "OUT"
-    ],
-    [
-     "paolo banchero",
      "OUT"
     ]
    ]
