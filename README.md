@@ -22,7 +22,7 @@ Gameweek analysis for a 4-team ESPN fantasy basketball league (9-category head-t
 Week to date is the sum of ESPN's nightly lineups (started games only). The Gameweek tab checks that this sum matches ESPN's live week totals and flags it if it doesn't.
 
 ## Model
-- Per-game line per player: preseason FantasyPros projection blended with his ESPN season average, weighted by games played (`gp / (gp + 3)`: 50% actual at 3 games, 73% at 8, 87% at 20).
+- Per-game line per player: ESPN season average once he has played 10 games; under 10 games, the preseason FantasyPros projection blended with his ESPN average (`gp / (gp + 3)`: 50% actual at 3 games, 73% at 8).
 - Lineup plan: each remaining day, the best 10 available players fill PG, SG, SF, PF, C, G, F and 3 UTIL.
 - 10,000 simulated finishes per matchup on top of the week-to-date totals.
 
