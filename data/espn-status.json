@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-18T10:36:53.724Z",
+ "at": "2026-11-18T16:27:37.328Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -42,7 +42,7 @@
   "poolStats": 363,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 114,
+   "flagged": 112,
    "sample": [
     [
      "amen thompson",
@@ -54,7 +54,7 @@
     ],
     [
      "deni avdija",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "bam adebayo",
@@ -74,7 +74,7 @@
     ],
     [
      "walker kessler",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "jaylen brown",
@@ -90,7 +90,7 @@
     ],
     [
      "jonathan kuminga",
-     "OUT"
+     "DAY_TO_DAY"
     ]
    ]
   },
@@ -226,7 +226,7 @@
     "pts": 243
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
