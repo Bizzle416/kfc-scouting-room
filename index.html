@@ -182,6 +182,7 @@ svg.chart .ax{font:11px var(--font);fill:var(--muted)}svg.chart .lbl{font:600 12
 .punt{display:inline-block;margin-top:6px;font-size:13px;position:relative}.punt summary{cursor:pointer;color:var(--ink);font-weight:500;padding:2px 10px;border:1px solid var(--line);border-radius:999px;list-style:none}
 .punt summary::-webkit-details-marker{display:none}.punt[open] .pbox{position:absolute;z-index:20;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:6px;width:260px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
 .punt .pbox label{display:inline-flex;gap:5px;align-items:center;width:30%;margin:2px 0;color:var(--ink);font-size:13px}
+h4.ph{font:600 13px var(--font);margin:8px 0 6px;display:flex;align-items:center;gap:6px}h4.ph i{display:inline-block;width:10px;height:10px;border-radius:2px}
 </style>
 </head>
 <body>
@@ -1017,6 +1018,44 @@ function probBar(w,t,l,a,b){return `<div class="pbar" data-tip="${esc(tname(a))}
 const catStatus=(x,a,b)=>{const p=Math.max(x.w,x.l),who=x.w>=x.l?a:b;return p>=.9?`${esc(who)} locked`:p>=.65?`${esc(who)} likely`:"Toss-up"};
 
 /* tables */
+/* ---------- performance vs projection (week to date) ---------- */
+// For every game a team actually started this week, what that player was projected to produce going into the week
+// (his season line with this week's games taken out), against what he actually produced.
+function effPre(tp,wkDays){
+  const k=norm(tp.n),a=(state.espn||{})[k],r=ref(tp.n),pj=r&&r.pj;
+  if(!a)return eff(tp);
+  const sum={};RAW.forEach(x=>sum[x]=(a[x]||0)*a.gp);let n=0;
+  wkDays.forEach(d=>TEAMS.forEach(t=>dayRows(d,t).forEach(row=>{if(norm(row[0])!==k)return;const v=row.slice(2,13);if(!v.some(x=>x>0))return;n++;RAW.forEach((x,i)=>sum[x]-=v[i])})));
+  const gp=a.gp-n;if(gp<=0)return pj?Object.assign({src:"proj"},pj):null;
+  const avg={};RAW.forEach(x=>avg[x]=Math.max(0,sum[x]/gp));
+  if(gp>=SEASON_GP||!pj)return avg;
+  const w=gp/(gp+BLEND_K),o={};RAW.forEach(x=>o[x]=w*avg[x]+(1-w)*(pj[x]||0));return o;
+}
+function gwPerf(M,S){
+  const wkDays=M.ds.filter(d=>(state.days||{})[d]),ros=state.teams[S.t]||[],proj=zeroLine(),act=zeroLine(),cache=new Map();let g=0;
+  M.banked.forEach(d=>dayRows(d,S.t).forEach(row=>{if(!onCourt(row))return;const v=row.slice(2,13);if(!v.some(x=>x>0))return;g++;
+    RAW.forEach((x,i)=>act[x]+=v[i]);
+    if(!cache.has(row[0]))cache.set(row[0],effPre(ros.find(p=>p.n===row[0])||{n:row[0]},wkDays));
+    const e=cache.get(row[0]);if(e)RAW.forEach(x=>proj[x]+=e[x]||0)}));
+  return {g,proj,act};
+}
+function perfLabel(c,diff,pct){
+  const good=c.low?diff<0:diff>0,m=c.k.endsWith("p")?Math.abs(diff)*100:Math.abs(pct);
+  const [t1,t2]=c.k.endsWith("p")?[1,3]:[5,15];
+  if(m<t1)return `<span class="muted">On track</span>`;
+  return `<span class="${good?"delta-pos":"delta-neg"}">${m<t2?"Slightly "+(good?"over":"under"):(good?"Over":"Under")}</span>`;
+}
+function gwPerfTable(M,S){
+  const P=gwPerf(M,S);if(!P.g)return `<p class="small muted">No games played yet.</p>`;
+  const rows=CATS.map(c=>{let pv,av,diff,pct,fmt,dfmt;
+    if(c.k.endsWith("p")){const [m,a]=c.k==="fgp"?["fgm","fga"]:["ftm","fta"];pv=P.proj[a]?P.proj[m]/P.proj[a]:0;av=P.act[a]?P.act[m]/P.act[a]:0;diff=av-pv;pct=pv?diff/pv*100:0;
+      fmt=v=>(v*100).toFixed(1)+"%";dfmt=`${diff>=0?"+":"−"}${Math.abs(diff*100).toFixed(1)} pts`}
+    else{pv=P.proj[c.k];av=P.act[c.k];diff=av-pv;pct=pv?diff/pv*100:0;fmt=v=>c.k==="pts"?Math.round(v):(Math.round(v*10)/10).toFixed(1).replace(/\.0$/,"");dfmt=`${diff>=0?"+":"−"}${Math.abs(diff).toFixed(1)}`}
+    const good=c.low?diff<0:diff>0;
+    return `<tr><td>${c.l}${c.low?' <span class="muted small">(low wins)</span>':""}</td><td>${fmt(pv)}</td><td><b>${fmt(av)}</b></td><td>${dfmt}</td><td class="${Math.abs(pct)<1?"":good?"delta-pos":"delta-neg"}">${pct>=0?"+":"−"}${Math.abs(pct).toFixed(1)}%</td><td class="l">${perfLabel(c,diff,pct)}</td></tr>`}).join("");
+  return `<table class="bi"><thead><tr><th>Category</th><th>Projected to date</th><th>Actual to date</th><th>Actual − projected</th><th>%</th><th class="l">Performance</th></tr></thead><tbody>${rows}</tbody></table><p class="small muted" style="margin-top:4px">${P.g} started games.</p>`;
+}
+
 function gwCatTable(M){
   const {A,B,a,b}=M;const live=!M.final;
   let h=`<table class="bi"><thead><tr><th>Category</th><th>${esc(a)} now</th><th>${esc(b)} now</th><th>Leader now</th>${live?`<th>${esc(a)} proj.</th><th>${esc(b)} proj.</th><th class="l">Win probability (${esc(a)} · tie · ${esc(b)})</th><th>${esc(a)} win %</th><th class="l">Status</th>`:`<th>Result</th>`}</tr></thead><tbody>`;
@@ -1107,6 +1146,10 @@ function gwPanel(M,i){
     <div class="phead"><h2>${esc(tname(a))} <span class="muted">vs</span> ${esc(tname(b))}</h2><span class="small muted">${esc(a)} v ${esc(b)} · Week ${M.wk} · ${dayLabel(M.ds[0])} – ${dayLabel(M.ds[M.ds.length-1])}${M.final?" · final":M.live?` · projecting from ${dayLabel(M.from)}`:""}</span></div>
     ${gwKpis(M)}
     <h3>Categories</h3><div class="scroll">${gwCatTable(M)}</div>
+    ${M.banked.length?`<h3>Performance vs projection <span class="muted small">· week to date</span></h3>
+    <h4 class="ph"><i style="background:var(--sa)"></i>${esc(tname(a))}</h4><div class="scroll">${gwPerfTable(M,A)}</div>
+    <h4 class="ph" style="margin-top:14px"><i style="background:var(--sb)"></i>${esc(tname(b))}</h4><div class="scroll">${gwPerfTable(M,B)}</div>
+    <p class="small muted">Projected = what each player who actually started was expected to produce per game going into the week (his season line with this week's games removed; under 10 games, blended with his preseason projection). It measures how well the players performed, not lineup choices or games played. Thresholds: counts ±5% on track, ±15% slightly; FG%/FT% ±1 pt on track, ±3 pts slightly. TO: fewer than projected is good.</p>`:""}
     <div class="cols">
       <div><h3>Starts per day</h3>${gwLegend(a,b,M.final?"":`<span><i style="background:var(--muted);opacity:.38"></i>Lighter = projected</span>`)}${startsChart}</div>
       <div><h3>Expected categories through the week</h3>${gwLegend(a,b)}<div class="gwtl" id="gwtl-${i}"><p class="small muted">Re-running the week night by night…</p></div></div>
