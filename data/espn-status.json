@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-19T16:34:14.971Z",
+ "at": "2026-11-20T05:01:14.113Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
   "rosters read for scoring period 32",
-  "daily lineups read: 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14, 2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18",
+  "daily lineups read: 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14, 2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19",
   "league.json written"
  ],
  "warnings": [
@@ -39,15 +39,11 @@
    ],
    "today": "2026-11-19"
   },
-  "poolStats": 365,
+  "poolStats": 367,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 107,
+   "flagged": 112,
    "sample": [
-    [
-     "scottie barnes",
-     "DAY_TO_DAY"
-    ],
     [
      "caleb wilson",
      "OUT"
@@ -81,16 +77,20 @@
      "OUT"
     ],
     [
-     "jonathan kuminga",
-     "DAY_TO_DAY"
-    ],
-    [
      "rj barrett",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "ty jerome",
      "OUT"
+    ],
+    [
+     "anthony edwards",
+     "OUT"
+    ],
+    [
+     "alperen sengun",
+     "DAY_TO_DAY"
     ]
    ]
   },
@@ -98,11 +98,9 @@
   "rosterChanges": {
    "added": [],
    "moved": [],
-   "dropped": [
-    "Danna: Dejounte Murray ($1 dead)"
-   ]
+   "dropped": []
   },
-  "espnPlayers": 451,
+  "espnPlayers": 453,
   "liveWeek": {
    "espn": 5,
    "site": 5
@@ -111,7 +109,7 @@
    "2026-11-16": "clock",
    "2026-11-17": "clock",
    "2026-11-18": "clock",
-   "2026-11-19": "not yet",
+   "2026-11-19": "scoreboard",
    "2026-11-20": "not yet",
    "2026-11-09": "clock",
    "2026-11-10": "clock",
@@ -124,7 +122,8 @@
   "finalDays": [
    "2026-11-16",
    "2026-11-17",
-   "2026-11-18"
+   "2026-11-18",
+   "2026-11-19"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -132,56 +131,56 @@
   },
   "liveTotals": {
    "Bizzle": {
-    "fgm": 149,
-    "fga": 307,
-    "ftm": 94,
-    "fta": 113,
-    "tpm": 38,
-    "reb": 141,
-    "ast": 79,
-    "stl": 31,
-    "blk": 21,
-    "to": 55,
-    "pts": 430
+    "fgm": 181,
+    "fga": 362,
+    "ftm": 102,
+    "fta": 123,
+    "tpm": 52,
+    "reb": 165,
+    "ast": 94,
+    "stl": 36,
+    "blk": 27,
+    "to": 67,
+    "pts": 516
    },
    "Danna": {
-    "fgm": 180,
-    "fga": 359,
-    "ftm": 92,
-    "fta": 122,
-    "tpm": 50,
-    "reb": 164,
-    "ast": 129,
-    "stl": 26,
-    "blk": 26,
-    "to": 47,
-    "pts": 502
+    "fgm": 192,
+    "fga": 388,
+    "ftm": 106,
+    "fta": 137,
+    "tpm": 53,
+    "reb": 188,
+    "ast": 141,
+    "stl": 28,
+    "blk": 32,
+    "to": 57,
+    "pts": 543
    },
    "Mamba": {
-    "fgm": 175,
-    "fga": 384,
-    "ftm": 98,
-    "fta": 121,
-    "tpm": 50,
-    "reb": 131,
-    "ast": 110,
-    "stl": 22,
-    "blk": 18,
-    "to": 78,
-    "pts": 498
+    "fgm": 200,
+    "fga": 448,
+    "ftm": 113,
+    "fta": 136,
+    "tpm": 60,
+    "reb": 151,
+    "ast": 144,
+    "stl": 30,
+    "blk": 19,
+    "to": 95,
+    "pts": 573
    },
    "Slav": {
-    "fgm": 178,
-    "fga": 364,
-    "ftm": 78,
-    "fta": 88,
-    "tpm": 42,
-    "reb": 136,
-    "ast": 132,
-    "stl": 29,
-    "blk": 9,
-    "to": 47,
-    "pts": 476
+    "fgm": 218,
+    "fga": 448,
+    "ftm": 93,
+    "fta": 104,
+    "tpm": 55,
+    "reb": 167,
+    "ast": 146,
+    "stl": 32,
+    "blk": 13,
+    "to": 59,
+    "pts": 584
    }
   },
   "espnScoreboard": {
@@ -230,8 +229,8 @@
     "pts": 430
    }
   },
-  "scoreboardCompared": false,
-  "scoreboardLagging": false,
+  "scoreboardCompared": true,
+  "scoreboardLagging": true,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)",
@@ -249,6 +248,6 @@
     "Bizzle"
    ]
   ],
-  "from": "2026-11-19"
+  "from": "2026-11-20"
  }
 }
