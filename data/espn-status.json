@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-22T06:49:49.723Z",
+ "at": "2026-11-22T15:17:52.018Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 34",
+  "rosters read for scoring period 35",
   "daily lineups read: 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14, 2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-20, 2026-11-21",
   "league.json written"
  ],
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 33,
-   "latestScoringPeriod": 33,
+   "currentScoringPeriod": 34,
+   "latestScoringPeriod": 34,
    "currentMatchupPeriod": 5,
    "mp1": [
     1,
@@ -37,7 +37,7 @@
     5,
     6
    ],
-   "today": "2026-11-21"
+   "today": "2026-11-22"
   },
   "poolStats": 367,
   "injuries": {
@@ -70,7 +70,7 @@
     ],
     [
      "jaylen brown",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "brandon ingram",
@@ -90,7 +90,7 @@
     ],
     [
      "jayson tatum",
-     "OUT"
+     "DAY_TO_DAY"
     ]
    ]
   },
@@ -111,7 +111,7 @@
    "2026-11-18": "clock",
    "2026-11-19": "clock",
    "2026-11-20": "clock",
-   "2026-11-21": "scoreboard",
+   "2026-11-21": "clock",
    "2026-11-22": "not yet",
    "2026-11-09": "clock",
    "2026-11-10": "clock",
@@ -136,7 +136,7 @@
   "liveTotals": {
    "Bizzle": {
     "fgm": 305,
-    "fga": 603,
+    "fga": 602,
     "ftm": 162,
     "fta": 207,
     "tpm": 77,
@@ -144,7 +144,7 @@
     "ast": 164,
     "stl": 52,
     "blk": 38,
-    "to": 101,
+    "to": 102,
     "pts": 849
    },
    "Danna": {
@@ -153,9 +153,9 @@
     "ftm": 178,
     "fta": 222,
     "tpm": 90,
-    "reb": 299,
+    "reb": 298,
     "ast": 230,
-    "stl": 39,
+    "stl": 40,
     "blk": 37,
     "to": 106,
     "pts": 912
@@ -189,52 +189,52 @@
   },
   "espnScoreboard": {
    "Danna": {
-    "fgp": 0.49458484,
-    "ftp": 0.79274611,
-    "tpm": 75,
-    "reb": 241,
-    "ast": 197,
-    "stl": 32,
-    "blk": 33,
-    "to": 85,
-    "pts": 776
+    "fgp": 0.4813154,
+    "ftp": 0.8018018,
+    "tpm": 90,
+    "reb": 298,
+    "ast": 230,
+    "stl": 40,
+    "blk": 37,
+    "to": 106,
+    "pts": 912
    },
    "Mamba": {
-    "fgp": 0.46724138,
-    "ftp": 0.79518072,
-    "tpm": 75,
-    "reb": 201,
-    "ast": 190,
-    "stl": 41,
-    "blk": 20,
-    "to": 122,
-    "pts": 749
+    "fgp": 0.47626113,
+    "ftp": 0.79899497,
+    "tpm": 86,
+    "reb": 246,
+    "ast": 237,
+    "stl": 48,
+    "blk": 27,
+    "to": 142,
+    "pts": 887
    },
    "Slav": {
-    "fgp": 0.48653199,
-    "ftp": 0.84722222,
-    "tpm": 76,
-    "reb": 214,
-    "ast": 191,
-    "stl": 50,
-    "blk": 16,
-    "to": 74,
-    "pts": 776
+    "fgp": 0.48885587,
+    "ftp": 0.8502994,
+    "tpm": 88,
+    "reb": 247,
+    "ast": 204,
+    "stl": 54,
+    "blk": 23,
+    "to": 82,
+    "pts": 888
    },
    "Bizzle": {
-    "fgp": 0.50096339,
-    "ftp": 0.78106509,
-    "tpm": 61,
-    "reb": 245,
-    "ast": 137,
-    "stl": 44,
-    "blk": 36,
-    "to": 87,
-    "pts": 713
+    "fgp": 0.50664452,
+    "ftp": 0.7826087,
+    "tpm": 77,
+    "reb": 277,
+    "ast": 164,
+    "stl": 52,
+    "blk": 38,
+    "to": 102,
+    "pts": 849
    }
   },
-  "scoreboardCompared": true,
-  "scoreboardLagging": true,
+  "scoreboardCompared": false,
+  "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)",
