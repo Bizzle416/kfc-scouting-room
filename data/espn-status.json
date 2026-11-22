@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-21T15:22:48.850Z",
+ "at": "2026-11-22T03:35:02.739Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -42,15 +42,11 @@
   "poolStats": 367,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 113,
+   "flagged": 119,
    "sample": [
     [
      "caleb wilson",
      "OUT"
-    ],
-    [
-     "deni avdija",
-     "DAY_TO_DAY"
     ],
     [
      "lauri markkanen",
@@ -65,6 +61,14 @@
      "OUT"
     ],
     [
+     "cade cunningham",
+     "DAY_TO_DAY"
+    ],
+    [
+     "shai gilgeous-alexander",
+     "DAY_TO_DAY"
+    ],
+    [
      "jaylen brown",
      "OUT"
     ],
@@ -77,8 +81,8 @@
      "OUT"
     ],
     [
-     "ty jerome",
-     "OUT"
+     "giannis antetokounmpo",
+     "DAY_TO_DAY"
     ],
     [
      "anthony edwards",
@@ -86,10 +90,6 @@
     ],
     [
      "jayson tatum",
-     "DAY_TO_DAY"
-    ],
-    [
-     "cameron boozer",
      "OUT"
     ]
    ]
