@@ -1,11 +1,11 @@
 {
  "ok": true,
- "at": "2026-11-23T04:54:15.245Z",
+ "at": "2026-11-23T19:14:29.445Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 35",
+  "rosters read for scoring period 36",
   "daily lineups read: 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-20, 2026-11-21, 2026-11-22",
   "league.json written"
  ],
@@ -26,9 +26,9 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 34,
-   "latestScoringPeriod": 34,
-   "currentMatchupPeriod": 5,
+   "currentScoringPeriod": 35,
+   "latestScoringPeriod": 35,
+   "currentMatchupPeriod": 6,
    "mp1": [
     1,
     2,
@@ -37,12 +37,12 @@
     5,
     6
    ],
-   "today": "2026-11-22"
+   "today": "2026-11-23"
   },
-  "poolStats": 368,
+  "poolStats": 367,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 112,
+   "flagged": 114,
    "sample": [
     [
      "caleb wilson",
@@ -57,6 +57,10 @@
      "OUT"
     ],
     [
+     "joel embiid",
+     "DAY_TO_DAY"
+    ],
+    [
      "jaren jackson jr",
      "OUT"
     ],
@@ -69,16 +73,12 @@
      "OUT"
     ],
     [
-     "shai gilgeous-alexander",
-     "OUT"
-    ],
-    [
      "jaylen brown",
      "DAY_TO_DAY"
     ],
     [
      "paul george",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "rj barrett",
@@ -86,7 +86,7 @@
     ],
     [
      "giannis antetokounmpo",
-     "OUT"
+     "DAY_TO_DAY"
     ],
     [
      "anthony edwards",
@@ -100,20 +100,21 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 454,
+  "espnPlayers": 453,
   "liveWeek": {
-   "espn": 5,
+   "espn": 6,
    "site": 6
   },
   "finalBy": {
+   "2026-11-23": "not yet",
+   "2026-11-24": "not yet",
    "2026-11-16": "clock",
    "2026-11-17": "clock",
    "2026-11-18": "clock",
    "2026-11-19": "clock",
    "2026-11-20": "clock",
    "2026-11-21": "clock",
-   "2026-11-22": "scoreboard",
-   "2026-11-23": "not yet"
+   "2026-11-22": "clock"
   },
   "finalDays": [],
   "matchupPeriods": {
@@ -174,15 +175,60 @@
     "pts": 0
    }
   },
-  "espnScoreboard": {},
-  "scoreboardCompared": true,
+  "espnScoreboard": {
+   "Mamba": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Bizzle": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Slav": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   },
+   "Danna": {
+    "fgp": 0,
+    "ftp": 0,
+    "tpm": 0,
+    "reb": 0,
+    "ast": 0,
+    "stl": 0,
+    "blk": 0,
+    "to": 0,
+    "pts": 0
+   }
+  },
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
    "wk 2: Mamba 7-2-0 Danna (espn), Bizzle 3-6-0 Slav (espn)",
    "wk 3: Bizzle 4-4-1 Mamba (espn), Danna 3-6-0 Slav (espn)",
    "wk 4: Mamba 3-6-0 Slav (espn), Danna 2-6-1 Bizzle (espn)",
-   "wk 5: Danna 6-3-0 Mamba (lineups), Slav 6-3-0 Bizzle (lineups)"
+   "wk 5: Danna 6-3-0 Mamba (espn), Slav 6-3-0 Bizzle (espn)"
   ],
   "fixtures": 36,
   "pairs": [
