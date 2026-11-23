@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-23T19:14:29.445Z",
+ "at": "2026-11-23T23:19:34.224Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,18 +39,14 @@
    ],
    "today": "2026-11-23"
   },
-  "poolStats": 367,
+  "poolStats": 368,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 114,
+   "flagged": 108,
    "sample": [
     [
      "caleb wilson",
      "OUT"
-    ],
-    [
-     "brandon miller",
-     "DAY_TO_DAY"
     ],
     [
      "lauri markkanen",
@@ -58,7 +54,7 @@
     ],
     [
      "joel embiid",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "jaren jackson jr",
@@ -73,11 +69,7 @@
      "OUT"
     ],
     [
-     "jaylen brown",
-     "DAY_TO_DAY"
-    ],
-    [
-     "paul george",
+     "cade cunningham",
      "DAY_TO_DAY"
     ],
     [
@@ -91,6 +83,14 @@
     [
      "anthony edwards",
      "OUT"
+    ],
+    [
+     "cameron boozer",
+     "OUT"
+    ],
+    [
+     "dylan harper",
+     "OUT"
     ]
    ]
   },
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 453,
+  "espnPlayers": 454,
   "liveWeek": {
    "espn": 6,
    "site": 6
