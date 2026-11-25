@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-24T18:53:43.803Z",
+ "at": "2026-11-25T05:30:49.332Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,10 +39,10 @@
    ],
    "today": "2026-11-24"
   },
-  "poolStats": 371,
+  "poolStats": 372,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 104,
+   "flagged": 103,
    "sample": [
     [
      "caleb wilson",
@@ -66,11 +66,15 @@
     ],
     [
      "cade cunningham",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "rj barrett",
      "OUT"
+    ],
+    [
+     "yaxel lendeborg",
+     "DAY_TO_DAY"
     ],
     [
      "giannis antetokounmpo",
@@ -87,10 +91,6 @@
     [
      "dylan harper",
      "OUT"
-    ],
-    [
-     "paolo banchero",
-     "OUT"
     ]
    ]
   },
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 458,
+  "espnPlayers": 459,
   "liveWeek": {
    "espn": 6,
    "site": 6
