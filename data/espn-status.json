@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-26T08:05:22.480Z",
+ "at": "2026-11-26T17:43:37.838Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,10 +39,10 @@
    ],
    "today": "2026-11-26"
   },
-  "poolStats": 374,
+  "poolStats": 378,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 102,
+   "flagged": 104,
    "sample": [
     [
      "caleb wilson",
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 461,
+  "espnPlayers": 465,
   "liveWeek": {
    "espn": 6,
    "site": 6
@@ -228,7 +228,7 @@
     "pts": 469
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
