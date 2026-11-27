@@ -1,12 +1,12 @@
 {
  "ok": true,
- "at": "2026-11-26T17:43:37.838Z",
+ "at": "2026-11-27T17:27:50.072Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
   "league read",
-  "rosters read for scoring period 39",
-  "daily lineups read: 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-20, 2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25",
+  "rosters read for scoring period 40",
+  "daily lineups read: 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-20, 2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25, 2026-11-26",
   "league.json written"
  ],
  "warnings": [
@@ -26,8 +26,8 @@
    "4:Klaw Patrol"
   ],
   "period": {
-   "currentScoringPeriod": 38,
-   "latestScoringPeriod": 38,
+   "currentScoringPeriod": 39,
+   "latestScoringPeriod": 39,
    "currentMatchupPeriod": 6,
    "mp1": [
     1,
@@ -37,12 +37,12 @@
     5,
     6
    ],
-   "today": "2026-11-26"
+   "today": "2026-11-27"
   },
-  "poolStats": 378,
+  "poolStats": 380,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 104,
+   "flagged": 110,
    "sample": [
     [
      "caleb wilson",
@@ -66,7 +66,7 @@
     ],
     [
      "cade cunningham",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "lamelo ball",
@@ -74,11 +74,15 @@
     ],
     [
      "jaylen brown",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "rj barrett",
      "OUT"
+    ],
+    [
+     "giannis antetokounmpo",
+     "DAY_TO_DAY"
     ],
     [
      "anthony edwards",
@@ -86,10 +90,6 @@
     ],
     [
      "cameron boozer",
-     "OUT"
-    ],
-    [
-     "dylan harper",
      "OUT"
     ]
    ]
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 465,
+  "espnPlayers": 467,
   "liveWeek": {
    "espn": 6,
    "site": 6
@@ -109,8 +109,9 @@
    "2026-11-23": "clock",
    "2026-11-24": "clock",
    "2026-11-25": "clock",
-   "2026-11-26": "not yet",
+   "2026-11-26": "clock",
    "2026-11-27": "not yet",
+   "2026-11-28": "not yet",
    "2026-11-16": "clock",
    "2026-11-17": "clock",
    "2026-11-18": "clock",
@@ -122,7 +123,8 @@
   "finalDays": [
    "2026-11-23",
    "2026-11-24",
-   "2026-11-25"
+   "2026-11-25",
+   "2026-11-26"
   ],
   "matchupPeriods": {
    "espn": 18,
@@ -248,6 +250,6 @@
     "Danna"
    ]
   ],
-  "from": "2026-11-26"
+  "from": "2026-11-27"
  }
 }
