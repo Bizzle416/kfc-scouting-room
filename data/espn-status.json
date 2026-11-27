@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-27T17:27:50.072Z",
+ "at": "2026-11-27T22:06:05.057Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,10 +39,10 @@
    ],
    "today": "2026-11-27"
   },
-  "poolStats": 380,
+  "poolStats": 381,
   "injuries": {
    "poolPlayers": 750,
-   "flagged": 110,
+   "flagged": 115,
    "sample": [
     [
      "caleb wilson",
@@ -70,11 +70,15 @@
     ],
     [
      "lamelo ball",
-     "DAY_TO_DAY"
+     "OUT"
     ],
     [
      "jaylen brown",
      "OUT"
+    ],
+    [
+     "kyrie irving",
+     "DAY_TO_DAY"
     ],
     [
      "rj barrett",
@@ -87,10 +91,6 @@
     [
      "anthony edwards",
      "OUT"
-    ],
-    [
-     "cameron boozer",
-     "OUT"
     ]
    ]
   },
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 467,
+  "espnPlayers": 468,
   "liveWeek": {
    "espn": 6,
    "site": 6
