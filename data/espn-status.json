@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-11-28T10:13:11.532Z",
+ "at": "2026-11-28T16:11:27.210Z",
  "league": "1143837492",
  "season": 2027,
  "steps": [
@@ -39,7 +39,7 @@
    ],
    "today": "2026-11-28"
   },
-  "poolStats": 383,
+  "poolStats": 382,
   "injuries": {
    "poolPlayers": 750,
    "flagged": 111,
@@ -100,7 +100,7 @@
    "moved": [],
    "dropped": []
   },
-  "espnPlayers": 470,
+  "espnPlayers": 469,
   "liveWeek": {
    "espn": 6,
    "site": 6
@@ -232,7 +232,7 @@
     "pts": 637
    }
   },
-  "scoreboardCompared": true,
+  "scoreboardCompared": false,
   "scoreboardLagging": false,
   "results": [
    "wk 1: Slav 7-2-0 Mamba (espn), Bizzle 2-6-1 Danna (espn)",
